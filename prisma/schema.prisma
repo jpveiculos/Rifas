@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -35,14 +35,14 @@ model Raffle {
 }
 
 model RaffleNumber {
-  id           String       @id @default(cuid())
-  raffleId     String
-  number       Int
-  status       NumberStatus @default(AVAILABLE)
+  id            String       @id @default(cuid())
+  raffleId      String
+  number        Int
+  status        NumberStatus @default(AVAILABLE)
   reservationId String?
-  reservedAt   DateTime?
-  confirmedAt  DateTime?
-  raffle       Raffle       @relation(fields: [raffleId], references: [id], onDelete: Cascade)
+  reservedAt    DateTime?
+  confirmedAt   DateTime?
+  raffle        Raffle       @relation(fields: [raffleId], references: [id], onDelete: Cascade)
 
   @@unique([raffleId, number])
   @@index([raffleId, status])
