@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum RaffleStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  ENDED
+}
+
+enum NumberStatus {
+  AVAILABLE
+  RESERVED
+  CONFIRMED
+}
+
+model Raffle {
+  id             String        @id @default(cuid())
+  name           String
+  productName    String
+  description    String        @db.Text
+  totalNumbers   Int
+  priceInCents   Int
+  endDate        DateTime
+  status         RaffleStatus  @default(DRAFT)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  numbers        RaffleNumber[]
+}
+
+model RaffleNumber {
+  id           String       @id @default(cuid())
+  raffleId     String
+  number       Int
+  status       NumberStatus @default(AVAILABLE)
+  reservationId String?
+  reservedAt   DateTime?
+  confirmedAt  DateTime?
+  raffle       Raffle       @relation(fields: [raffleId], references: [id], onDelete: Cascade)
+
+  @@unique([raffleId, number])
+  @@index([raffleId, status])
+}
