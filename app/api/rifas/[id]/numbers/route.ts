@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/auth";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -7,6 +8,20 @@ export async function POST(request: Request, { params }: Params) {
   const { id } = await params;
 
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: "Faça login para participar da rifa." }, { status: 401 });
+    }
+
+    const raffle = await prisma.raffle.findUnique({
+      where: { id },
+      select: { status: true, endDate: true }
+    });
+
+    if (!raffle || raffle.status !== "ACTIVE" || raffle.endDate <= new Date()) {
+      return NextResponse.json({ error: "Esta rifa não está disponível para novas reservas." }, { status: 409 });
+    }
+
     const body = await request.json();
     const quantity = Number(body.quantity);
 
@@ -34,7 +49,8 @@ export async function POST(request: Request, { params }: Params) {
           data: {
             status: "RESERVED",
             reservationId,
-            reservedAt: new Date()
+            reservedAt: new Date(),
+            reservedByUserId: user.id
           }
         });
 
