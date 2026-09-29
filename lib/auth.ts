@@ -12,7 +12,7 @@ function normalizeUsername(value: string) {
 }
 
 export function normalizeWhatsapp(value: string) {
-  return value.replace(/\\D/g, "").trim();
+  return value.replace(/\D/g, "").trim();
 }
 
 export function validateCredentials(username: string, whatsapp: string, password: string) {
