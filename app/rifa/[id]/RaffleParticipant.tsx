@@ -7,10 +7,12 @@ export default function RaffleParticipant({ raffleId, priceInCents }: { raffleId
   const [numbers, setNumbers] = useState<number[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [requiresLogin, setRequiresLogin] = useState(false);
 
   async function generateNumbers() {
     setLoading(true);
     setError("");
+    setRequiresLogin(false);
     setNumbers([]);
 
     try {
@@ -22,6 +24,7 @@ export default function RaffleParticipant({ raffleId, priceInCents }: { raffleId
       const data = await response.json();
 
       if (!response.ok) {
+        setRequiresLogin(response.status === 401);
         setError(data.error ?? "Não foi possível gerar os números.");
         return;
       }
@@ -72,7 +75,7 @@ export default function RaffleParticipant({ raffleId, priceInCents }: { raffleId
         </div>
       )}
 
-      {error && <div className="error-message">{error}</div>}
+      {error && <div className="error-message">{error}{requiresLogin && <> <a href="/login">Entrar</a> ou <a href="/cadastro">criar uma conta</a>.</>}</div>}
     </div>
   );
 }
