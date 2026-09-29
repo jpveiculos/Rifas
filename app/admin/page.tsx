@@ -13,16 +13,42 @@ const initialForm = {
 
 export default function AdminPage() {
   const [form, setForm] = useState(initialForm);
-  const [saved, setSaved] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   function update(field: keyof typeof initialForm, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
-    setSaved(false);
+    setMessage("");
+    setError("");
   }
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSaved(true);
+    setLoading(true);
+    setMessage("");
+    setError("");
+
+    try {
+      const response = await fetch("/api/rifas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form)
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error ?? "Não foi possível salvar a rifa.");
+        return;
+      }
+
+      setMessage("Rifa criada com sucesso. ID: " + data.id);
+      setForm(initialForm);
+    } catch {
+      setError("Não foi possível conectar ao servidor.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -32,7 +58,7 @@ export default function AdminPage() {
           <div>
             <a className="back-link" href="/">← Voltar para a página inicial</a>
             <h1>Criar nova rifa</h1>
-            <p>Cadastre sua rifa e deixe os dados prontos para publicação.</p>
+            <p>Cadastre sua rifa e prepare os números automaticamente.</p>
           </div>
           <span className="admin-badge">ADMINISTRAÇÃO</span>
         </div>
@@ -48,7 +74,7 @@ export default function AdminPage() {
 
           <section className="form-section">
             <h2>Fotos</h2>
-            <p className="form-help">Adicione as fotos do produto. A galeria será exibida na página da rifa.</p>
+            <p className="form-help">A galeria de fotos será conectada ao armazenamento na próxima etapa.</p>
             <label className="upload-box"><span>Adicionar fotos</span><small>JPG, PNG ou WEBP</small><input type="file" accept="image/jpeg,image/png,image/webp" multiple /></label>
           </section>
 
@@ -58,7 +84,7 @@ export default function AdminPage() {
               <label>Quantidade total de números<input required min="1" type="number" value={form.totalNumbers} onChange={(e) => update("totalNumbers", e.target.value)} /></label>
               <label>Valor por número<input required inputMode="decimal" value={form.pricePerNumber} onChange={(e) => update("pricePerNumber", e.target.value)} placeholder="1,00" /></label>
             </div>
-            <div className="number-note"><strong>Distribuição automática</strong><span>O participante escolherá a quantidade. O sistema gerará automaticamente somente números disponíveis.</span></div>
+            <div className="number-note"><strong>Distribuição automática</strong><span>Os números são criados no banco e poderão ser reservados automaticamente sem exibir uma lista gigante ao participante.</span></div>
           </section>
 
           <section className="form-section">
@@ -68,10 +94,11 @@ export default function AdminPage() {
 
           <div className="form-actions">
             <a className="secondary-button" href="/">Cancelar</a>
-            <button className="primary-button" type="submit">Salvar rifa</button>
+            <button className="primary-button" type="submit" disabled={loading}>{loading ? "Salvando..." : "Salvar rifa"}</button>
           </div>
 
-          {saved && <div className="success-message">Cadastro preenchido. A gravação permanente será ligada ao banco de dados na próxima etapa.</div>}
+          {message && <div className="success-message">{message}</div>}
+          {error && <div className="error-message">{error}</div>}
         </form>
       </div>
     </main>
