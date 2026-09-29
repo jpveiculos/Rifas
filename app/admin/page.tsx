@@ -2,6 +2,44 @@
 
 import { FormEvent, useState } from "react";
 
+function ParticipantForm() {
+  const [username, setUsername] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
+  const [password, setPassword] = useState("");
+  const [adminPassword, setAdminPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setLoading(true); setMessage(""); setError("");
+    try {
+      const response = await fetch("/api/admin/participantes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-password": adminPassword },
+        body: JSON.stringify({ username, whatsapp, password })
+      });
+      const data = await response.json();
+      if (!response.ok) { setError(data.error ?? "Não foi possível cadastrar."); return; }
+      setMessage("Participante cadastrado com sucesso: " + data.user.username);
+      setUsername(""); setWhatsapp(""); setPassword("");
+    } catch { setError("Não foi possível conectar ao servidor."); }
+    finally { setLoading(false); }
+  }
+
+  return <form className="admin-subform" onSubmit={submit}>
+    <label>Usuário<input required value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Ex.: joao123" /></label>
+    <label>WhatsApp ou telefone<input required inputMode="tel" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="(77) 99999-9999" /></label>
+    <label>Senha do participante<input required minLength={4} type="text" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Senha que será entregue ao participante" /></label>
+    <label>Senha administrativa<input required type="password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} placeholder="Sua senha de administrador" /></label>
+    <button className="primary-button" type="submit" disabled={loading}>{loading ? "Cadastrando..." : "Cadastrar participante"}</button>
+    {message && <div className="success-message">{message}</div>}
+    {error && <div className="error-message">{error}</div>}
+  </form>;
+}
+
+
 const initialForm = {
   raffleName: "",
   productName: "",
@@ -64,6 +102,13 @@ export default function AdminPage() {
         </div>
 
         <form className="admin-form" onSubmit={submit}>
+
+        <section className="form-section">
+          <h2>Cadastrar participante</h2>
+          <p className="form-help">Use esta opção quando a pessoa comprar uma participação pessoalmente. Cadastre o usuário, o WhatsApp/telefone e uma senha para ela.</p>
+          <ParticipantForm />
+        </section>
+
           <section className="form-section">
             <h2>Identificação da rifa</h2>
             <p className="form-help">O nome da rifa é independente do nome do produto.</p>
