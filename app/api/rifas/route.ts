@@ -27,24 +27,28 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "A data de encerramento precisa ser futura." }, { status: 400 });
     }
 
-    const raffle = await prisma.raffle.create({
-      data: {
-        name,
-        productName,
-        description,
-        totalNumbers,
-        priceInCents,
-        endDate
-      }
-    });
+    const raffle = await prisma.$transaction(async (tx) => {
+      const created = await tx.raffle.create({
+        data: {
+          name,
+          productName,
+          description,
+          totalNumbers,
+          priceInCents,
+          endDate
+        }
+      });
 
-    await prisma.$executeRaw(
-      Prisma.sql`
-        INSERT INTO "RaffleNumber" ("id", "raffleId", "number")
-        SELECT md5(${raffle.id} || ':' || series::text), ${raffle.id}, series
-        FROM generate_series(1, ${totalNumbers}) AS series
-      `
-    );
+      await tx.$executeRaw(
+        Prisma.sql`
+          INSERT INTO "RaffleNumber" ("id", "raffleId", "number")
+          SELECT md5(${created.id} || ':' || series::text), ${created.id}, series
+          FROM generate_series(1, ${totalNumbers}) AS series
+        `
+      );
+
+      return created;
+    });
 
     return NextResponse.json({ id: raffle.id, status: raffle.status }, { status: 201 });
   } catch (error) {
