@@ -7,6 +7,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     where: { id },
     select: {
       id: true,
+      raffleCode: true,
       name: true,
       productName: true,
       category: true,
@@ -15,7 +16,14 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
       priceInCents: true,
       endDate: true,
       imageUrls: true,
-      status: true
+      status: true,
+      salesClosedAt: true,
+      drawEligibleCount: true,
+      federalNumbers: true,
+      winningNumber: true,
+      winningNumbers: true,
+      resultStatus: true,
+      resultPublishedAt: true
     }
   });
 
