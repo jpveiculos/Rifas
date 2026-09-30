@@ -114,9 +114,9 @@ export default function HomeRaffleBrowser({ activeRaffles, finishedRaffles }: Pr
       <section className="category-browser">
         <div className="browser-heading">
           <div>
-            <span className="section-kicker">ENCONTRE SUA RIFA</span>
-            <h3>Escolha uma categoria</h3>
-            <p>Abra o menu e escolha o tipo de rifa que deseja encontrar.</p>
+            <span className="section-kicker">CATEGORIAS</span>
+            <h3>Filtre por categoria</h3>
+            <p>Escolha uma categoria para encontrar sua rifa.</p>
           </div>
         </div>
 
@@ -142,8 +142,8 @@ export default function HomeRaffleBrowser({ activeRaffles, finishedRaffles }: Pr
 
         <div className="browser-results-heading">
           <div>
-            <span className="section-kicker">RESULTADOS</span>
-            <h3>{selectedCategory === "TODAS" ? "Todas as rifas ativas" : selectedCategory}</h3>
+            <span className="section-kicker">RIFAS ATIVAS</span>
+            <h3>{selectedCategory === "TODAS" ? "Rifas disponíveis" : selectedCategory}</h3>
           </div>
           <span>{filteredRaffles.length} {filteredRaffles.length === 1 ? "resultado" : "resultados"}</span>
         </div>
