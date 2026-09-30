@@ -57,3 +57,8 @@
   .form-actions { flex-direction: column-reverse; }
   .form-actions a, .form-actions button { width: 100%; }
 }
+
+.image-admin-list { display: grid; gap: 10px; margin-bottom: 12px; }
+.image-admin-row { display: flex; gap: 8px; align-items: center; }
+.image-admin-row input { flex: 1; }
+@media (max-width: 640px) { .image-admin-row { display: grid; grid-template-columns: 1fr; } .image-admin-row .secondary-button { width: 100%; } }
