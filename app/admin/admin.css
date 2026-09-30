@@ -26,6 +26,28 @@
 .primary-button { background: #111318; color: #fff; }
 .secondary-button { background: #e9ebef; color: #252a31; }
 .success-message { padding: 15px 17px; border-radius: 12px; background: #e9f7ef; color: #176d3a; font-size: 14px; line-height: 1.45; }
+.admin-overview { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 18px; }
+.admin-overview div { display: grid; gap: 5px; padding: 18px; background: #fff; border: 1px solid #e1e4e9; border-radius: 16px; }
+.admin-overview strong { font-size: 26px; }
+.admin-overview span { color: #747b85; font-size: 13px; }
+.form-section-nested { padding: 20px; background: #fafbfc; box-shadow: none; }
+.form-section-nested h3 { margin: 0 0 8px; font-size: 16px; }
+.section-heading-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.compact-button { min-height: 40px; padding: 0 14px; font-size: 13px; white-space: nowrap; }
+.admin-empty { display: grid; gap: 6px; padding: 28px 18px; text-align: center; border: 1px dashed #d2d6dc; border-radius: 14px; color: #747b85; }
+.admin-empty strong { color: #343941; }
+.raffle-admin-list { display: grid; gap: 12px; }
+.raffle-admin-card { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px; border: 1px solid #e1e4e9; border-radius: 15px; }
+.raffle-admin-main { min-width: 0; }
+.raffle-admin-main h3 { margin: 8px 0 3px; font-size: 18px; }
+.raffle-admin-main p { margin: 0; color: #666d78; }
+.admin-status { display: inline-flex; padding: 5px 9px; border-radius: 999px; font-size: 11px; font-weight: 800; }
+.status-draft { background: #eef0f3; color: #5e6570; }
+.status-active { background: #e9f7ef; color: #176d3a; }
+.status-paused { background: #fff5dc; color: #855f00; }
+.status-ended { background: #f0e8e8; color: #7a3838; }
+.raffle-admin-meta { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 12px; color: #747b85; font-size: 12px; }
+.raffle-admin-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 @media (max-width: 640px) {
   .admin-page { padding-top: 20px; }
   .admin-heading { display: block; }
