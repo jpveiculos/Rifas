@@ -697,3 +697,11 @@ a { color: inherit; text-decoration: none; }
   .home-intro p { margin-top: 5px; font-size: 12px; }
   .raffle-section { padding-top: 20px; }
 }
+
+@media (max-width: 640px) {
+  .home-raffle-heading { margin-bottom: 14px; gap: 8px; }
+  .home-raffle-heading .section-title { font-size: 30px; }
+  .home-raffle-subtitle { margin: 4px 0 0; color: #68778a; font-size: 12px; }
+  .home-raffle-heading .raffle-count { font-size: 11px; }
+  .category-browser { margin-top: 0; }
+}
