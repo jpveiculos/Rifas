@@ -50,7 +50,7 @@ export default async function HomePage() {
             <div className="home-hero-copy">
               <span className="hero-kicker">RIFAS.TOP</span>
               <h1>Concorra a prêmios incríveis.</h1>
-              <p>Escolha seus números, acompanhe os resultados da Loteria Federal e confira tudo pela sua área de participante.</p>
+              <p>Escolha seus números, acompanhe o sorteio e confira tudo pela sua área de participante.</p>
               <div className="hero-actions">
                 <Link className="hero-button" href="#rifas">Ver rifas</Link>
                 {!user && <Link className="hero-secondary" href="/cadastro">Criar minha conta</Link>}
@@ -108,7 +108,6 @@ export default async function HomePage() {
                           : raffle.winningNumber !== null
                             ? [raffle.winningNumber]
                             : [];
-                        const accumulated = raffle.status === "ACTIVE" && raffle.resultStatus === "ACCUMULATED";
                         const finished = raffle.status === "ENDED";
 
                         return (
@@ -120,20 +119,12 @@ export default async function HomePage() {
                             )}
 
                             <div className="raffle-card-content">
-                              <span className={"badge " + (finished ? "badge-finished" : accumulated ? "badge-accumulated" : "")}>
-                                {finished ? "SORTEIO FINALIZADO" : accumulated ? "ACUMULOU · SEGUE ABERTA" : "EM ANDAMENTO"}
+                              <span className={"badge " + (finished ? "badge-finished" : "")}>
+                                {finished ? "SORTEIO FINALIZADO" : "EM ANDAMENTO"}
                               </span>
                               <div className="raffle-code-public">{raffle.raffleCode ? "ID " + raffle.raffleCode : ""}</div>
                               <h3>{raffle.productName}</h3>
                               <p>{raffle.description}</p>
-
-                              {accumulated && raffle.federalNumbers.length > 0 && (
-                                <div className="public-draw-result public-draw-accumulated">
-                                  <span>Última Federal</span>
-                                  <strong>{raffle.federalNumbers.map(formatNumber).join(" · ")}</strong>
-                                  <small>Nenhum número comprado coincidiu. A rifa continua aberta.</small>
-                                </div>
-                              )}
 
                               {finished && winningNumbers.length > 0 && (
                                 <div className="public-draw-result public-draw-winner">
@@ -145,7 +136,7 @@ export default async function HomePage() {
 
                               <div className="card-price">{(raffle.priceInCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}<small> por número</small></div>
                               <div className="raffle-meta">
-                                <span>{finished ? "● Finalizada" : accumulated ? "● Aberta" : "● Ativa"}</span>
+                                <span>{finished ? "● Finalizada" : "● Ativa"}</span>
                               </div>
 
                               {finished ? (
