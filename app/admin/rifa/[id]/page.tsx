@@ -1,12 +1,14 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { RAFFLE_CATEGORIES } from "@/lib/raffle-categories";
 
 type Raffle = {
   id: string;
   raffleCode: string | null;
   name: string;
   productName: string;
+  category: string;
   description: string;
   totalNumbers: number;
   priceInCents: number;
@@ -56,7 +58,7 @@ function compressImage(file: File): Promise<string> {
 export default function EditRafflePage({ params }: { params: Promise<{ id: string }> }) {
   const [id, setId] = useState("");
   const [raffle, setRaffle] = useState<Raffle | null>(null);
-  const [form, setForm] = useState({ raffleCode: "", raffleName: "", productName: "", description: "", totalNumbers: "", pricePerNumber: "", endDate: "", imageUrls: [""] });
+  const [form, setForm] = useState({ raffleCode: "", raffleName: "", productName: "", category: "OUTROS", description: "", totalNumbers: "", pricePerNumber: "", endDate: "", imageUrls: [""] });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -83,6 +85,7 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
             raffleCode: item.raffleCode ?? "",
             raffleName: item.name,
             productName: item.productName,
+            category: item.category ?? "OUTROS",
             description: item.description,
             totalNumbers: String(item.totalNumbers),
             pricePerNumber: (item.priceInCents / 100).toFixed(2).replace(".", ","),
@@ -185,6 +188,7 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
             <label>ID da rifa<input value={form.raffleCode} onChange={(e) => update("raffleCode", e.target.value)} placeholder="Ex.: RIFA-001" /><small>Você pode alterar o ID ou deixar vazio para manter o atual.</small></label>
             <label>Nome da rifa<input required value={form.raffleName} onChange={(e) => update("raffleName", e.target.value)} /></label>
             <label>Nome do produto<input required value={form.productName} onChange={(e) => update("productName", e.target.value)} /></label>
+            <label>Categoria da rifa<select required value={form.category} onChange={(e) => update("category", e.target.value)}>{RAFFLE_CATEGORIES.map((category) => <option key={category} value={category}>{category}</option>)}</select><small>Essa categoria define em qual seção da página inicial a rifa será exibida.</small></label>
             <label>Descrição<textarea required rows={8} value={form.description} onChange={(e) => update("description", e.target.value)} /></label>
           </section>
 
