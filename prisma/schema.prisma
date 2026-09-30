@@ -20,6 +20,12 @@ enum NumberStatus {
   CONFIRMED
 }
 
+enum ParticipationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model Raffle {
   id             String        @id @default(cuid())
   name           String
@@ -33,6 +39,7 @@ model Raffle {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   numbers        RaffleNumber[]
+  participations RaffleParticipation[]
 }
 
 model User {
@@ -45,7 +52,8 @@ model User {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   sessions     Session[]
-  numbers      RaffleNumber[]
+  numbers        RaffleNumber[]
+  participations RaffleParticipation[]
 }
 
 model Session {
@@ -75,4 +83,32 @@ model RaffleNumber {
   @@unique([raffleId, number])
   @@index([raffleId, status])
   @@index([reservedByUserId])
+  @@index([raffleId, reservationId])
+}
+
+model RaffleParticipation {
+  id                           String              @id @default(cuid())
+  raffleId                    String
+  userId                      String
+  reservationId               String              @unique
+  quantity                    Int
+  amountInCents                Int
+  status                      ParticipationStatus @default(PENDING)
+  mercadopagoOrderId           String?             @unique
+  mercadopagoStatus            String?
+  mercadopagoStatusDetail      String?
+  mercadopagoPaidAmountInCents Int?
+  mercadopagoQrCode            String?             @db.Text
+  mercadopagoQrCodeBase64      String?             @db.Text
+  mercadopagoTicketUrl         String?             @db.Text
+  createdAt                    DateTime            @default(now())
+  updatedAt                    DateTime            @updatedAt
+  approvedAt                   DateTime?
+
+  raffle                       Raffle              @relation(fields: [raffleId], references: [id], onDelete: Cascade)
+  user                         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([raffleId, status])
+  @@index([userId, createdAt])
+  @@index([mercadopagoOrderId])
 }
