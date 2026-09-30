@@ -7,7 +7,7 @@ function formatMoney(cents: number) {
   return (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
-function formatNumber(value: number) {
+function formatNumber(value: number | string) {
   return String(value).padStart(5, "0");
 }
 
@@ -37,7 +37,10 @@ export default async function AccountPage() {
           priceInCents: true,
           status: true,
           endDate: true,
+          federalNumbers: true,
           winningNumber: true,
+          winningNumbers: true,
+          resultStatus: true,
           resultPublishedAt: true
         }
       }
@@ -73,20 +76,56 @@ export default async function AccountPage() {
   const confirmedNumberCount = numbers.filter((item) => item.status === "CONFIRMED").length;
   const wonCount = finished.filter((item) => {
     const mine = numbersByReservation.get(item.reservationId) ?? [];
-    return item.raffle.winningNumber !== null && mine.includes(item.raffle.winningNumber);
+    const winningNumbers = item.raffle.winningNumbers.length > 0
+      ? item.raffle.winningNumbers
+      : item.raffle.winningNumber !== null
+        ? [item.raffle.winningNumber]
+        : [];
+    return winningNumbers.some((number) => mine.includes(number));
   }).length;
 
   function participationNumbers(reservationId: string) {
     return (numbersByReservation.get(reservationId) ?? []).sort((a, b) => a - b);
   }
 
+  function winningNumbers(item: (typeof participations)[number]) {
+    return item.raffle.winningNumbers.length > 0
+      ? item.raffle.winningNumbers
+      : item.raffle.winningNumber !== null
+        ? [item.raffle.winningNumber]
+        : [];
+  }
+
+  function ResultNotice({ item }: { item: (typeof participations)[number] }) {
+    if (item.raffle.resultStatus === "ACCUMULATED" && item.raffle.federalNumbers.length > 0) {
+      return (
+        <div className="account-result account-result-accumulated">
+          <span>Resultado da Federal · acumulou</span>
+          <strong>{item.raffle.federalNumbers.map(formatNumber).join(" · ")}</strong>
+          <small>A rifa continua aberta para o próximo sorteio.</small>
+        </div>
+      );
+    }
+
+    const winners = winningNumbers(item);
+    if (winners.length > 0) {
+      return (
+        <div className="account-result account-result-winner">
+          <span>Número(s) vencedor(es)</span>
+          <strong>{winners.map(formatNumber).join(" · ")}</strong>
+          <small>Confira seus números acima.</small>
+        </div>
+      );
+    }
+
+    return null;
+  }
+
   return (
     <>
       <header className="site-header">
         <div className="container site-header-inner">
-          <Link className="brand" href="/">
-            <span>Rifas<span className="brand-dot">.</span><strong>TOP</strong></span>
-          </Link>
+          <Link className="brand" href="/"><span>Rifas<span className="brand-dot">.</span><strong>TOP</strong></span></Link>
           <div className="header-actions">
             <Link className="header-link" href="/">Início</Link>
             <Link className="header-link" href="/#rifas">Rifas</Link>
@@ -101,7 +140,7 @@ export default async function AccountPage() {
             <div>
               <span className="section-kicker">ÁREA DO PARTICIPANTE</span>
               <h1>Minha Área</h1>
-              <p>Acompanhe suas rifas, números, pagamentos e resultados em um só lugar.</p>
+              <p>Acompanhe seus números e veja imediatamente os resultados publicados pela Loteria Federal.</p>
             </div>
             <Link className="account-back-button" href="/">Ver rifas</Link>
           </div>
@@ -124,14 +163,13 @@ export default async function AccountPage() {
                   const mine = participationNumbers(item.reservationId);
                   return (
                     <article className="account-raffle-card account-pending-card" key={item.id}>
-                      <div className="account-card-image">
-                        {item.raffle.imageUrls[0] ? <img src={item.raffle.imageUrls[0]} alt={item.raffle.productName} /> : <span>Rifas.TOP</span>}
-                      </div>
+                      <div className="account-card-image">{item.raffle.imageUrls[0] ? <img src={item.raffle.imageUrls[0]} alt={item.raffle.productName} /> : <span>Rifas.TOP</span>}</div>
                       <div className="account-card-content">
                         <span className="account-status status-pending">Pagamento pendente</span>
                         <h3>{item.raffle.productName}</h3>
                         <p>{item.raffle.name}{item.raffle.raffleCode ? " · ID " + item.raffle.raffleCode : ""}</p>
                         {mine.length > 0 && <div className="account-numbers"><span>Seus números</span><div>{mine.map((number) => <b key={number}>{formatNumber(number)}</b>)}</div></div>}
+                        <ResultNotice item={item} />
                         <div className="account-card-footer"><strong>{formatMoney(item.amountInCents)}</strong><span>{formatDate(item.createdAt)}</span></div>
                         <Link className="primary-button" href={"/rifa/" + item.raffle.id}>Voltar para a rifa</Link>
                       </div>
@@ -155,14 +193,13 @@ export default async function AccountPage() {
                   const mine = participationNumbers(item.reservationId);
                   return (
                     <article className="account-raffle-card" key={item.id}>
-                      <div className="account-card-image">
-                        {item.raffle.imageUrls[0] ? <img src={item.raffle.imageUrls[0]} alt={item.raffle.productName} /> : <span>Rifas.TOP</span>}
-                      </div>
+                      <div className="account-card-image">{item.raffle.imageUrls[0] ? <img src={item.raffle.imageUrls[0]} alt={item.raffle.productName} /> : <span>Rifas.TOP</span>}</div>
                       <div className="account-card-content">
                         <span className="account-status status-active">Participação confirmada</span>
                         <h3>{item.raffle.productName}</h3>
                         <p>{item.raffle.name}{item.raffle.raffleCode ? " · ID " + item.raffle.raffleCode : ""}</p>
                         <div className="account-numbers"><span>Seus números</span><div>{mine.map((number) => <b key={number}>{formatNumber(number)}</b>)}</div></div>
+                        <ResultNotice item={item} />
                         <div className="account-card-footer"><strong>{formatMoney(item.amountInCents)}</strong><span>{formatDate(item.approvedAt ?? item.createdAt)}</span></div>
                         <Link className="secondary-button account-button" href={"/rifa/" + item.raffle.id}>Ver rifa</Link>
                       </div>
@@ -179,27 +216,22 @@ export default async function AccountPage() {
               <span>{finished.length}</span>
             </div>
             {finished.length === 0 ? (
-              <div className="account-empty"><strong>Nenhuma rifa finalizada ainda.</strong><span>Quando uma rifa terminar, ela ficará registrada aqui.</span></div>
+              <div className="account-empty"><strong>Nenhuma rifa finalizada ainda.</strong><span>Quando houver ganhador, o resultado ficará registrado aqui.</span></div>
             ) : (
               <div className="account-list">
                 {finished.map((item) => {
                   const mine = participationNumbers(item.reservationId);
-                  const won = item.raffle.winningNumber !== null && mine.includes(item.raffle.winningNumber);
+                  const winners = winningNumbers(item);
+                  const won = winners.some((number) => mine.includes(number));
                   return (
                     <article className={"account-raffle-card account-finished-card" + (won ? " account-winner-card" : "")} key={item.id}>
-                      <div className="account-card-image">
-                        {item.raffle.imageUrls[0] ? <img src={item.raffle.imageUrls[0]} alt={item.raffle.productName} /> : <span>Rifas.TOP</span>}
-                      </div>
+                      <div className="account-card-image">{item.raffle.imageUrls[0] ? <img src={item.raffle.imageUrls[0]} alt={item.raffle.productName} /> : <span>Rifas.TOP</span>}</div>
                       <div className="account-card-content">
-                        <span className={"account-status " + (won ? "status-winner" : "status-finished")}>{won ? "🎉 Você foi premiado!" : item.raffle.winningNumber !== null ? "Rifa sorteada" : "Rifa finalizada"}</span>
+                        <span className={"account-status " + (won ? "status-winner" : "status-finished")}>{won ? "🎉 Você foi premiado!" : "Rifa finalizada"}</span>
                         <h3>{item.raffle.productName}</h3>
                         <p>{item.raffle.name}{item.raffle.raffleCode ? " · ID " + item.raffle.raffleCode : ""}</p>
-                        <div className="account-numbers"><span>Seus números</span><div>{mine.map((number) => <b className={item.raffle.winningNumber === number ? "winning-number" : ""} key={number}>{formatNumber(number)}</b>)}</div></div>
-                        {item.raffle.winningNumber !== null ? (
-                          <div className="account-result"><span>Número vencedor</span><strong>{formatNumber(item.raffle.winningNumber)}</strong></div>
-                        ) : (
-                          <div className="account-result account-result-muted"><span>Resultado</span><strong>Ainda não publicado</strong></div>
-                        )}
+                        <div className="account-numbers"><span>Seus números</span><div>{mine.map((number) => <b className={winners.includes(number) ? "winning-number" : ""} key={number}>{formatNumber(number)}</b>)}</div></div>
+                        <ResultNotice item={item} />
                         <div className="account-card-footer"><strong>{formatMoney(item.amountInCents)}</strong><span>{item.raffle.resultPublishedAt ? "Resultado em " + formatDate(item.raffle.resultPublishedAt) : "Finalizada em " + formatDate(item.raffle.endDate ?? item.createdAt)}</span></div>
                       </div>
                     </article>
