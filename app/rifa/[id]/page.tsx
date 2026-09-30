@@ -31,8 +31,8 @@ export default async function RafflePage({ params }: Props) {
 
       <main className="section"><div className="container">
         <article className="raffle-card"><div className="raffle-card-content">
-          <span className={"badge " + (raffle.status === "ENDED" ? "badge-finished" : raffle.resultStatus === "ACCUMULATED" ? "badge-accumulated" : "")}>
-            {raffle.status === "ENDED" ? "SORTEIO FINALIZADO" : raffle.resultStatus === "ACCUMULATED" ? "ACUMULOU · SEGUE ABERTA" : raffle.status}
+          <span className={"badge " + (raffle.status === "ENDED" ? "badge-finished" : "")}>
+            {raffle.status === "ENDED" ? "SORTEIO FINALIZADO" : raffle.status === "ACTIVE" ? "EM ANDAMENTO" : raffle.status}
           </span>
 
           <h1>{raffle.name}</h1>
