@@ -35,7 +35,6 @@ export default function AdminPage() {
   const [loadingList, setLoadingList] = useState(true);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [editingId, setEditingId] = useState<string | null>(null);
 
   async function loadRaffles() {
     setLoadingList(true);
