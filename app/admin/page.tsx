@@ -35,7 +35,7 @@ type Raffle = {
   winningNumber: number | null;
   winningNumbers: number[];
   confirmedCount: number;
-  resultStatus: "PENDING" | "ACCUMULATED" | "WINNER";
+  resultStatus: "PENDING" | "WINNER";
   resultPublishedAt: string | null;
   status: "DRAFT" | "ACTIVE" | "PAUSED" | "ENDED";
 };
