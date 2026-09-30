@@ -381,17 +381,10 @@ export default function AdminPage() {
                       <p>{raffle.productName}</p>
                       <div className="raffle-admin-category">{raffle.category}</div>
 
-                      {raffle.resultStatus === "ACCUMULATED" && raffle.federalNumbers.length > 0 && (
-                        <div className="admin-draw-status admin-draw-accumulated">
-                          <strong>ACUMULOU — segue em aberto</strong>
-                          <span>Federal: {raffle.federalNumbers.map(formatFederalNumber).join(" · ")}</span>
-                        </div>
-                      )}
-
                       {raffle.resultStatus === "WINNER" && winningNumbers.length > 0 && (
                         <div className="admin-draw-status admin-draw-winner">
                           <strong>RESULTADO PUBLICADO — ganhador encontrado</strong>
-                          <span>Número(s): {winningNumbers.map(formatFederalNumber).join(" · ")}</span>
+                          <span>Número(s): {winningNumbers.map(formatNumber).join(" · ")}</span>
                         </div>
                       )}
 
