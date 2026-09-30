@@ -4,6 +4,7 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
 type Raffle = {
   id: string;
+  raffleCode: string | null;
   name: string;
   productName: string;
   totalNumbers: number;
@@ -15,6 +16,7 @@ type Raffle = {
 };
 
 const initialForm = {
+  raffleCode: "",
   raffleName: "",
   productName: "",
   description: "",
@@ -208,6 +210,7 @@ export default function AdminPage() {
           <form className="admin-form" onSubmit={submit}>
             <section className="form-section form-section-nested">
               <h3>Identificação</h3>
+              <label>ID da rifa<input value={form.raffleCode} onChange={(e) => update("raffleCode", e.target.value)} placeholder="Ex.: RIFA-001 ou deixe vazio" /><small>Se deixar vazio, o sistema gera um ID automaticamente. O ID pode ser usado para diferenciar rifas do mesmo produto.</small></label>
               <label>Nome da rifa<input required value={form.raffleName} onChange={(e) => update("raffleName", e.target.value)} placeholder="Ex.: Rifa Paramirim" /></label>
               <label>Nome do produto<input required value={form.productName} onChange={(e) => update("productName", e.target.value)} placeholder="Ex.: Chevrolet Celta 2012" /></label>
               <label>Descrição<textarea required value={form.description} onChange={(e) => update("description", e.target.value)} placeholder="Descreva o produto e as informações importantes." rows={6} /></label>
@@ -275,6 +278,7 @@ export default function AdminPage() {
                 <article className="raffle-admin-card" key={raffle.id}>
                   <div className="raffle-admin-main">
                     <span className={"admin-status status-" + raffle.status.toLowerCase()}>{statusLabel[raffle.status]}</span>
+                    <div className="raffle-admin-id">{raffle.raffleCode ? "ID: " + raffle.raffleCode : "ID ainda não definido"}</div>
                     <h3>{raffle.name}</h3>
                     <p>{raffle.productName}</p>
                     <div className="raffle-admin-meta">
