@@ -19,7 +19,6 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
       status: true,
       salesClosedAt: true,
       drawEligibleCount: true,
-      federalNumbers: true,
       winningNumber: true,
       winningNumbers: true,
       resultStatus: true,
