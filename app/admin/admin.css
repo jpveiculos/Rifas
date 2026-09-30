@@ -15,10 +15,12 @@
 .form-section input:not([type="file"]):focus, .form-section textarea:focus { border-color: #111318; box-shadow: 0 0 0 3px rgba(17, 19, 24, .08); }
 .form-section textarea { resize: vertical; min-height: 130px; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.upload-box { min-height: 150px; margin-top: 0 !important; align-items: center; justify-content: center; text-align: center; border: 2px dashed #d2d6dc; border-radius: 14px; padding: 24px; color: #343941; cursor: pointer; }
-.upload-box span { font-size: 16px; }
-.upload-box small { color: #7b818a; font-weight: 400; }
-.upload-box input { width: auto; max-width: 100%; }
+.photo-upload-button { min-height: 56px; margin: 0 !important; display: flex !important; align-items: center; justify-content: center; border: 2px dashed #b9c3d0; border-radius: 14px; background: #f8fafc; color: #263140 !important; cursor: pointer; font-size: 15px !important; font-weight: 800 !important; }
+.photo-upload-button:hover { background: #eef5ff; border-color: #0d63df; }
+.photo-upload-button input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.image-admin-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; }
+.image-admin-preview { display: grid; gap: 8px; padding: 8px; border: 1px solid #e1e4e9; border-radius: 13px; background: #f8fafc; }
+.image-admin-preview img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 9px; background: #e9edf2; }
 .number-note { display: grid; gap: 5px; margin-top: 18px; padding: 15px; border-radius: 12px; background: #f5f6f8; color: #5f6670; font-size: 13px; line-height: 1.45; }
 .number-note strong { color: #252a31; }
 .form-actions { display: flex; justify-content: flex-end; gap: 12px; }
@@ -56,9 +58,5 @@
   .form-section { padding: 20px; }
   .form-actions { flex-direction: column-reverse; }
   .form-actions a, .form-actions button { width: 100%; }
+  .image-admin-list { grid-template-columns: 1fr 1fr; }
 }
-
-.image-admin-list { display: grid; gap: 10px; margin-bottom: 12px; }
-.image-admin-row { display: flex; gap: 8px; align-items: center; }
-.image-admin-row input { flex: 1; }
-@media (max-width: 640px) { .image-admin-row { display: grid; grid-template-columns: 1fr; } .image-admin-row .secondary-button { width: 100%; } }
