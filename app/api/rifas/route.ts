@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 function parsePrice(value: string) {
@@ -18,8 +19,12 @@ export async function POST(request: Request) {
     const priceInCents = parsePrice(String(body.pricePerNumber ?? ""));
     const endDate = new Date(String(body.endDate ?? ""));
 
-    if (!name || !productName || !description || !Number.isInteger(totalNumbers) || totalNumbers < 1 || !priceInCents || Number.isNaN(endDate.getTime())) {
+    if (!name || !productName || !description || !Number.isInteger(totalNumbers) || totalNumbers < 1 || totalNumbers > 1_000_000 || !priceInCents || Number.isNaN(endDate.getTime())) {
       return NextResponse.json({ error: "Preencha todos os campos corretamente." }, { status: 400 });
+    }
+
+    if (endDate <= new Date()) {
+      return NextResponse.json({ error: "A data de encerramento precisa ser futura." }, { status: 400 });
     }
 
     const raffle = await prisma.raffle.create({
@@ -33,14 +38,15 @@ export async function POST(request: Request) {
       }
     });
 
-    await prisma.raffleNumber.createMany({
-      data: Array.from({ length: totalNumbers }, (_, index) => ({
-        raffleId: raffle.id,
-        number: index + 1
-      }))
-    });
+    await prisma.$executeRaw(
+      Prisma.sql`
+        INSERT INTO "RaffleNumber" ("id", "raffleId", "number")
+        SELECT md5(${raffle.id} || ':' || series::text), ${raffle.id}, series
+        FROM generate_series(1, ${totalNumbers}) AS series
+      `
+    );
 
-    return NextResponse.json({ id: raffle.id }, { status: 201 });
+    return NextResponse.json({ id: raffle.id, status: raffle.status }, { status: 201 });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Não foi possível salvar a rifa." }, { status: 500 });
