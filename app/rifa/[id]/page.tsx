@@ -26,6 +26,7 @@ export default async function RafflePage({ params }: Props) {
         <article className="raffle-card"><div className="raffle-card-content">
           <span className="badge">{raffle.status}</span>
           <h1>{raffle.name}</h1>
+          {raffle.raffleCode && <div className="raffle-code-public raffle-code-detail">ID {raffle.raffleCode}</div>}
           {raffle.imageUrls.length > 0 && <div className="raffle-gallery">{raffle.imageUrls.map((url) => <img key={url} src={url} alt={raffle.productName} />)}</div>}
           <h3>{raffle.productName}</h3>
           <p>{raffle.description}</p>
