@@ -29,6 +29,22 @@ export async function POST(request: Request, { params }: Params) {
       return NextResponse.json({ error: "Quantidade inválida." }, { status: 400 });
     }
 
+    const reservationLimit = new Date(Date.now() - 30 * 60 * 1000);
+
+    await prisma.raffleNumber.updateMany({
+      where: {
+        raffleId: id,
+        status: "RESERVED",
+        reservedAt: { lt: reservationLimit }
+      },
+      data: {
+        status: "AVAILABLE",
+        reservationId: null,
+        reservedAt: null,
+        reservedByUserId: null
+      }
+    });
+
     const available = await prisma.raffleNumber.findMany({
       where: { raffleId: id, status: "AVAILABLE" },
       select: { id: true, number: true },
