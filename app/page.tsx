@@ -23,7 +23,7 @@ export default async function HomePage() {
             <Link className="header-link" href="/">Início</Link>
             <Link className="header-link" href="#rifas">Rifas</Link>
             {user ? (
-              <Link className="header-login" href="/minha-conta">Olá, {user.username}</Link>
+              <Link className="header-login" href="/minha-conta">Minha Área · {user.username}</Link>
             ) : (
               <Link className="header-login" href="/login">Entrar</Link>
             )}
