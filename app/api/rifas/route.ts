@@ -38,6 +38,8 @@ export async function GET() {
         status: true,
         salesClosedAt: true,
         drawEligibleCount: true,
+        winningNumber: true,
+        resultPublishedAt: true,
         createdAt: true
       }
     });
@@ -144,6 +146,44 @@ export async function PATCH(request: Request) {
 
     if (!id || !["ACTIVE", "PAUSED", "ENDED"].includes(status)) {
       return NextResponse.json({ error: "Dados inválidos." }, { status: 400 });
+    }
+
+    if (body.result === true) {
+      const winningNumber = Number(body.winningNumber);
+
+      if (!id || !Number.isInteger(winningNumber) || winningNumber < 1) {
+        return NextResponse.json({ error: "Informe um número vencedor válido." }, { status: 400 });
+      }
+
+      const raffle = await prisma.raffle.findUnique({
+        where: { id },
+        select: { id: true, status: true, totalNumbers: true }
+      });
+
+      if (!raffle) return NextResponse.json({ error: "Rifa não encontrada." }, { status: 404 });
+      if (raffle.status !== "ENDED") {
+        return NextResponse.json({ error: "O resultado só pode ser publicado depois de encerrar as vendas." }, { status: 400 });
+      }
+      if (winningNumber > raffle.totalNumbers) {
+        return NextResponse.json({ error: "O número vencedor está fora da faixa da rifa." }, { status: 400 });
+      }
+
+      const eligible = await prisma.raffleNumber.findFirst({
+        where: { raffleId: id, number: winningNumber, status: "CONFIRMED" },
+        select: { id: true }
+      });
+
+      if (!eligible) {
+        return NextResponse.json({ error: "O número informado não está entre os números confirmados da rifa." }, { status: 400 });
+      }
+
+      const updated = await prisma.raffle.update({
+        where: { id },
+        data: { winningNumber, resultPublishedAt: new Date() },
+        select: { id: true, winningNumber: true, resultPublishedAt: true }
+      });
+
+      return NextResponse.json(updated);
     }
 
     if (status === "ENDED") {
