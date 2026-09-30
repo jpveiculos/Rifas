@@ -14,12 +14,11 @@ type Winner = {
   } | null;
 };
 
-type ResultPreview = {
-  federalNumbers: string[];
-  winningNumbers: number[];
-  resultStatus: "ACCUMULATED" | "WINNER";
+type DrawResult = {
+  number: number;
+  eligibleCount: number;
   message: string;
-  winners: Winner[];
+  winner: Winner;
 };
 
 type Raffle = {
@@ -35,7 +34,7 @@ type Raffle = {
   drawEligibleCount: number | null;
   winningNumber: number | null;
   winningNumbers: number[];
-  federalNumbers: string[];
+  confirmedCount: number;
   resultStatus: "PENDING" | "ACCUMULATED" | "WINNER";
   resultPublishedAt: string | null;
   status: "DRAFT" | "ACTIVE" | "PAUSED" | "ENDED";
@@ -59,11 +58,7 @@ const statusLabel: Record<Raffle["status"], string> = {
   ENDED: "Encerrada"
 };
 
-function emptyFederalInputs() {
-  return ["", "", "", "", ""];
-}
-
-function formatFederalNumber(value: number | string) {
+function formatNumber(value: number | string) {
   return String(value).padStart(5, "0");
 }
 
@@ -75,10 +70,8 @@ export default function AdminPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [images, setImages] = useState<string[]>([]);
-  const [resultInputs, setResultInputs] = useState<Record<string, string[]>>({});
-  const [resultPreviews, setResultPreviews] = useState<Record<string, ResultPreview>>({});
-  const [checkingResult, setCheckingResult] = useState<Record<string, boolean>>({});
-  const [publishingResult, setPublishingResult] = useState<Record<string, boolean>>({});
+  const [drawResults, setDrawResults] = useState<Record<string, DrawResult>>({});
+  const [drawing, setDrawing] = useState<Record<string, boolean>>({});
 
   async function loadRaffles() {
     setLoadingList(true);
@@ -224,35 +217,21 @@ export default function AdminPage() {
     }
   }
 
-  function updateFederalInput(raffleId: string, index: number, value: string) {
-    const digits = value.replace(/\D/g, "").slice(-5);
-    setResultInputs((current) => {
-      const next = [...(current[raffleId] ?? emptyFederalInputs())];
-      next[index] = digits;
-      return { ...current, [raffleId]: next };
-    });
-    setResultPreviews((current) => {
-      const next = { ...current };
-      delete next[raffleId];
-      return next;
-    });
-    setMessage("");
-    setError("");
-  }
+  async function drawRaffle(id: string) {
+    const raffle = raffles.find((item) => item.id === id);
+    if (!raffle) return;
 
-  function getFederalInputs(raffleId: string) {
-    return resultInputs[raffleId] ?? emptyFederalInputs();
-  }
-
-  async function checkResult(id: string) {
-    const federalNumbers = getFederalInputs(id);
-
-    if (federalNumbers.some((value) => value.length !== 5)) {
-      setError("Preencha os 5 números da Loteria Federal com 5 dígitos cada.");
+    if (raffle.confirmedCount < 1) {
+      setError("Não há nenhum número confirmado para realizar o sorteio.");
       return;
     }
 
-    setCheckingResult((current) => ({ ...current, [id]: true }));
+    const confirmation = window.confirm(
+      `Realizar o sorteio agora? O sistema sorteará somente entre os ${raffle.confirmedCount.toLocaleString("pt-BR")} números confirmados. Depois do sorteio, a rifa será finalizada.`
+    );
+    if (!confirmation) return;
+
+    setDrawing((current) => ({ ...current, [id]: true }));
     setError("");
     setMessage("");
 
@@ -260,81 +239,39 @@ export default function AdminPage() {
       const response = await fetch("/api/rifas", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, result: true, federalNumbers, preview: true })
+        body: JSON.stringify({ id, draw: true })
       });
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error ?? "Não foi possível conferir o resultado.");
+        setError(data.error ?? "Não foi possível realizar o sorteio.");
         return;
       }
 
-      setResultPreviews((current) => ({ ...current, [id]: data }));
-      setMessage(data.message);
-    } catch {
-      setError("Não foi possível conectar ao servidor.");
-    } finally {
-      setCheckingResult((current) => ({ ...current, [id]: false }));
-    }
-  }
-
-  async function publishResult(id: string) {
-    const preview = resultPreviews[id];
-    const federalNumbers = preview?.federalNumbers ?? getFederalInputs(id);
-
-    if (federalNumbers.length !== 5 || federalNumbers.some((value) => value.length !== 5)) {
-      setError("Confira os 5 números da Loteria Federal antes de publicar.");
-      return;
-    }
-
-    const confirmation = preview?.resultStatus === "WINNER"
-      ? "Publicar este resultado? A rifa será finalizada automaticamente e o(s) ganhador(es) será(ão) mostrado(s) agora."
-      : "Publicar este resultado? Não houve número comprado entre os 5 números da Federal. A rifa ficará aberta e acumulará para o próximo sorteio.";
-
-    if (!window.confirm(confirmation)) return;
-
-    setPublishingResult((current) => ({ ...current, [id]: true }));
-    setError("");
-    setMessage("");
-
-    try {
-      const response = await fetch("/api/rifas", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, result: true, federalNumbers })
-      });
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.error ?? "Não foi possível publicar o resultado.");
-        return;
+      const winner = data.winners?.[0] as Winner | undefined;
+      if (winner) {
+        setDrawResults((current) => ({
+          ...current,
+          [id]: {
+            number: winner.number,
+            eligibleCount: data.drawEligibleCount ?? raffle.confirmedCount,
+            message: data.message,
+            winner
+          }
+        }));
+        const user = winner.user;
+        setMessage(
+          user
+            ? `Sorteio realizado: nº ${formatNumber(winner.number)} — ${user.name} — WhatsApp ${user.whatsapp}.`
+            : `Sorteio realizado: nº ${formatNumber(winner.number)}.`
+        );
       }
 
-      const winnerText = (data.winners ?? [])
-        .map((winner: Winner) => {
-          const user = winner.user;
-          return user
-            ? `Nº ${formatFederalNumber(winner.number)} — ${user.name} — WhatsApp ${user.whatsapp}`
-            : `Nº ${formatFederalNumber(winner.number)} — usuário não localizado`;
-        })
-        .join(" | ");
-
-      setMessage(winnerText ? `${data.message} ${winnerText}` : data.message);
-      setResultPreviews((current) => {
-        const next = { ...current };
-        delete next[id];
-        return next;
-      });
-      setResultInputs((current) => {
-        const next = { ...current };
-        delete next[id];
-        return next;
-      });
       await loadRaffles();
     } catch {
       setError("Não foi possível conectar ao servidor.");
     } finally {
-      setPublishingResult((current) => ({ ...current, [id]: false }));
+      setDrawing((current) => ({ ...current, [id]: false }));
     }
   }
 
@@ -345,7 +282,7 @@ export default function AdminPage() {
           <div>
             <a className="back-link" href="/">← Voltar para a página inicial</a>
             <h1>Área administrativa</h1>
-            <p>Crie e controle suas rifas e publique os resultados oficiais da Loteria Federal.</p>
+            <p>Crie e controle suas rifas e realize o sorteio diretamente pelo servidor.</p>
           </div>
           <span className="admin-badge">ADMINISTRAÇÃO</span>
         </div>
@@ -417,7 +354,7 @@ export default function AdminPage() {
           <div className="section-heading-row">
             <div>
               <h2>Minhas rifas</h2>
-              <p className="form-help">O resultado pela Federal é conferido antes da publicação.</p>
+              <p className="form-help">O sorteio usa somente números com pagamento confirmado.</p>
             </div>
             <button className="secondary-button compact-button" type="button" onClick={loadRaffles} disabled={loadingList}>Atualizar</button>
           </div>
@@ -429,9 +366,6 @@ export default function AdminPage() {
           ) : (
             <div className="raffle-admin-list">
               {raffles.map((raffle) => {
-                const inputs = getFederalInputs(raffle.id);
-                const preview = resultPreviews[raffle.id];
-                const winners = preview?.winners ?? [];
                 const winningNumbers = raffle.winningNumbers?.length > 0
                   ? raffle.winningNumbers
                   : raffle.winningNumber !== null
@@ -465,7 +399,7 @@ export default function AdminPage() {
                         <span>{raffle.totalNumbers.toLocaleString("pt-BR")} números</span>
                         <span>{(raffle.priceInCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} cada</span>
                         <span>{raffle.endDate ? "Sorteio em " + new Date(raffle.endDate).toLocaleString("pt-BR") : "Sorteio divulgado depois"}</span>
-                        {raffle.status === "ENDED" && <span>{raffle.drawEligibleCount ?? 0} números confirmados</span>}
+                        {raffle.status === "ENDED" && <span>{raffle.drawEligibleCount ?? 0} números que concorreram</span>}
                       </div>
                     </div>
 
@@ -478,76 +412,44 @@ export default function AdminPage() {
                       {raffle.status === "PAUSED" && <button className="primary-button compact-button" type="button" onClick={() => changeStatus(raffle.id, "ACTIVE")}>Reativar</button>}
 
                       {raffle.status === "ACTIVE" && (
-                        <div className="federal-result-box">
+                        <div className="draw-result-box">
                           <div>
-                            <strong>Resultado da Loteria Federal</strong>
-                            <span>Digite os 5 prêmios principais e confira antes de publicar.</span>
+                            <strong>Sorteio aleatório</strong>
+                            <span>Somente números com pagamento confirmado participam. Números disponíveis ou apenas reservados ficam fora do sorteio.</span>
                           </div>
 
-                          <div className="federal-number-inputs">
-                            {inputs.map((value, index) => (
-                              <input
-                                key={index}
-                                inputMode="numeric"
-                                type="text"
-                                maxLength={5}
-                                placeholder={"0".repeat(5)}
-                                value={value}
-                                onChange={(event) => updateFederalInput(raffle.id, index, event.target.value)}
-                                aria-label={"Número Federal " + (index + 1)}
-                              />
-                            ))}
+                          <div className="draw-count">
+                            <b>{raffle.confirmedCount.toLocaleString("pt-BR")}</b>
+                            <span>números confirmados concorrendo</span>
                           </div>
 
                           <button
-                            className="secondary-button compact-button"
+                            className="primary-button compact-button"
                             type="button"
-                            disabled={checkingResult[raffle.id] || publishingResult[raffle.id]}
-                            onClick={() => checkResult(raffle.id)}
+                            disabled={drawing[raffle.id] || raffle.confirmedCount === 0}
+                            onClick={() => drawRaffle(raffle.id)}
                           >
-                            {checkingResult[raffle.id] ? "Conferindo..." : "Conferir resultado"}
+                            {drawing[raffle.id] ? "Sorteando..." : "Realizar sorteio"}
                           </button>
+                        </div>
+                      )}
 
-                          {preview && (
-                            <div className={"federal-preview " + (preview.resultStatus === "WINNER" ? "federal-preview-winner" : "federal-preview-accumulated")}>
-                              <strong>{preview.message}</strong>
-
-                              {winners.length > 0 ? (
-                                <div className="federal-winners">
-                                  {winners.map((winner) => (
-                                    <div key={winner.number}>
-                                      <b>Nº {formatFederalNumber(winner.number)}</b>
-                                      <span>{winner.user?.name ?? "Usuário não localizado"}</span>
-                                      {winner.user?.username && <small>@{winner.user.username}</small>}
-                                      {winner.user?.whatsapp && <small>WhatsApp: {winner.user.whatsapp}</small>}
-                                      {winner.user?.city && <small>{winner.user.city}</small>}
-                                    </div>
-                                  ))}
-                                </div>
-                              ) : (
-                                <p>Nenhum número comprado coincide com os 5 números informados. A rifa continuará aberta.</p>
-                              )}
-
-                              <button
-                                className="primary-button compact-button"
-                                type="button"
-                                disabled={publishingResult[raffle.id]}
-                                onClick={() => publishResult(raffle.id)}
-                              >
-                                {publishingResult[raffle.id]
-                                  ? "Publicando..."
-                                  : preview.resultStatus === "WINNER"
-                                    ? "Publicar e finalizar rifa"
-                                    : "Publicar como acumulado"}
-                              </button>
-                            </div>
+                      {drawResults[raffle.id] && (
+                        <div className="draw-preview draw-preview-winner">
+                          <strong>🎉 Resultado publicado</strong>
+                          <span>Número sorteado: <b>{formatNumber(drawResults[raffle.id].number)}</b></span>
+                          {drawResults[raffle.id].winner.user && (
+                            <>
+                              <span>Ganhador: <b>{drawResults[raffle.id].winner.user.name}</b></span>
+                              <small>WhatsApp: {drawResults[raffle.id].winner.user.whatsapp}</small>
+                            </>
                           )}
                         </div>
                       )}
 
                       {raffle.status === "ENDED" && winningNumbers.length > 0 && (
                         <div className="raffle-result-admin raffle-result-published">
-                          Resultado: <strong>{winningNumbers.map(formatFederalNumber).join(" · ")}</strong>
+                          Resultado: <strong>{winningNumbers.map(formatNumber).join(" · ")}</strong>
                         </div>
                       )}
                     </div>
