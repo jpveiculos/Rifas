@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
 type Raffle = {
   id: string;
@@ -37,6 +37,7 @@ export default function AdminPage() {
   const [loadingList, setLoadingList] = useState(true);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [images, setImages] = useState<string[]>([]);
 
   async function loadRaffles() {
     setLoadingList(true);
@@ -62,6 +63,71 @@ export default function AdminPage() {
     setError("");
   }
 
+  function compressImage(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (!file.type.startsWith("image/")) {
+        reject(new Error("Selecione somente arquivos de imagem."));
+        return;
+      }
+
+      if (file.size > 8 * 1024 * 1024) {
+        reject(new Error("Cada foto pode ter no máximo 8 MB."));
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const image = new Image();
+        image.onload = () => {
+          const maxSize = 1400;
+          const scale = Math.min(1, maxSize / Math.max(image.width, image.height));
+          const canvas = document.createElement("canvas");
+          canvas.width = Math.max(1, Math.round(image.width * scale));
+          canvas.height = Math.max(1, Math.round(image.height * scale));
+
+          const context = canvas.getContext("2d");
+          if (!context) {
+            reject(new Error("Não foi possível preparar a foto."));
+            return;
+          }
+
+          context.drawImage(image, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL("image/jpeg", 0.78));
+        };
+        image.onerror = () => reject(new Error("Não foi possível ler uma das fotos."));
+        image.src = String(reader.result);
+      };
+      reader.onerror = () => reject(new Error("Não foi possível ler uma das fotos."));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function handleImages(event: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files ?? []);
+    event.target.value = "";
+
+    if (files.length === 0) return;
+
+    if (images.length + files.length > 10) {
+      setError("Você pode adicionar no máximo 10 fotos por rifa.");
+      return;
+    }
+
+    setError("");
+
+    try {
+      const converted: string[] = [];
+      for (const file of files) converted.push(await compressImage(file));
+      setImages((current) => [...current, ...converted]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível adicionar as fotos.");
+    }
+  }
+
+  function removeImage(index: number) {
+    setImages((current) => current.filter((_, currentIndex) => currentIndex !== index));
+  }
+
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
@@ -72,7 +138,7 @@ export default function AdminPage() {
       const response = await fetch("/api/rifas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form)
+        body: JSON.stringify({ ...form, imageUrls: images })
       });
       const data = await response.json();
 
@@ -83,6 +149,7 @@ export default function AdminPage() {
 
       setMessage("Rifa criada como rascunho. Revise e publique quando estiver pronta.");
       setForm(initialForm);
+      setImages([]);
       await loadRaffles();
     } catch {
       setError("Não foi possível conectar ao servidor.");
@@ -144,6 +211,25 @@ export default function AdminPage() {
               <label>Nome da rifa<input required value={form.raffleName} onChange={(e) => update("raffleName", e.target.value)} placeholder="Ex.: Rifa Paramirim" /></label>
               <label>Nome do produto<input required value={form.productName} onChange={(e) => update("productName", e.target.value)} placeholder="Ex.: Chevrolet Celta 2012" /></label>
               <label>Descrição<textarea required value={form.description} onChange={(e) => update("description", e.target.value)} placeholder="Descreva o produto e as informações importantes." rows={6} /></label>
+            </section>
+
+            <section className="form-section form-section-nested">
+              <h3>Fotos do produto</h3>
+              <p className="form-help">Adicione até 10 fotos. Elas serão comprimidas automaticamente antes de serem salvas.</p>
+              <label className="photo-upload-button">
+                <span>📷 Adicionar fotos</span>
+                <input type="file" accept="image/*" multiple onChange={handleImages} />
+              </label>
+              {images.length > 0 && (
+                <div className="image-admin-list">
+                  {images.map((image, index) => (
+                    <div className="image-admin-preview" key={image}>
+                      <img src={image} alt={`Prévia ${index + 1}`} />
+                      <button className="secondary-button compact-button" type="button" onClick={() => removeImage(index)}>Remover</button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </section>
 
             <section className="form-section form-section-nested">
