@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 const API_URL = "https://api.mercadopago.com";
@@ -302,6 +303,19 @@ async function applyMercadoPagoOrder(participationId: string, order: any) {
   const orderStatusDetail = String(order?.status_detail || "");
 
   await prisma.$transaction(async (tx) => {
+    // Usa o mesmo bloqueio do sorteio para impedir que um pagamento confirmado
+    // concorra com o fechamento da rifa no mesmo instante.
+    const participationForLock = await tx.raffleParticipation.findUnique({
+      where: { id: participationId },
+      select: { raffleId: true }
+    });
+
+    if (!participationForLock) return;
+
+    await tx.$executeRaw(
+      Prisma.sql`SELECT pg_advisory_xact_lock(hashtext(${participationForLock.raffleId}))`
+    );
+
     const participation = await tx.raffleParticipation.findUnique({
       where: { id: participationId },
       include: { raffle: { select: { status: true } } }
