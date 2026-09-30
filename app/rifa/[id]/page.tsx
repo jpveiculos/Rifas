@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import RaffleParticipant from "./RaffleParticipant";
+import ShareRaffle from "../ShareRaffle";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -33,6 +34,7 @@ export default async function RafflePage({ params }: Props) {
             <div className="info-item"><span className="info-label">Data do sorteio</span><span className="info-value">{raffle.endDate ? new Date(raffle.endDate).toLocaleString("pt-BR") : "Será divulgada posteriormente"}</span></div>
           </div>
           <RaffleParticipant raffleId={raffle.id} priceInCents={raffle.priceInCents} />
+          <ShareRaffle raffleName={raffle.name} />
         </div></article>
       </div></main>
     </>
