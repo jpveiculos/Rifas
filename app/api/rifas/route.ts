@@ -9,6 +9,28 @@ function parsePrice(value: string) {
   return Math.round(amount * 100);
 }
 
+export async function GET() {
+  try {
+    const raffles = await prisma.raffle.findMany({
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        name: true,
+        productName: true,
+        totalNumbers: true,
+        priceInCents: true,
+        endDate: true,
+        status: true,
+        createdAt: true
+      }
+    });
+    return NextResponse.json({ raffles });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Não foi possível carregar as rifas." }, { status: 500 });
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -29,14 +51,7 @@ export async function POST(request: Request) {
 
     const raffle = await prisma.$transaction(async (tx) => {
       const created = await tx.raffle.create({
-        data: {
-          name,
-          productName,
-          description,
-          totalNumbers,
-          priceInCents,
-          endDate
-        }
+        data: { name, productName, description, totalNumbers, priceInCents, endDate }
       });
 
       await tx.$executeRaw(
