@@ -17,8 +17,7 @@ export default async function HomePage() {
       <header className="site-header">
         <div className="container site-header-inner">
           <Link className="brand" href="/">
-            <span className="brand-mark">R</span>
-            <span>Rifas<span className="brand-dot">.</span><strong>TOP</strong></span>
+            <span>Rifas<span className="brand-dot">.</span><strong>top</strong></span>
           </Link>
           <div className="header-actions">
             <Link className="header-link" href="/">Início</Link>
@@ -102,7 +101,7 @@ export default async function HomePage() {
         </section>
       </main>
 
-      <footer className="footer"><div className="container">Rifas.TOP · Plataforma pessoal</div></footer>
+      <footer className="footer"><div className="container">Rifas.top · Plataforma pessoal</div></footer>
     </>
   );
 }
