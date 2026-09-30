@@ -9,6 +9,8 @@ type Raffle = {
   totalNumbers: number;
   priceInCents: number;
   endDate: string | null;
+  salesClosedAt: string | null;
+  drawEligibleCount: number | null;
   status: "DRAFT" | "ACTIVE" | "PAUSED" | "ENDED";
 };
 
@@ -192,7 +194,8 @@ export default function AdminPage() {
                     <div className="raffle-admin-meta">
                       <span>{raffle.totalNumbers.toLocaleString("pt-BR")} números</span>
                       <span>{(raffle.priceInCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} cada</span>
-                      <span>{raffle.endDate ? "Sorteio em " + new Date(raffle.endDate).toLocaleString("pt-BR") : "Sorteio ainda não definido"}</span>
+                      <span>{raffle.endDate ? "Sorteio em " + new Date(raffle.endDate).toLocaleString("pt-BR") : "Sorteio ainda não definido"}
+                      {raffle.status === "ENDED" && <span>{raffle.drawEligibleCount ?? 0} números aptos ao sorteio</span>}</span>
                     </div>
                   </div>
                   <div className="raffle-admin-actions">
@@ -201,7 +204,7 @@ export default function AdminPage() {
                     {raffle.status === "DRAFT" && <button className="primary-button compact-button" type="button" onClick={() => changeStatus(raffle.id, "ACTIVE")}>Publicar</button>}
                     {raffle.status === "ACTIVE" && <button className="secondary-button compact-button" type="button" onClick={() => changeStatus(raffle.id, "PAUSED")}>Pausar</button>}
                     {raffle.status === "PAUSED" && <button className="primary-button compact-button" type="button" onClick={() => changeStatus(raffle.id, "ACTIVE")}>Reativar</button>}
-                    {raffle.status !== "ENDED" && <button className="secondary-button compact-button" type="button" onClick={() => changeStatus(raffle.id, "ENDED")}>Encerrar</button>}
+                    {raffle.status !== "ENDED" && <button className="secondary-button compact-button" type="button" onClick={() => changeStatus(raffle.id, "ENDED")}>Encerrar vendas</button>}
                   </div>
                 </article>
               ))}
