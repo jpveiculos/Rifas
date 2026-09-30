@@ -27,19 +27,21 @@ enum ParticipationStatus {
 }
 
 model Raffle {
-  id             String        @id @default(cuid())
-  name           String
-  productName    String
-  description    String        @db.Text
-  imageUrls      String[]      @default([])
-  totalNumbers   Int
-  priceInCents   Int
-  endDate        DateTime?
-  status         RaffleStatus  @default(DRAFT)
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  numbers        RaffleNumber[]
-  participations RaffleParticipation[]
+  id                   String        @id @default(cuid())
+  name                 String
+  productName          String
+  description          String        @db.Text
+  imageUrls            String[]      @default([])
+  totalNumbers         Int
+  priceInCents         Int
+  endDate              DateTime?
+  status               RaffleStatus  @default(DRAFT)
+  salesClosedAt        DateTime?
+  drawEligibleCount    Int?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  numbers               RaffleNumber[]
+  participations        RaffleParticipation[]
 }
 
 model User {
@@ -93,7 +95,7 @@ model RaffleParticipation {
   reservationId               String              @unique
   quantity                    Int
   amountInCents                Int
-  status                      ParticipationStatus @default(PENDING)
+  status                       ParticipationStatus @default(PENDING)
   mercadopagoOrderId           String?             @unique
   mercadopagoStatus            String?
   mercadopagoStatusDetail      String?
