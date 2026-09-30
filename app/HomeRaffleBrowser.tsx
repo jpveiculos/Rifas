@@ -1,15 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import Link from "next/link";
-import { RAFFLE_CATEGORIES } from "@/lib/raffle-categories";
 
 type RaffleCardData = {
   id: string;
   raffleCode: string | null;
   name: string;
   productName: string;
-  category: string;
   description: string;
   imageUrls: string[];
   priceInCents: number;
@@ -21,8 +18,6 @@ type Props = {
   activeRaffles: RaffleCardData[];
   finishedRaffles: RaffleCardData[];
 };
-
-const INITIAL_VISIBLE = 6;
 
 function formatNumber(value: number | string) {
   return String(value).padStart(5, "0");
@@ -85,89 +80,13 @@ function RaffleCard({
 }
 
 export default function HomeRaffleBrowser({ activeRaffles, finishedRaffles }: Props) {
-  const [selectedCategory, setSelectedCategory] = useState("TODAS");
-  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE);
-
-  const categoryCounts = useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const raffle of activeRaffles) {
-      counts.set(raffle.category, (counts.get(raffle.category) || 0) + 1);
-    }
-    return counts;
-  }, [activeRaffles]);
-
-  const filteredRaffles = useMemo(() => {
-    if (selectedCategory === "TODAS") return activeRaffles;
-    return activeRaffles.filter((raffle) => raffle.category === selectedCategory);
-  }, [activeRaffles, selectedCategory]);
-
-  const visibleRaffles = filteredRaffles.slice(0, visibleCount);
-  const hasMore = visibleCount < filteredRaffles.length;
-
-  function chooseCategory(category: string) {
-    setSelectedCategory(category);
-    setVisibleCount(INITIAL_VISIBLE);
-  }
-
   return (
     <div className="home-raffle-browser">
-      <section className="category-browser">
-        <div className="browser-heading">
-          <div>
-            <span className="section-kicker">CATEGORIAS</span>
-            <h3>Filtre por categoria</h3>
-            <p>Escolha uma categoria para encontrar sua rifa.</p>
-          </div>
-        </div>
-
-        <div className="category-select-wrap">
-          <label htmlFor="raffle-category-select">Categoria</label>
-          <select
-            id="raffle-category-select"
-            value={selectedCategory}
-            onChange={(event) => chooseCategory(event.target.value)}
-            aria-label="Escolher categoria da rifa"
-          >
-            <option value="TODAS">Todas as categorias ({activeRaffles.length})</option>
-            {RAFFLE_CATEGORIES.map((category) => {
-              const count = categoryCounts.get(category) || 0;
-              return (
-                <option value={category} key={category}>
-                  {category} ({count})
-                </option>
-              );
-            })}
-          </select>
-        </div>
-
-        <div className="browser-results-heading">
-          <div>
-            <span className="section-kicker">RIFAS ATIVAS</span>
-            <h3>{selectedCategory === "TODAS" ? "Rifas disponíveis" : selectedCategory}</h3>
-          </div>
-          <span>{filteredRaffles.length} {filteredRaffles.length === 1 ? "resultado" : "resultados"}</span>
-        </div>
-
-        {filteredRaffles.length === 0 ? (
-          <div className="empty-state category-empty-state">
-            <h3>Nenhuma rifa ativa nesta categoria.</h3>
-            <p>Escolha outra categoria para ver as rifas disponíveis.</p>
-          </div>
-        ) : (
-          <>
-            <div className="raffle-grid raffle-mosaic">
-              {visibleRaffles.map((raffle) => (
-                <RaffleCard raffle={raffle} key={raffle.id} />
-              ))}
-            </div>
-            {hasMore && (
-              <button className="show-more-button" type="button" onClick={() => setVisibleCount((current) => current + INITIAL_VISIBLE)}>
-                Mostrar mais rifas
-              </button>
-            )}
-          </>
-        )}
-      </section>
+      <div className="raffle-grid raffle-mosaic">
+        {activeRaffles.map((raffle) => (
+          <RaffleCard raffle={raffle} key={raffle.id} />
+        ))}
+      </div>
 
       {finishedRaffles.length > 0 && (
         <section className="finished-raffles">
@@ -179,7 +98,7 @@ export default function HomeRaffleBrowser({ activeRaffles, finishedRaffles }: Pr
             <span>{finishedRaffles.length} finalizada{finishedRaffles.length === 1 ? "" : "s"}</span>
           </div>
           <div className="raffle-grid finished-raffle-grid">
-            {finishedRaffles.slice(0, INITIAL_VISIBLE).map((raffle) => (
+            {finishedRaffles.map((raffle) => (
               <RaffleCard raffle={raffle} finished key={raffle.id} />
             ))}
           </div>
