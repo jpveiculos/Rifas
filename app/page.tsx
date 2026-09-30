@@ -65,20 +65,13 @@ export default async function HomePage() {
       </header>
 
       <main>
-        <section className="home-intro">
-          <div className="container">
-            <span className="hero-kicker">RIFAS.TOP</span>
-            <h1>Escolha sua rifa</h1>
-            <p>Veja as rifas disponíveis, escolha seus números e participe.</p>
-          </div>
-        </section>
-
         <section className="section raffle-section" id="rifas">
           <div className="container">
-            <div className="section-heading">
+            <div className="section-heading home-raffle-heading">
               <div>
-                <span className="section-kicker">RIFAS</span>
-                <h2 className="section-title">Encontre sua rifa</h2>
+                <span className="section-kicker">RIFAS.TOP</span>
+                <h2 className="section-title">Escolha sua rifa</h2>
+                <p className="home-raffle-subtitle">Veja as rifas disponíveis e escolha seus números.</p>
               </div>
               {raffles.length > 0 && (
                 <span className="raffle-count">
