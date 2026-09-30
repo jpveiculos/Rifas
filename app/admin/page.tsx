@@ -8,7 +8,7 @@ type Raffle = {
   productName: string;
   totalNumbers: number;
   priceInCents: number;
-  endDate: string;
+  endDate: string | null;
   status: "DRAFT" | "ACTIVE" | "PAUSED" | "ENDED";
 };
 
@@ -150,8 +150,9 @@ export default function AdminPage() {
             </section>
 
             <section className="form-section form-section-nested">
-              <h3>Encerramento</h3>
-              <label>Data e hora de encerramento<input required type="datetime-local" value={form.endDate} onChange={(e) => update("endDate", e.target.value)} /></label>
+              <h3>Data do sorteio</h3>
+              <p className="form-help">Opcional. Você pode deixar sem data e divulgá-la depois, quando a meta da rifa for atingida.</p>
+              <label>Data e hora do sorteio<input type="datetime-local" value={form.endDate} onChange={(e) => update("endDate", e.target.value)} /></label>
             </section>
 
             <div className="form-actions">
@@ -187,7 +188,7 @@ export default function AdminPage() {
                     <div className="raffle-admin-meta">
                       <span>{raffle.totalNumbers.toLocaleString("pt-BR")} números</span>
                       <span>{(raffle.priceInCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} cada</span>
-                      <span>Encerra em {new Date(raffle.endDate).toLocaleString("pt-BR")}</span>
+                      <span>{raffle.endDate ? "Sorteio em " + new Date(raffle.endDate).toLocaleString("pt-BR") : "Sorteio ainda não definido"}</span>
                     </div>
                   </div>
                   <div className="raffle-admin-actions">
