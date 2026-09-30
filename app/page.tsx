@@ -65,31 +65,11 @@ export default async function HomePage() {
       </header>
 
       <main>
-        <section className="home-hero">
-          <div className="container home-hero-grid">
-            <div className="home-hero-copy">
-              <span className="hero-kicker">RIFAS.TOP</span>
-              <h1>Concorra a prêmios incríveis.</h1>
-              <p>Escolha seus números, acompanhe o sorteio e confira tudo pela sua área de participante.</p>
-              <div className="hero-actions">
-                <Link className="hero-button" href="#rifas">Ver rifas</Link>
-                {!user && <Link className="hero-secondary" href="/cadastro">Criar minha conta</Link>}
-              </div>
-              <div className="hero-benefits">
-                <div><span>01</span><strong>Escolha seus números</strong></div>
-                <div><span>02</span><strong>Pagamento fácil</strong></div>
-                <div><span>03</span><strong>Confira o resultado</strong></div>
-              </div>
-            </div>
-            <div className="hero-visual" aria-hidden="true">
-              <div className="ticket ticket-one">RIFAS.TOP</div>
-              <div className="ticket ticket-two">001</div>
-              <div className="ticket ticket-three">TOP</div>
-              <div className="hero-circle"><strong>Rifas</strong><b>.TOP</b></div>
-              <div className="hero-spark spark-one">✦</div>
-              <div className="hero-spark spark-two">✦</div>
-              <div className="hero-orbit"></div>
-            </div>
+        <section className="home-intro">
+          <div className="container">
+            <span className="hero-kicker">RIFAS.TOP</span>
+            <h1>Escolha sua rifa</h1>
+            <p>Veja as rifas disponíveis, escolha seus números e participe.</p>
           </div>
         </section>
 
