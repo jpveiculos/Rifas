@@ -303,7 +303,8 @@ async function applyMercadoPagoOrder(participationId: string, order: any) {
 
   await prisma.$transaction(async (tx) => {
     const participation = await tx.raffleParticipation.findUnique({
-      where: { id: participationId }
+      where: { id: participationId },
+      include: { raffle: { select: { status: true } } }
     });
 
     if (!participation) return;
@@ -318,6 +319,32 @@ async function applyMercadoPagoOrder(participationId: string, order: any) {
     });
 
     if (participation.status === "APPROVED") return;
+
+    if (participation.raffle.status !== "ACTIVE") {
+      await tx.raffleNumber.updateMany({
+        where: {
+          raffleId: participation.raffleId,
+          reservationId: participation.reservationId,
+          reservedByUserId: participation.userId,
+          status: "RESERVED"
+        },
+        data: {
+          status: "AVAILABLE",
+          reservationId: null,
+          reservedAt: null,
+          reservedByUserId: null
+        }
+      });
+
+      await tx.raffleParticipation.update({
+        where: { id: participation.id },
+        data: {
+          status: "REJECTED",
+          mercadopagoStatusDetail: "Rifa encerrada antes da confirmação do pagamento."
+        }
+      });
+      return;
+    }
 
     if (orderStatus === "processed" && orderStatusDetail === "accredited") {
       if (paidAmountInCents < participation.amountInCents) {
