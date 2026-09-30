@@ -4,6 +4,8 @@ import Link from "next/link";
 import { FormEvent, useState } from "react";
 
 export default function CadastroPage() {
+  const [name, setName] = useState("");
+  const [city, setCity] = useState("");
   const [username, setUsername] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [password, setPassword] = useState("");
@@ -19,7 +21,7 @@ export default function CadastroPage() {
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, whatsapp, password })
+        body: JSON.stringify({ name, city, username, whatsapp, password })
       });
       const data = await response.json();
 
@@ -44,6 +46,8 @@ export default function CadastroPage() {
         <p>Cadastro simples. Só precisamos de um usuário, seu WhatsApp e uma senha.</p>
 
         <form className="auth-form" onSubmit={submit}>
+          <label>Nome completo<input required minLength={3} maxLength={100} autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo" /></label>
+          <label>Cidade<input required minLength={2} maxLength={80} autoComplete="address-level2" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Sua cidade" /></label>
           <label>Usuário<input required minLength={3} maxLength={30} autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="ex.: joao123" /></label>
           <label>WhatsApp ou telefone<input required inputMode="tel" autoComplete="tel" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="(77) 99999-9999" /></label>
           <label>Senha<input required minLength={4} type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Crie sua senha" /></label>
