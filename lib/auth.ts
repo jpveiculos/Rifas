@@ -18,8 +18,6 @@ export function normalizeWhatsapp(value: string) {
 export function validateCredentials(name: string, city: string, username: string, whatsapp: string, password: string) {
   const cleanName = name.trim();
   const cleanCity = city.trim();
-  const cleanName = name.trim();
-  const cleanCity = city.trim();
   const cleanUsername = normalizeUsername(username);
   const cleanWhatsapp = normalizeWhatsapp(whatsapp);
 
@@ -70,6 +68,8 @@ export async function createUser(name: string, city: string, username: string, w
   const error = validateCredentials(name, city, username, whatsapp, password);
   if (error) throw new Error(error);
 
+  const cleanName = name.trim();
+  const cleanCity = city.trim();
   const cleanUsername = normalizeUsername(username);
   const cleanWhatsapp = normalizeWhatsapp(whatsapp);
 
