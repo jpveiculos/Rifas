@@ -4,7 +4,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 function normalizeRaffleCode(value: string) {
-  return value.trim().toUpperCase().replace(/\\s+/g, "-");
+  return value.trim().toUpperCase().replace(/\s+/g, "-");
 }
 
 async function generateRaffleCode() {
