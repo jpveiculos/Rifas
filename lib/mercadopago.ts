@@ -142,6 +142,28 @@ export async function createMercadoPagoParticipation({
     throw new Error("Esta rifa não está disponível para pagamento.");
   }
 
+  const reservationLimit = new Date(Date.now() - 30 * 60 * 1000);
+
+  const expiredNumbers = await prisma.raffleNumber.updateMany({
+    where: {
+      raffleId,
+      reservationId,
+      reservedByUserId: userId,
+      status: "RESERVED",
+      reservedAt: { lt: reservationLimit }
+    },
+    data: {
+      status: "AVAILABLE",
+      reservationId: null,
+      reservedAt: null,
+      reservedByUserId: null
+    }
+  });
+
+  if (expiredNumbers.count > 0) {
+    throw new Error("A reserva expirou após 30 minutos. Escolha novos números.");
+  }
+
   const reservedNumbers = await prisma.raffleNumber.findMany({
     where: {
       raffleId,
