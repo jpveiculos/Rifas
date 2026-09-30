@@ -60,3 +60,8 @@
   .form-actions a, .form-actions button { width: 100%; }
   .image-admin-list { grid-template-columns: 1fr 1fr; }
 }
+
+.raffle-admin-id { color: #0d63df; font-size: 12px; font-weight: 800; letter-spacing: .4px; }
+.form-section small { color: #747b85; font-size: 12px; font-weight: 500; line-height: 1.4; }
+.raffle-code-public { margin: 6px 0 8px; color: #0d63df; font-size: 12px; font-weight: 800; letter-spacing: .4px; }
+.raffle-code-detail { margin: 8px 0 16px; }
