@@ -1,6 +1,20 @@
+import { randomBytes } from "crypto";
 import { NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+
+function normalizeRaffleCode(value: string) {
+  return value.trim().toUpperCase().replace(/\\s+/g, "-");
+}
+
+async function generateRaffleCode() {
+  for (let attempt = 0; attempt < 10; attempt += 1) {
+    const code = "RIFA-" + randomBytes(4).toString("hex").toUpperCase();
+    const exists = await prisma.raffle.findUnique({ where: { raffleCode: code }, select: { id: true } });
+    if (!exists) return code;
+  }
+  throw new Error("Não foi possível gerar um ID único para a rifa.");
+}
 
 function parsePrice(value: string) {
   const normalized = value.replace(/\./g, "").replace(",", ".");
@@ -15,6 +29,7 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
       select: {
         id: true,
+        raffleCode: true,
         name: true,
         productName: true,
         totalNumbers: true,
@@ -36,6 +51,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    const raffleCodeInput = normalizeRaffleCode(String(body.raffleCode ?? ""));
     const name = String(body.raffleName ?? "").trim();
     const productName = String(body.productName ?? "").trim();
     const description = String(body.description ?? "").trim();
@@ -45,6 +61,8 @@ export async function POST(request: Request) {
     const rawEndDate = String(body.endDate ?? "").trim();
     const endDate = rawEndDate ? new Date(rawEndDate) : null;
 
+    if (raffleCodeInput && !/^[A-Z0-9-]{3,30}$/.test(raffleCodeInput)) return NextResponse.json({ error: "O ID da rifa deve ter de 3 a 30 caracteres, usando apenas letras, números e hífen." }, { status: 400 });
+
     if (!name || !productName || !description || !Number.isInteger(totalNumbers) || totalNumbers < 1 || totalNumbers > 1_000_000 || !priceInCents || (endDate && Number.isNaN(endDate.getTime()))) {
       return NextResponse.json({ error: "Preencha todos os campos corretamente." }, { status: 400 });
     }
@@ -53,9 +71,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "A data de encerramento precisa ser futura." }, { status: 400 });
     }
 
+    const raffleCode = raffleCodeInput || await generateRaffleCode();
+
     const raffle = await prisma.$transaction(async (tx) => {
       const created = await tx.raffle.create({
-        data: { name, productName, description, imageUrls, totalNumbers, priceInCents, endDate }
+        data: { raffleCode, name, productName, description, imageUrls, totalNumbers, priceInCents, endDate }
       });
 
       await tx.$executeRaw(
@@ -84,6 +104,7 @@ export async function PATCH(request: Request) {
     const isEdit = Boolean(body.edit);
 
     if (isEdit) {
+      const raffleCodeInput = normalizeRaffleCode(String(body.raffleCode ?? ""));
       const name = String(body.raffleName ?? "").trim();
       const productName = String(body.productName ?? "").trim();
       const description = String(body.description ?? "").trim();
@@ -92,6 +113,8 @@ export async function PATCH(request: Request) {
       const rawEndDate = String(body.endDate ?? "").trim();
       const endDate = rawEndDate ? new Date(rawEndDate) : null;
       const imageUrls = Array.isArray(body.imageUrls) ? body.imageUrls.map((value: unknown) => String(value).trim()).filter(Boolean).slice(0, 10) : [];
+
+      if (raffleCodeInput && !/^[A-Z0-9-]{3,30}$/.test(raffleCodeInput)) return NextResponse.json({ error: "O ID da rifa deve ter de 3 a 30 caracteres, usando apenas letras, números e hífen." }, { status: 400 });
 
       if (!id || !name || !productName || !description || !Number.isInteger(totalNumbers) || totalNumbers < 1 || totalNumbers > 1_000_000 || !priceInCents || (endDate && Number.isNaN(endDate.getTime()))) {
         return NextResponse.json({ error: "Preencha todos os campos corretamente." }, { status: 400 });
@@ -105,9 +128,15 @@ export async function PATCH(request: Request) {
         return NextResponse.json({ error: "A quantidade de números é fixa depois que a rifa é criada." }, { status: 400 });
       }
 
+      const raffleCode = raffleCodeInput || (await prisma.raffle.findUnique({ where: { id }, select: { raffleCode: true } }))?.raffleCode;
+      if (!raffleCode) return NextResponse.json({ error: "ID da rifa não encontrado." }, { status: 400 });
+
+      const duplicate = await prisma.raffle.findFirst({ where: { raffleCode, NOT: { id } }, select: { id: true } });
+      if (duplicate) return NextResponse.json({ error: "Esse ID de rifa já está sendo usado. Escolha outro." }, { status: 409 });
+
       await prisma.raffle.update({
         where: { id },
-        data: { name, productName, description, priceInCents, endDate, imageUrls }
+        data: { raffleCode, name, productName, description, priceInCents, endDate, imageUrls }
       });
       return NextResponse.json({ id, ok: true });
     }
