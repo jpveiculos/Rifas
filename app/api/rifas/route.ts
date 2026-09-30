@@ -1,4 +1,4 @@
-import { randomBytes } from "crypto";
+import { randomBytes, randomInt } from "crypto";
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
@@ -25,27 +25,6 @@ function parsePrice(value: string) {
   return Math.round(amount * 100);
 }
 
-function parseFederalNumbers(value: unknown) {
-  const source = Array.isArray(value)
-    ? value
-    : typeof value === "string"
-      ? value.split(/[,;\s]+/)
-      : [];
-
-  const numbers = source
-    .map((item) => String(item).trim())
-    .filter(Boolean)
-    .map((item) => item.padStart(5, "0"));
-
-  if (numbers.length !== 5 || numbers.some((item) => !/^\d{5}$/.test(item))) return null;
-
-  const unique = [...new Set(numbers)];
-  if (unique.length !== numbers.length) return null;
-  if (numbers.every((item) => item === "00000")) return null;
-
-  return numbers;
-}
-
 export async function GET() {
   try {
     const raffles = await prisma.raffle.findMany({
@@ -64,13 +43,28 @@ export async function GET() {
         drawEligibleCount: true,
         winningNumber: true,
         winningNumbers: true,
-        federalNumbers: true,
         resultStatus: true,
         resultPublishedAt: true,
         createdAt: true
       }
     });
-    return NextResponse.json({ raffles });
+
+    const confirmedCounts = await prisma.raffleNumber.groupBy({
+      by: ["raffleId"],
+      where: { status: "CONFIRMED", raffleId: { in: raffles.map((raffle) => raffle.id) } },
+      _count: { _all: true }
+    });
+
+    const confirmedByRaffle = new Map(
+      confirmedCounts.map((item) => [item.raffleId, item._count._all])
+    );
+
+    return NextResponse.json({
+      raffles: raffles.map((raffle) => ({
+        ...raffle,
+        confirmedCount: confirmedByRaffle.get(raffle.id) ?? 0
+      }))
+    });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Não foi possível carregar as rifas." }, { status: 500 });
@@ -170,89 +164,35 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ id, ok: true });
     }
 
-    if (body.result === true) {
+    if (body.draw === true) {
       if (!id) return NextResponse.json({ error: "Rifa não informada." }, { status: 400 });
 
-      const federalNumbers = parseFederalNumbers(body.federalNumbers);
-      if (!federalNumbers) {
-        return NextResponse.json({ error: "Informe exatamente os 5 números principais da Loteria Federal, com 5 dígitos cada." }, { status: 400 });
-      }
+      const result = await prisma.$transaction(async (tx) => {
+        // Serializa o sorteio desta rifa para impedir dois cliques simultâneos
+        // de produzirem dois resultados diferentes.
+        await tx.$executeRaw(
+          Prisma.sql`SELECT pg_advisory_xact_lock(hashtext(${id}))`
+        );
 
-      const raffle = await prisma.raffle.findUnique({
-        where: { id },
-        select: { id: true, status: true, totalNumbers: true }
-      });
-
-      if (!raffle) return NextResponse.json({ error: "Rifa não encontrada." }, { status: 404 });
-      if (raffle.status !== "ACTIVE") return NextResponse.json({ error: "A apuração pela Loteria Federal só pode ser feita enquanto a rifa estiver ativa." }, { status: 400 });
-
-      const federalNumericNumbers = federalNumbers.map(Number);
-      const matches = await prisma.raffleNumber.findMany({
-        where: {
-          raffleId: id,
-          status: "CONFIRMED",
-          number: { in: federalNumericNumbers }
-        },
-        select: {
-          number: true,
-          reservedByUser: {
-            select: { id: true, name: true, username: true, whatsapp: true, city: true }
-          }
-        },
-        orderBy: { number: "asc" }
-      });
-
-      const winningNumbers = [...new Set(matches.map((item) => item.number))];
-      const winners = matches.map((item) => ({
-        number: item.number,
-        user: item.reservedByUser
-      }));
-
-      if (body.preview === true) {
-        return NextResponse.json({
-          preview: true,
-          federalNumbers,
-          winningNumbers,
-          resultStatus: winningNumbers.length > 0 ? "WINNER" : "ACCUMULATED",
-          message: winningNumbers.length > 0
-            ? (winningNumbers.length === 1 ? "GANHADOR ENCONTRADO." : `GANHADORES ENCONTRADOS: ${winningNumbers.length}.`)
-            : "NENHUM DOS 5 NÚMEROS FOI COMPRADO. A RIFA ACUMULOU E CONTINUA ABERTA.",
-          winners
-        });
-      }
-
-      if (winningNumbers.length === 0) {
-        const updated = await prisma.raffle.update({
+        const raffle = await tx.raffle.findUnique({
           where: { id },
-          data: {
-            federalNumbers,
-            winningNumbers: [],
-            winningNumber: null,
-            resultStatus: "ACCUMULATED",
-            resultPublishedAt: new Date()
-          },
           select: {
             id: true,
+            name: true,
             status: true,
-            federalNumbers: true,
-            winningNumbers: true,
-            resultStatus: true,
-            resultPublishedAt: true
+            endDate: true,
+            resultStatus: true
           }
         });
 
-        revalidatePath("/");
-        revalidatePath("/rifa/" + id);
-        revalidatePath("/minha-conta");
+        if (!raffle) throw new Error("Rifa não encontrada.");
+        if (raffle.status !== "ACTIVE") throw new Error("A rifa não está ativa para sorteio.");
+        if (raffle.resultStatus === "WINNER") throw new Error("Esta rifa já possui um resultado publicado.");
+        if (raffle.endDate && raffle.endDate > new Date()) {
+          throw new Error("O sorteio ainda não chegou à data e hora programadas.");
+        }
 
-        return NextResponse.json({
-          ...updated,
-          message: "Nenhum dos números da Loteria Federal foi comprado. A rifa acumulou e continua aberta.",
-          winners: []
-        });
-      }
-
-      const result = await prisma.$transaction(async (tx) => {
+        // Reservas não pagas nunca concorrem: somente CONFIRMED participa.
         await tx.raffleNumber.updateMany({
           where: { raffleId: id, status: "RESERVED" },
           data: {
@@ -263,34 +203,53 @@ export async function PATCH(request: Request) {
           }
         });
 
-        const drawEligibleCount = await tx.raffleNumber.count({
+        const eligibleCount = await tx.raffleNumber.count({
           where: { raffleId: id, status: "CONFIRMED" }
         });
 
-        return tx.raffle.update({
+        if (eligibleCount === 0) throw new Error("Não há nenhum número confirmado para realizar o sorteio.");
+
+        const randomIndex = randomInt(0, eligibleCount);
+
+        const selected = await tx.raffleNumber.findFirst({
+          where: { raffleId: id, status: "CONFIRMED" },
+          orderBy: { number: "asc" },
+          skip: randomIndex,
+          select: {
+            number: true,
+            reservedByUser: {
+              select: { id: true, name: true, username: true, whatsapp: true, city: true }
+            }
+          }
+        });
+
+        if (!selected) throw new Error("Não foi possível selecionar o número vencedor.");
+
+        const publishedAt = new Date();
+        const updated = await tx.raffle.update({
           where: { id },
           data: {
             status: "ENDED",
-            salesClosedAt: new Date(),
-            drawEligibleCount,
-            federalNumbers,
-            winningNumbers,
-            winningNumber: winningNumbers[0],
+            salesClosedAt: publishedAt,
+            drawEligibleCount: eligibleCount,
+            winningNumbers: [selected.number],
+            winningNumber: selected.number,
             resultStatus: "WINNER",
-            resultPublishedAt: new Date()
+            resultPublishedAt: publishedAt
           },
           select: {
             id: true,
             status: true,
             salesClosedAt: true,
             drawEligibleCount: true,
-            federalNumbers: true,
             winningNumbers: true,
             winningNumber: true,
             resultStatus: true,
             resultPublishedAt: true
           }
         });
+
+        return { ...updated, winner: selected };
       });
 
       revalidatePath("/");
@@ -299,10 +258,11 @@ export async function PATCH(request: Request) {
 
       return NextResponse.json({
         ...result,
-        message: winningNumbers.length === 1
-          ? "Há um ganhador. A rifa foi finalizada automaticamente."
-          : `Há ${winningNumbers.length} ganhadores. A rifa foi finalizada automaticamente.`,
-        winners
+        message: "Sorteio realizado. A rifa foi finalizada automaticamente.",
+        winners: [{
+          number: result.winner.number,
+          user: result.winner.reservedByUser
+        }]
       });
     }
 
@@ -370,6 +330,18 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ id: raffle.id, status: raffle.status });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: "Não foi possível alterar a rifa." }, { status: 500 });
+    const message = error instanceof Error ? error.message : "Não foi possível alterar a rifa.";
+    const clientErrors = [
+      "Rifa não encontrada.",
+      "A rifa não está ativa para sorteio.",
+      "Esta rifa já possui um resultado publicado.",
+      "O sorteio ainda não chegou à data e hora programadas.",
+      "Não há nenhum número confirmado para realizar o sorteio.",
+      "Não foi possível selecionar o número vencedor."
+    ];
+    return NextResponse.json(
+      { error: clientErrors.includes(message) ? message : "Não foi possível alterar a rifa." },
+      { status: clientErrors.includes(message) ? 400 : 500 }
+    );
   }
 }
