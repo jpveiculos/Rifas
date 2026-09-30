@@ -83,6 +83,7 @@ export default async function HomePage() {
                     )}
                     <div className="raffle-card-content">
                       <span className="badge">EM ANDAMENTO</span>
+                      <div className="raffle-code-public">{raffle.raffleCode ? "ID " + raffle.raffleCode : ""}</div>
                       <h3>{raffle.productName}</h3>
                       <p>{raffle.description}</p>
                       <div className="card-price">{(raffle.priceInCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}<small> por número</small></div>
