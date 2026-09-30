@@ -1,5 +1,6 @@
 import { randomBytes } from "crypto";
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { isRaffleCategory } from "@/lib/raffle-categories";
@@ -36,18 +37,11 @@ function parseFederalNumbers(value: unknown) {
     .filter(Boolean)
     .map((item) => item.padStart(5, "0"));
 
-  if (numbers.length !== 5 || numbers.some((item) => !/^\d{5}$/.test(item))) {
-    return null;
-  }
+  if (numbers.length !== 5 || numbers.some((item) => !/^\d{5}$/.test(item))) return null;
 
   const unique = [...new Set(numbers)];
-  if (unique.length !== numbers.length) {
-    return null;
-  }
-
-  if (numbers.every((item) => item === "00000")) {
-    return null;
-  }
+  if (unique.length !== numbers.length) return null;
+  if (numbers.every((item) => item === "00000")) return null;
 
   return numbers;
 }
@@ -190,9 +184,7 @@ export async function PATCH(request: Request) {
       });
 
       if (!raffle) return NextResponse.json({ error: "Rifa não encontrada." }, { status: 404 });
-      if (raffle.status !== "ACTIVE") {
-        return NextResponse.json({ error: "A apuração pela Loteria Federal só pode ser feita enquanto a rifa estiver ativa." }, { status: 400 });
-      }
+      if (raffle.status !== "ACTIVE") return NextResponse.json({ error: "A apuração pela Loteria Federal só pode ser feita enquanto a rifa estiver ativa." }, { status: 400 });
 
       const federalNumericNumbers = federalNumbers.map(Number);
       const matches = await prisma.raffleNumber.findMany({
@@ -211,6 +203,23 @@ export async function PATCH(request: Request) {
       });
 
       const winningNumbers = [...new Set(matches.map((item) => item.number))];
+      const winners = matches.map((item) => ({
+        number: item.number,
+        user: item.reservedByUser
+      }));
+
+      if (body.preview === true) {
+        return NextResponse.json({
+          preview: true,
+          federalNumbers,
+          winningNumbers,
+          resultStatus: winningNumbers.length > 0 ? "WINNER" : "ACCUMULATED",
+          message: winningNumbers.length > 0
+            ? (winningNumbers.length === 1 ? "GANHADOR ENCONTRADO." : `GANHADORES ENCONTRADOS: ${winningNumbers.length}.`)
+            : "NENHUM DOS 5 NÚMEROS FOI COMPRADO. A RIFA ACUMULOU E CONTINUA ABERTA.",
+          winners
+        });
+      }
 
       if (winningNumbers.length === 0) {
         const updated = await prisma.raffle.update({
@@ -232,6 +241,10 @@ export async function PATCH(request: Request) {
           }
         });
 
+        revalidatePath("/");
+        revalidatePath("/rifa/" + id);
+        revalidatePath("/minha-conta");
+
         return NextResponse.json({
           ...updated,
           message: "Nenhum dos números da Loteria Federal foi comprado. A rifa acumulou e continua aberta.",
@@ -241,10 +254,7 @@ export async function PATCH(request: Request) {
 
       const result = await prisma.$transaction(async (tx) => {
         await tx.raffleNumber.updateMany({
-          where: {
-            raffleId: id,
-            status: "RESERVED"
-          },
+          where: { raffleId: id, status: "RESERVED" },
           data: {
             status: "AVAILABLE",
             reservationId: null,
@@ -257,7 +267,7 @@ export async function PATCH(request: Request) {
           where: { raffleId: id, status: "CONFIRMED" }
         });
 
-        const updated = await tx.raffle.update({
+        return tx.raffle.update({
           where: { id },
           data: {
             status: "ENDED",
@@ -281,16 +291,18 @@ export async function PATCH(request: Request) {
             resultPublishedAt: true
           }
         });
-
-        return updated;
       });
+
+      revalidatePath("/");
+      revalidatePath("/rifa/" + id);
+      revalidatePath("/minha-conta");
 
       return NextResponse.json({
         ...result,
         message: winningNumbers.length === 1
           ? "Há um ganhador. A rifa foi finalizada automaticamente."
           : `Há ${winningNumbers.length} ganhadores. A rifa foi finalizada automaticamente.`,
-        winners: matches
+        winners
       });
     }
 
@@ -339,6 +351,10 @@ export async function PATCH(request: Request) {
         });
       });
 
+      revalidatePath("/");
+      revalidatePath("/rifa/" + id);
+      revalidatePath("/minha-conta");
+
       return NextResponse.json(result);
     }
 
@@ -346,6 +362,10 @@ export async function PATCH(request: Request) {
       where: { id },
       data: { status: status as "ACTIVE" | "PAUSED" }
     });
+
+    revalidatePath("/");
+    revalidatePath("/rifa/" + id);
+    revalidatePath("/minha-conta");
 
     return NextResponse.json({ id: raffle.id, status: raffle.status });
   } catch (error) {
