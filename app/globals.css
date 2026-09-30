@@ -80,3 +80,7 @@ a { color: inherit; text-decoration: none; }
   .share-button { width: 100%; }
   .share-main { grid-column: 1 / -1; }
 }
+
+.raffle-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 22px 0; }
+.raffle-gallery img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; border: 1px solid #e1e4e9; background: #f5f6f8; }
+@media (max-width: 640px) { .raffle-gallery { grid-template-columns: 1fr 1fr; } }
