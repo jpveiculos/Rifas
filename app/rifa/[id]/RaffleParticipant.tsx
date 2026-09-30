@@ -177,6 +177,9 @@ export default function RaffleParticipant({ raffleId, priceInCents }: { raffleId
             <>
               <h3>Pagamento aprovado!</h3>
               <p>Seus números foram confirmados com sucesso.</p>
+              <a className="primary-button participant-button payment-link" href="/minha-conta">
+                Ver meus números
+              </a>
             </>
           ) : payment.status === "REJECTED" ? (
             <>
