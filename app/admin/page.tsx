@@ -433,8 +433,8 @@ export default function AdminPage() {
                           <span>Número sorteado: <b>{formatNumber(drawResults[raffle.id].number)}</b></span>
                           {drawResults[raffle.id].winner.user && (
                             <>
-                              <span>Ganhador: <b>{drawResults[raffle.id].winner.user.name}</b></span>
-                              <small>WhatsApp: {drawResults[raffle.id].winner.user.whatsapp}</small>
+                              <span>Ganhador: <b>{drawResults[raffle.id].winner.user?.name}</b></span>
+                              <small>WhatsApp: {drawResults[raffle.id].winner.user?.whatsapp}</small>
                             </>
                           )}
                         </div>
