@@ -37,7 +37,6 @@ export default async function AccountPage() {
           priceInCents: true,
           status: true,
           endDate: true,
-          federalNumbers: true,
           winningNumber: true,
           winningNumbers: true,
           resultStatus: true,
@@ -97,28 +96,16 @@ export default async function AccountPage() {
   }
 
   function ResultNotice({ item }: { item: (typeof participations)[number] }) {
-    if (item.raffle.resultStatus === "ACCUMULATED" && item.raffle.federalNumbers.length > 0) {
-      return (
-        <div className="account-result account-result-accumulated">
-          <span>Resultado da Federal · acumulou</span>
-          <strong>{item.raffle.federalNumbers.map(formatNumber).join(" · ")}</strong>
-          <small>A rifa continua aberta para o próximo sorteio.</small>
-        </div>
-      );
-    }
-
     const winners = winningNumbers(item);
-    if (winners.length > 0) {
-      return (
-        <div className="account-result account-result-winner">
-          <span>Número(s) vencedor(es)</span>
-          <strong>{winners.map(formatNumber).join(" · ")}</strong>
-          <small>Confira seus números acima.</small>
-        </div>
-      );
-    }
+    if (winners.length === 0) return null;
 
-    return null;
+    return (
+      <div className="account-result account-result-winner">
+        <span>Número vencedor</span>
+        <strong>{formatNumber(winners[0])}</strong>
+        <small>Resultado do sorteio publicado.</small>
+      </div>
+    );
   }
 
   return (
@@ -140,7 +127,7 @@ export default async function AccountPage() {
             <div>
               <span className="section-kicker">ÁREA DO PARTICIPANTE</span>
               <h1>Minha Área</h1>
-              <p>Acompanhe seus números e veja imediatamente os resultados publicados pela Loteria Federal.</p>
+              <p>Acompanhe seus números e veja imediatamente o resultado do sorteio.</p>
             </div>
             <Link className="account-back-button" href="/">Ver rifas</Link>
           </div>
