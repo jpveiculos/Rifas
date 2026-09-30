@@ -199,12 +199,12 @@ a { color: inherit; text-decoration: none; }
   .section-heading { align-items: start; flex-direction: column; }
   .raffle-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .raffle-card { border-radius: 13px; }
-  .raffle-card-image { height: 112px; }
+  .raffle-card-image { height: 108px; }
   .raffle-card-content { padding: 10px; }
   .raffle-card .badge { padding: 4px 6px; font-size: 8px; }
   .raffle-card .raffle-code-public { font-size: 9px; margin-top: 5px; }
   .raffle-card h3 { margin: 7px 0 4px; font-size: 14px; line-height: 1.15; }
-  .raffle-card p { min-height: 34px; font-size: 10px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .raffle-card p { min-height: 0; margin-bottom: 2px; font-size: 10px; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .raffle-card .card-price { margin-top: 8px; font-size: 17px; }
   .raffle-card .card-price small { font-size: 9px; }
   .raffle-card .raffle-meta { margin: 8px 0; padding-top: 7px; font-size: 9px; }
@@ -634,4 +634,30 @@ a { color: inherit; text-decoration: none; }
   .raffle-mosaic,
   .featured-raffle-grid,
   .finished-raffle-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Cards compactos da página principal */
+@media (max-width: 640px) {
+  .raffle-section { padding-top: 26px; }
+  .raffle-section .section-title { font-size: 34px; letter-spacing: -1.4px; }
+  .raffle-section .section-heading { margin-bottom: 20px; }
+  .category-browser { padding: 15px; }
+  .category-browser .browser-heading { margin-bottom: 14px; }
+  .category-browser .browser-heading h3 { font-size: 21px; }
+  .category-browser .browser-heading p { font-size: 12px; line-height: 1.35; }
+  .category-select-wrap { margin-bottom: 20px; }
+  .category-select-wrap label { font-size: 12px; }
+  .category-select-wrap select { min-height: 48px; font-size: 13px; border-radius: 12px; }
+  .browser-results-heading { margin-bottom: 12px; }
+  .browser-results-heading h3 { font-size: 21px; }
+  .raffle-mosaic { gap: 9px; }
+  .raffle-card { border-radius: 12px; box-shadow: 0 5px 16px rgba(22,42,65,.07); }
+  .raffle-card-image { height: 100px; }
+  .raffle-card-content { padding: 9px; }
+  .raffle-card .badge { font-size: 7px; padding: 4px 6px; }
+  .raffle-card .raffle-code-public { font-size: 8px; }
+  .raffle-card h3 { font-size: 13px; }
+  .raffle-card p { font-size: 9px; -webkit-line-clamp: 2; }
+  .raffle-card .card-price { font-size: 16px; }
+  .raffle-card .primary-button { min-height: 36px; font-size: 10px; }
 }
