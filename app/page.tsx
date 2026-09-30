@@ -87,7 +87,6 @@ export default async function HomePage() {
                       <p>{raffle.description}</p>
                       <div className="card-price">{(raffle.priceInCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}<small> por número</small></div>
                       <div className="raffle-meta">
-                        <span>🎟 {raffle.totalNumbers.toLocaleString("pt-BR")} números</span>
                         <span>● Ativa</span>
                       </div>
                       <Link className="primary-button" href={"/rifa/" + raffle.id}>Escolher números</Link>
