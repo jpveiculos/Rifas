@@ -39,13 +39,14 @@ export async function POST(request: Request) {
     const description = String(body.description ?? "").trim();
     const totalNumbers = Number(body.totalNumbers);
     const priceInCents = parsePrice(String(body.pricePerNumber ?? ""));
-    const endDate = new Date(String(body.endDate ?? ""));
+    const rawEndDate = String(body.endDate ?? "").trim();
+    const endDate = rawEndDate ? new Date(rawEndDate) : null;
 
-    if (!name || !productName || !description || !Number.isInteger(totalNumbers) || totalNumbers < 1 || totalNumbers > 1_000_000 || !priceInCents || Number.isNaN(endDate.getTime())) {
+    if (!name || !productName || !description || !Number.isInteger(totalNumbers) || totalNumbers < 1 || totalNumbers > 1_000_000 || !priceInCents || (endDate && Number.isNaN(endDate.getTime()))) {
       return NextResponse.json({ error: "Preencha todos os campos corretamente." }, { status: 400 });
     }
 
-    if (endDate <= new Date()) {
+    if (endDate && endDate <= new Date()) {
       return NextResponse.json({ error: "A data de encerramento precisa ser futura." }, { status: 400 });
     }
 
