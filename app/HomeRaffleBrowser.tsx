@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import ShareRaffle from "@/app/rifa/ShareRaffle";
 import { RAFFLE_CATEGORIES } from "@/lib/raffle-categories";
 
 type RaffleCardData = {
@@ -78,10 +77,7 @@ function RaffleCard({
         {finished ? (
           <Link className="primary-button" href={"/rifa/" + raffle.id}>Ver resultado</Link>
         ) : (
-          <>
-            <Link className="primary-button" href={"/rifa/" + raffle.id}>Escolher números</Link>
-            <ShareRaffle raffleName={raffle.name} />
-          </>
+          <Link className="primary-button" href={"/rifa/" + raffle.id}>Escolher números</Link>
         )}
       </div>
     </article>
