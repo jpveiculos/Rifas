@@ -51,6 +51,10 @@ const initialForm = {
   endDate: ""
 };
 
+function formatDateTimeInput(value: string | null) {
+  return value ? new Date(value).toISOString().slice(0, 16) : "";
+}
+
 const statusLabel: Record<Raffle["status"], string> = {
   DRAFT: "Rascunho",
   ACTIVE: "Ativa",
@@ -400,9 +404,9 @@ export default function AdminPage() {
                       <div className="raffle-admin-meta">
                         <span>{raffle.totalNumbers.toLocaleString("pt-BR")} números</span>
                         <span>{(raffle.priceInCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} cada</span>
-                        <span>{raffle.endDate ? "Sorteio em " + new Date(raffle.endDate).toLocaleString("pt-BR") : "Sorteio divulgado depois"}</span>
+                        <span>{raffle.endDate ? "Sorteio em " + new Date(raffle.endDate).toLocaleString("pt-BR") : "Data do sorteio ainda não definida"}</span>
                         {raffle.status === "ENDED" && <span>{raffle.drawEligibleCount ?? 0} números que concorreram</span>}
-                      </div>
+                      </div></div>
                     </div>
 
                     <div className="raffle-admin-actions">
