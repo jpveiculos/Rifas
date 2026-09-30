@@ -90,7 +90,6 @@ function RaffleCard({
 
 export default function HomeRaffleBrowser({ activeRaffles, finishedRaffles }: Props) {
   const [selectedCategory, setSelectedCategory] = useState("TODAS");
-  const [categorySearch, setCategorySearch] = useState("");
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE);
 
   const categoryCounts = useMemo(() => {
@@ -100,13 +99,6 @@ export default function HomeRaffleBrowser({ activeRaffles, finishedRaffles }: Pr
     }
     return counts;
   }, [activeRaffles]);
-
-  const filteredCategories = useMemo(() => {
-    const term = categorySearch.trim().toLocaleLowerCase("pt-BR");
-    return RAFFLE_CATEGORIES.filter((category) =>
-      !term || category.toLocaleLowerCase("pt-BR").includes(term)
-    );
-  }, [categorySearch]);
 
   const filteredRaffles = useMemo(() => {
     if (selectedCategory === "TODAS") return activeRaffles;
@@ -123,72 +115,33 @@ export default function HomeRaffleBrowser({ activeRaffles, finishedRaffles }: Pr
 
   return (
     <div className="home-raffle-browser">
-      {activeRaffles.length > 0 && (
-        <section className="featured-raffles">
-          <div className="browser-heading">
-            <div>
-              <span className="section-kicker">EM DESTAQUE</span>
-              <h3>Rifas ativas</h3>
-              <p>Algumas rifas em andamento aparecem aqui. Use as categorias para encontrar as demais.</p>
-            </div>
-            <span className="raffle-count">{activeRaffles.length} ativa{activeRaffles.length === 1 ? "" : "s"}</span>
-          </div>
-          <div className="raffle-grid featured-raffle-grid">
-            {activeRaffles.slice(0, INITIAL_VISIBLE).map((raffle) => (
-              <RaffleCard raffle={raffle} key={raffle.id} />
-            ))}
-          </div>
-        </section>
-      )}
-
       <section className="category-browser">
         <div className="browser-heading">
           <div>
             <span className="section-kicker">ENCONTRE SUA RIFA</span>
             <h3>Escolha uma categoria</h3>
-            <p>Selecione uma categoria para abrir um mosaico somente com as rifas ativas daquele tipo.</p>
+            <p>Abra o menu e escolha o tipo de rifa que deseja encontrar.</p>
           </div>
         </div>
 
-        <div className="category-search-wrap">
-          <span aria-hidden="true">⌕</span>
-          <input
-            value={categorySearch}
-            onChange={(event) => setCategorySearch(event.target.value)}
-            placeholder="Pesquisar categoria..."
-            aria-label="Pesquisar categoria"
-          />
-          {categorySearch && (
-            <button type="button" onClick={() => setCategorySearch("")} aria-label="Limpar pesquisa">
-              ×
-            </button>
-          )}
-        </div>
-
-        <div className="category-menu" aria-label="Categorias de rifas">
-          <button
-            type="button"
-            className={"category-chip " + (selectedCategory === "TODAS" ? "category-chip-active" : "")}
-            onClick={() => chooseCategory("TODAS")}
+        <div className="category-select-wrap">
+          <label htmlFor="raffle-category-select">Categoria</label>
+          <select
+            id="raffle-category-select"
+            value={selectedCategory}
+            onChange={(event) => chooseCategory(event.target.value)}
+            aria-label="Escolher categoria da rifa"
           >
-            <strong>Todas</strong>
-            <span>{activeRaffles.length}</span>
-          </button>
-
-          {filteredCategories.map((category) => {
-            const count = categoryCounts.get(category) || 0;
-            return (
-              <button
-                type="button"
-                key={category}
-                className={"category-chip " + (selectedCategory === category ? "category-chip-active" : "") + (count === 0 ? " category-chip-empty" : "")}
-                onClick={() => chooseCategory(category)}
-              >
-                <strong>{category}</strong>
-                <span>{count}</span>
-              </button>
-            );
-          })}
+            <option value="TODAS">Todas as categorias ({activeRaffles.length})</option>
+            {RAFFLE_CATEGORIES.map((category) => {
+              const count = categoryCounts.get(category) || 0;
+              return (
+                <option value={category} key={category}>
+                  {category} ({count})
+                </option>
+              );
+            })}
+          </select>
         </div>
 
         <div className="browser-results-heading">
