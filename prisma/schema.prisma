@@ -28,7 +28,7 @@ enum ParticipationStatus {
 
 model Raffle {
   id                   String        @id @default(cuid())
-  raffleCode           String        @unique
+  raffleCode           String?       @unique
   name                 String
   productName          String
   description          String        @db.Text
