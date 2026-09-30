@@ -11,6 +11,9 @@ export const RAFFLE_CATEGORIES = [
   "MODA E ACESSÓRIOS",
   "CASA E JARDIM",
   "ESPORTES E LAZER",
+  "PET",
+  "ANIMAIS",
+  "RURAL",
   "COMÉRCIO E NEGÓCIOS",
   "OUTROS"
 ] as const;
