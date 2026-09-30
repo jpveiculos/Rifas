@@ -65,11 +65,6 @@ export default function AdminPage() {
 
         <form className="admin-form" onSubmit={submit}>
 
-        <section className="form-section">
-          <h2>Cadastrar participante</h2>
-          <p className="form-help">Use esta opção quando a pessoa comprar uma participação pessoalmente. Cadastre o usuário, o WhatsApp/telefone e uma senha para ela.</p>
-          <ParticipantForm />
-        </section>
 
           <section className="form-section">
             <h2>Identificação da rifa</h2>
