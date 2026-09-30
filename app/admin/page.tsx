@@ -1,12 +1,14 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { RAFFLE_CATEGORIES } from "@/lib/raffle-categories";
 
 type Raffle = {
   id: string;
   raffleCode: string | null;
   name: string;
   productName: string;
+  category: string;
   totalNumbers: number;
   priceInCents: number;
   endDate: string | null;
@@ -21,6 +23,7 @@ const initialForm = {
   raffleCode: "",
   raffleName: "",
   productName: "",
+  category: "OUTROS",
   description: "",
   totalNumbers: "10000",
   pricePerNumber: "1,00",
@@ -248,6 +251,7 @@ export default function AdminPage() {
               <label>ID da rifa<input value={form.raffleCode} onChange={(e) => update("raffleCode", e.target.value)} placeholder="Ex.: RIFA-001 ou deixe vazio" /><small>Se deixar vazio, o sistema gera um ID automaticamente. O ID pode ser usado para diferenciar rifas do mesmo produto.</small></label>
               <label>Nome da rifa<input required value={form.raffleName} onChange={(e) => update("raffleName", e.target.value)} placeholder="Ex.: Rifa Paramirim" /></label>
               <label>Nome do produto<input required value={form.productName} onChange={(e) => update("productName", e.target.value)} placeholder="Ex.: Chevrolet Celta 2012" /></label>
+              <label>Categoria da rifa<select required value={form.category} onChange={(e) => update("category", e.target.value)}>{RAFFLE_CATEGORIES.map((category) => <option key={category} value={category}>{category}</option>)}</select><small>Escolha a natureza do produto. Na página inicial, as rifas serão organizadas por categoria.</small></label>
               <label>Descrição<textarea required value={form.description} onChange={(e) => update("description", e.target.value)} placeholder="Descreva o produto e as informações importantes." rows={6} /></label>
             </section>
 
@@ -316,6 +320,7 @@ export default function AdminPage() {
                     <div className="raffle-admin-id">{raffle.raffleCode ? "ID: " + raffle.raffleCode : "ID ainda não definido"}</div>
                     <h3>{raffle.name}</h3>
                     <p>{raffle.productName}</p>
+                    <div className="raffle-admin-category">{raffle.category}</div>
                     <div className="raffle-admin-meta">
                       <span>{raffle.totalNumbers.toLocaleString("pt-BR")} números</span>
                       <span>{(raffle.priceInCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} cada</span>
