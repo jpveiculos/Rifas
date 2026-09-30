@@ -43,13 +43,13 @@ export default function CadastroPage() {
       <div className="auth-card">
         <Link className="auth-brand" href="/">Rifas</Link>
         <h1>Criar conta</h1>
-        <p>Cadastro simples. Só precisamos de um usuário, seu WhatsApp e uma senha.</p>
+        <p>Preencha seus dados para criar sua conta.</p>
 
         <form className="auth-form" onSubmit={submit}>
           <label>Nome completo<input required minLength={3} maxLength={100} autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo" /></label>
-          <label>Cidade<input required minLength={2} maxLength={80} autoComplete="address-level2" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Sua cidade" /></label>
-          <label>Usuário<input required minLength={3} maxLength={30} autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="ex.: joao123" /></label>
-          <label>WhatsApp ou telefone<input required inputMode="tel" autoComplete="tel" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="(77) 99999-9999" /></label>
+          <label>Nome da cidade<input required minLength={2} maxLength={80} autoComplete="address-level2" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Sua cidade" /></label>
+          <label>Contato<input required inputMode="tel" autoComplete="tel" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="WhatsApp ou telefone" /></label>
+          <label>Nome de usuário<input required minLength={3} maxLength={30} autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="ex.: joao123" /></label>
           <label>Senha<input required minLength={4} type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Crie sua senha" /></label>
           <button className="primary-button" type="submit" disabled={loading}>{loading ? "Criando..." : "Criar minha conta"}</button>
         </form>
