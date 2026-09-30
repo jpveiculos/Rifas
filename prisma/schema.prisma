@@ -37,7 +37,6 @@ model Raffle {
   raffleCode           String?            @unique
   name                 String
   productName          String
-  category             String             @default("OUTROS")
   description          String             @db.Text
   imageUrls            String[]           @default([])
   totalNumbers         Int
