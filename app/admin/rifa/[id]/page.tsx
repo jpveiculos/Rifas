@@ -159,7 +159,13 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
       const response = await fetch("/api/rifas", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, edit: true, ...form, imageUrls: form.imageUrls.filter(Boolean) })
+        body: JSON.stringify({
+          id,
+          edit: true,
+          ...form,
+          endDate: form.endDate ? new Date(form.endDate).toISOString() : "",
+          imageUrls: form.imageUrls.filter(Boolean)
+        })
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "Não foi possível salvar.");
