@@ -99,16 +99,13 @@ export async function PATCH(request: Request) {
       if (!current) return NextResponse.json({ error: "Rifa não encontrada." }, { status: 404 });
 
       if (totalNumbers !== current.totalNumbers) {
-        const occupied = await prisma.raffleNumber.count({ where: { raffleId: id, status: { not: "AVAILABLE" } } });
-        if (occupied > 0) return NextResponse.json({ error: "A quantidade de números não pode ser alterada depois que houver números reservados ou confirmados." }, { status: 400 });
-        if (totalNumbers < current.totalNumbers) return NextResponse.json({ error: "A quantidade de números só pode ser reduzida criando uma nova rifa." }, { status: 400 });
-        await prisma.$transaction(async (tx) => {
-          await tx.raffle.update({ where: { id }, data: { name, productName, description, totalNumbers, priceInCents, endDate, imageUrls } });
-          await tx.$executeRaw(Prisma.sql`INSERT INTO "RaffleNumber" ("id", "raffleId", "number") SELECT md5(${id} || ':' || series::text), ${id}, series FROM generate_series(${current.totalNumbers + 1}, ${totalNumbers}) AS series`);
-        });
-      } else {
-        await prisma.raffle.update({ where: { id }, data: { name, productName, description, priceInCents, endDate, imageUrls } });
+        return NextResponse.json({ error: "A quantidade de números é fixa depois que a rifa é criada." }, { status: 400 });
       }
+
+      await prisma.raffle.update({
+        where: { id },
+        data: { name, productName, description, priceInCents, endDate, imageUrls }
+      });
       return NextResponse.json({ id, ok: true });
     }
 
