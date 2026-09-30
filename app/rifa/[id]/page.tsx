@@ -46,13 +46,7 @@ export default async function RafflePage({ params }: Props) {
             <div className="info-item"><span className="info-label">Data do sorteio</span><span className="info-value">{raffle.endDate ? new Date(raffle.endDate).toLocaleString("pt-BR") : "Será divulgada posteriormente"}</span></div>
           </div>
 
-          {raffle.resultStatus === "ACCUMULATED" && raffle.federalNumbers.length > 0 && (
-            <div className="account-result account-result-accumulated">
-              <span>Resultado da Loteria Federal</span>
-              <strong>{raffle.federalNumbers.map(formatNumber).join(" · ")}</strong>
-              <small>Nenhum dos números confirmados coincidiu. A rifa continua aberta para o próximo sorteio.</small>
-            </div>
-          )}
+
 
           {raffle.status === "ENDED" && winningNumbers.length > 0 && (
             <div className="account-result account-result-winner">
