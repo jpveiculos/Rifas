@@ -18,7 +18,7 @@ export async function POST(request: Request, { params }: Params) {
       select: { status: true, endDate: true }
     });
 
-    if (!raffle || raffle.status !== "ACTIVE" || raffle.endDate <= new Date()) {
+    if (!raffle || raffle.status !== "ACTIVE" || (raffle.endDate && raffle.endDate <= new Date())) {
       return NextResponse.json({ error: "Esta rifa não está disponível para novas reservas." }, { status: 409 });
     }
 
