@@ -188,7 +188,10 @@ export async function PATCH(request: Request) {
         if (!raffle) throw new Error("Rifa não encontrada.");
         if (raffle.status !== "ACTIVE") throw new Error("A rifa não está ativa para sorteio.");
         if (raffle.resultStatus === "WINNER") throw new Error("Esta rifa já possui um resultado publicado.");
-        if (raffle.endDate && raffle.endDate > new Date()) {
+        if (!raffle.endDate) {
+          throw new Error("Defina a data e o horário do sorteio antes de sortear.");
+        }
+        if (raffle.endDate > new Date()) {
           throw new Error("O sorteio ainda não chegou à data e hora programadas.");
         }
 
@@ -335,6 +338,7 @@ export async function PATCH(request: Request) {
       "Rifa não encontrada.",
       "A rifa não está ativa para sorteio.",
       "Esta rifa já possui um resultado publicado.",
+      "Defina a data e o horário do sorteio antes de sortear.",
       "O sorteio ainda não chegou à data e hora programadas.",
       "Não há nenhum número confirmado para realizar o sorteio.",
       "Não foi possível selecionar o número vencedor."
