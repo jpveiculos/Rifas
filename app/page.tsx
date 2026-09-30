@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import ShareRaffle from "@/app/rifa/ShareRaffle";
+import { RAFFLE_CATEGORIES } from "@/lib/raffle-categories";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +12,11 @@ export default async function HomePage() {
     where: { status: "ACTIVE" },
     orderBy: { createdAt: "desc" }
   });
+
+  const groupedRaffles = RAFFLE_CATEGORIES.map((category) => ({
+    category,
+    raffles: raffles.filter((raffle) => raffle.category === category)
+  })).filter((group) => group.raffles.length > 0);
 
   return (
     <>
@@ -73,27 +79,38 @@ export default async function HomePage() {
             {raffles.length === 0 ? (
               <div className="empty-state"><h3>Nenhuma rifa publicada ainda.</h3><p>As rifas criadas e ativadas no painel administrativo aparecerão aqui.</p></div>
             ) : (
-              <div className="raffle-grid">
-                {raffles.map((raffle) => (
-                  <article className="raffle-card" key={raffle.id}>
-                    {raffle.imageUrls.length > 0 ? (
-                      <img className="raffle-card-image" src={raffle.imageUrls[0]} alt={raffle.productName} />
-                    ) : (
-                      <div className="raffle-card-image raffle-card-placeholder"><span>Rifas.TOP</span></div>
-                    )}
-                    <div className="raffle-card-content">
-                      <span className="badge">EM ANDAMENTO</span>
-                      <div className="raffle-code-public">{raffle.raffleCode ? "ID " + raffle.raffleCode : ""}</div>
-                      <h3>{raffle.productName}</h3>
-                      <p>{raffle.description}</p>
-                      <div className="card-price">{(raffle.priceInCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}<small> por número</small></div>
-                      <div className="raffle-meta">
-                        <span>● Ativa</span>
+              <div className="raffle-category-list">
+                {groupedRaffles.map((group) => (
+                  <section className="raffle-category-section" key={group.category}>
+                    <div className="raffle-category-heading">
+                      <div>
+                        <span className="section-kicker">CATEGORIA</span>
+                        <h3>{group.category}</h3>
                       </div>
-                      <Link className="primary-button" href={"/rifa/" + raffle.id}>Escolher números</Link>
-                      <ShareRaffle raffleName={raffle.name} />
+                      <span>{group.raffles.length} {group.raffles.length === 1 ? "rifa" : "rifas"}</span>
                     </div>
-                  </article>
+                    <div className="raffle-grid">
+                      {group.raffles.map((raffle) => (
+                        <article className="raffle-card" key={raffle.id}>
+                          {raffle.imageUrls.length > 0 ? (
+                            <img className="raffle-card-image" src={raffle.imageUrls[0]} alt={raffle.productName} />
+                          ) : (
+                            <div className="raffle-card-image raffle-card-placeholder"><span>Rifas.TOP</span></div>
+                          )}
+                          <div className="raffle-card-content">
+                            <span className="badge">EM ANDAMENTO</span>
+                            <div className="raffle-code-public">{raffle.raffleCode ? "ID " + raffle.raffleCode : ""}</div>
+                            <h3>{raffle.productName}</h3>
+                            <p>{raffle.description}</p>
+                            <div className="card-price">{(raffle.priceInCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}<small> por número</small></div>
+                            <div className="raffle-meta"><span>● Ativa</span></div>
+                            <Link className="primary-button" href={"/rifa/" + raffle.id}>Escolher números</Link>
+                            <ShareRaffle raffleName={raffle.name} />
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  </section>
                 ))}
               </div>
             )}
