@@ -26,38 +26,47 @@ enum ParticipationStatus {
   REJECTED
 }
 
+enum RaffleResultStatus {
+  PENDING
+  ACCUMULATED
+  WINNER
+}
+
 model Raffle {
-  id                   String        @id @default(cuid())
-  raffleCode           String?       @unique
+  id                   String             @id @default(cuid())
+  raffleCode           String?            @unique
   name                 String
   productName          String
-  category             String        @default("OUTROS")
-  description          String        @db.Text
-  imageUrls            String[]      @default([])
+  category             String             @default("OUTROS")
+  description          String             @db.Text
+  imageUrls            String[]           @default([])
   totalNumbers         Int
   priceInCents         Int
   endDate              DateTime?
-  status               RaffleStatus  @default(DRAFT)
+  status               RaffleStatus       @default(DRAFT)
   salesClosedAt        DateTime?
   drawEligibleCount    Int?
   winningNumber        Int?
+  winningNumbers       Int[]              @default([])
+  federalNumbers       String[]           @default([])
+  resultStatus         RaffleResultStatus @default(PENDING)
   resultPublishedAt    DateTime?
-  createdAt             DateTime      @default(now())
-  updatedAt             DateTime      @updatedAt
-  numbers               RaffleNumber[]
-  participations        RaffleParticipation[]
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+  numbers              RaffleNumber[]
+  participations       RaffleParticipation[]
 }
 
 model User {
-  id           String    @id @default(cuid())
-  name         String
-  city         String
-  whatsapp     String
-  username     String    @unique
-  passwordHash String
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  sessions     Session[]
+  id             String    @id @default(cuid())
+  name           String
+  city           String
+  whatsapp       String
+  username       String    @unique
+  passwordHash   String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  sessions       Session[]
   numbers        RaffleNumber[]
   participations RaffleParticipation[]
 }
