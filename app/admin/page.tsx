@@ -12,6 +12,8 @@ type Raffle = {
   endDate: string | null;
   salesClosedAt: string | null;
   drawEligibleCount: number | null;
+  winningNumber: number | null;
+  resultPublishedAt: string | null;
   status: "DRAFT" | "ACTIVE" | "PAUSED" | "ENDED";
 };
 
@@ -40,6 +42,7 @@ export default function AdminPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [images, setImages] = useState<string[]>([]);
+  const [resultInputs, setResultInputs] = useState<Record<string, string>>({});
 
   async function loadRaffles() {
     setLoadingList(true);
@@ -185,6 +188,38 @@ export default function AdminPage() {
     }
   }
 
+  async function publishResult(id: string) {
+    const value = String(resultInputs[id] ?? "").trim();
+    if (!value) {
+      setError("Informe o número vencedor.");
+      return;
+    }
+
+    if (!window.confirm("Publicar este número como vencedor da rifa?")) return;
+
+    setError("");
+    setMessage("");
+
+    try {
+      const response = await fetch("/api/rifas", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, result: true, winningNumber: Number(value) })
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error ?? "Não foi possível publicar o resultado.");
+        return;
+      }
+
+      setMessage("Resultado publicado com sucesso.");
+      await loadRaffles();
+    } catch {
+      setError("Não foi possível conectar ao servidor.");
+    }
+  }
+
   return (
     <main className="admin-page">
       <div className="container admin-container">
@@ -284,8 +319,9 @@ export default function AdminPage() {
                     <div className="raffle-admin-meta">
                       <span>{raffle.totalNumbers.toLocaleString("pt-BR")} números</span>
                       <span>{(raffle.priceInCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} cada</span>
-                      <span>{raffle.endDate ? "Sorteio em " + new Date(raffle.endDate).toLocaleString("pt-BR") : "Sorteio ainda não definido"}
-                      {raffle.status === "ENDED" && <span>{raffle.drawEligibleCount ?? 0} números aptos ao sorteio</span>}</span>
+                      <span>{raffle.endDate ? "Sorteio em " + new Date(raffle.endDate).toLocaleString("pt-BR") : "Sorteio ainda não definido"}</span>
+                      {raffle.status === "ENDED" && <span>{raffle.drawEligibleCount ?? 0} números aptos ao sorteio</span>}
+                      {raffle.status === "ENDED" && raffle.winningNumber && <span>Número vencedor: {String(raffle.winningNumber).padStart(5, "0")}</span>}
                     </div>
                   </div>
                   <div className="raffle-admin-actions">
@@ -295,6 +331,25 @@ export default function AdminPage() {
                     {raffle.status === "ACTIVE" && <button className="secondary-button compact-button" type="button" onClick={() => changeStatus(raffle.id, "PAUSED")}>Pausar</button>}
                     {raffle.status === "PAUSED" && <button className="primary-button compact-button" type="button" onClick={() => changeStatus(raffle.id, "ACTIVE")}>Reativar</button>}
                     {raffle.status !== "ENDED" && <button className="secondary-button compact-button" type="button" onClick={() => changeStatus(raffle.id, "ENDED")}>Encerrar vendas</button>}
+                    {raffle.status === "ENDED" && !raffle.winningNumber && (
+                      <div className="raffle-result-admin">
+                        <input
+                          inputMode="numeric"
+                          type="number"
+                          min="1"
+                          max={raffle.totalNumbers}
+                          placeholder="Nº vencedor"
+                          value={resultInputs[raffle.id] ?? ""}
+                          onChange={(event) => setResultInputs((current) => ({ ...current, [raffle.id]: event.target.value }))}
+                        />
+                        <button className="primary-button compact-button" type="button" onClick={() => publishResult(raffle.id)}>Publicar resultado</button>
+                      </div>
+                    )}
+                    {raffle.status === "ENDED" && raffle.winningNumber && (
+                      <div className="raffle-result-admin raffle-result-published">
+                        Resultado: <strong>{String(raffle.winningNumber).padStart(5, "0")}</strong>
+                      </div>
+                    )}
                   </div>
                 </article>
               ))}
