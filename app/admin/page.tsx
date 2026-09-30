@@ -72,6 +72,7 @@ export default function AdminPage() {
   const [images, setImages] = useState<string[]>([]);
   const [drawResults, setDrawResults] = useState<Record<string, DrawResult>>({});
   const [drawing, setDrawing] = useState<Record<string, boolean>>({});
+  const [now, setNow] = useState(() => Date.now());
 
   async function loadRaffles() {
     setLoadingList(true);
@@ -89,7 +90,15 @@ export default function AdminPage() {
 
   useEffect(() => {
     loadRaffles();
+    const timer = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(timer);
   }, []);
+
+  function toServerDateTime(value: string) {
+    if (!value) return "";
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? value : date.toISOString();
+  }
 
   function update(field: keyof typeof initialForm, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
@@ -169,7 +178,7 @@ export default function AdminPage() {
       const response = await fetch("/api/rifas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, imageUrls: images })
+        body: JSON.stringify({ ...form, endDate: toServerDateTime(form.endDate), imageUrls: images })
       });
       const data = await response.json();
 
@@ -416,14 +425,37 @@ export default function AdminPage() {
                             <span>números confirmados concorrendo</span>
                           </div>
 
-                          <button
-                            className="primary-button compact-button"
-                            type="button"
-                            disabled={drawing[raffle.id] || raffle.confirmedCount === 0}
-                            onClick={() => drawRaffle(raffle.id)}
-                          >
-                            {drawing[raffle.id] ? "Sorteando..." : "Realizar sorteio"}
-                          </button>
+                          {(() => {
+                            const hasDrawDate = Boolean(raffle.endDate);
+                            const drawDateReached = hasDrawDate && new Date(raffle.endDate as string).getTime() <= now;
+                            const canDraw = hasDrawDate && drawDateReached && raffle.confirmedCount > 0 && !drawing[raffle.id];
+
+                            return (
+                              <>
+                                <div className={"draw-date-lock " + (canDraw ? "draw-date-ready" : "")}>
+                                  {!hasDrawDate
+                                    ? "🔒 Defina a data e o horário do sorteio em “Editar” para liberar o botão."
+                                    : !drawDateReached
+                                      ? "🔒 Aguardando a data e o horário definidos para o sorteio."
+                                      : raffle.confirmedCount === 0
+                                        ? "🔒 A data chegou, mas ainda não há números com pagamento confirmado."
+                                        : "🟢 Data e horário atingidos. O sorteio está liberado."}
+                                </div>
+                                <button
+                                  className="primary-button compact-button"
+                                  type="button"
+                                  disabled={!canDraw}
+                                  onClick={() => drawRaffle(raffle.id)}
+                                >
+                                  {drawing[raffle.id]
+                                    ? "Sorteando..."
+                                    : canDraw
+                                      ? "Realizar sorteio"
+                                      : "Sorteio bloqueado"}
+                                </button>
+                              </>
+                            );
+                          })()}
                         </div>
                       )}
 
