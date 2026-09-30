@@ -6,15 +6,21 @@ import ShareRaffle from "../ShareRaffle";
 
 type Props = { params: Promise<{ id: string }> };
 
+function formatNumber(value: number | string) {
+  return String(value).padStart(5, "0");
+}
+
 export default async function RafflePage({ params }: Props) {
   const { id } = await params;
   const raffle = await prisma.raffle.findUnique({ where: { id } });
 
   if (!raffle) notFound();
 
-  const availableNumbers = await prisma.raffleNumber.count({
-    where: { raffleId: id, status: "AVAILABLE" }
-  });
+  const winningNumbers = raffle.winningNumbers.length > 0
+    ? raffle.winningNumbers
+    : raffle.winningNumber !== null
+      ? [raffle.winningNumber]
+      : [];
 
   return (
     <>
@@ -22,25 +28,41 @@ export default async function RafflePage({ params }: Props) {
         <Link className="brand" href="/"><span>Rifas<span className="brand-dot">.</span><strong>TOP</strong></span></Link>
         <Link className="header-link" href="/">Voltar</Link>
       </div></header>
+
       <main className="section"><div className="container">
         <article className="raffle-card"><div className="raffle-card-content">
-          <span className="badge">{raffle.status}</span>
+          <span className={"badge " + (raffle.status === "ENDED" ? "badge-finished" : raffle.resultStatus === "ACCUMULATED" ? "badge-accumulated" : "")}>
+            {raffle.status === "ENDED" ? "SORTEIO FINALIZADO" : raffle.resultStatus === "ACCUMULATED" ? "ACUMULOU · SEGUE ABERTA" : raffle.status}
+          </span>
+
           <h1>{raffle.name}</h1>
           {raffle.raffleCode && <div className="raffle-code-public raffle-code-detail">ID {raffle.raffleCode}</div>}
           {raffle.imageUrls.length > 0 && <div className="raffle-gallery">{raffle.imageUrls.map((url) => <img key={url} src={url} alt={raffle.productName} />)}</div>}
           <h3>{raffle.productName}</h3>
           <p>{raffle.description}</p>
+
           <div className="info-row">
             <div className="info-item"><span className="info-label">Preço por número</span><span className="info-value">{(raffle.priceInCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span></div>
             <div className="info-item"><span className="info-label">Data do sorteio</span><span className="info-value">{raffle.endDate ? new Date(raffle.endDate).toLocaleString("pt-BR") : "Será divulgada posteriormente"}</span></div>
           </div>
-          {raffle.status === "ENDED" && raffle.winningNumber !== null && (
-            <div className="account-result">
-              <span>Número vencedor</span>
-              <strong>{String(raffle.winningNumber).padStart(5, "0")}</strong>
+
+          {raffle.resultStatus === "ACCUMULATED" && raffle.federalNumbers.length > 0 && (
+            <div className="account-result account-result-accumulated">
+              <span>Resultado da Loteria Federal</span>
+              <strong>{raffle.federalNumbers.map(formatNumber).join(" · ")}</strong>
+              <small>Nenhum dos números confirmados coincidiu. A rifa continua aberta para o próximo sorteio.</small>
             </div>
           )}
-          {raffle.status !== "ENDED" && <RaffleParticipant raffleId={raffle.id} priceInCents={raffle.priceInCents} />}
+
+          {raffle.status === "ENDED" && winningNumbers.length > 0 && (
+            <div className="account-result account-result-winner">
+              <span>Número(s) vencedor(es)</span>
+              <strong>{winningNumbers.map(formatNumber).join(" · ")}</strong>
+              <small>Resultado publicado em {raffle.resultPublishedAt ? new Date(raffle.resultPublishedAt).toLocaleString("pt-BR") : "data não informada"}.</small>
+            </div>
+          )}
+
+          {raffle.status === "ACTIVE" && <RaffleParticipant raffleId={raffle.id} priceInCents={raffle.priceInCents} />}
           <ShareRaffle raffleName={raffle.name} />
         </div></article>
       </div></main>
