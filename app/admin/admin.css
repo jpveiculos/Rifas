@@ -65,3 +65,72 @@
 .form-section small { color: #747b85; font-size: 12px; font-weight: 500; line-height: 1.4; }
 .raffle-code-public { margin: 6px 0 8px; color: #0d63df; font-size: 12px; font-weight: 800; letter-spacing: .4px; }
 .raffle-code-detail { margin: 8px 0 16px; }
+
+
+.draw-result-box {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  margin-top: 10px;
+  padding: 15px;
+  border: 2px solid #d9e5f1;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #f7fbff, #fffdf4);
+}
+.draw-result-box > div:first-child {
+  display: grid;
+  gap: 5px;
+}
+.draw-result-box > div:first-child strong {
+  color: #17263b;
+  font-size: 14px;
+}
+.draw-result-box > div:first-child span {
+  color: #6b7888;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.draw-count {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 11px 12px;
+  border-radius: 10px;
+  background: #edf5ff;
+  color: #31506f;
+}
+.draw-count b {
+  color: #0d63df;
+  font-size: 22px;
+}
+.draw-count span {
+  font-size: 12px;
+  font-weight: 700;
+}
+.draw-preview {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  margin-top: 10px;
+  padding: 13px;
+  border-radius: 12px;
+}
+.draw-preview-winner {
+  background: #effaf4;
+  border: 1px solid #bde7ce;
+  color: #137747;
+}
+.draw-preview span, .draw-preview small {
+  font-size: 12px;
+}
+.draw-preview strong {
+  font-size: 14px;
+}
+.draw-preview b {
+  font-size: 18px;
+}
+@media (max-width: 640px) {
+  .draw-count {
+    align-items: center;
+  }
+}
