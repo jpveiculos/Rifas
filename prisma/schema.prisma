@@ -27,7 +27,7 @@ model Raffle {
   description    String        @db.Text
   totalNumbers   Int
   priceInCents   Int
-  endDate        DateTime
+  endDate        DateTime?
   status         RaffleStatus  @default(DRAFT)
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
