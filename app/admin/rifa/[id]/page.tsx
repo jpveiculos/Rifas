@@ -4,6 +4,7 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
 type Raffle = {
   id: string;
+  raffleCode: string | null;
   name: string;
   productName: string;
   description: string;
@@ -55,7 +56,7 @@ function compressImage(file: File): Promise<string> {
 export default function EditRafflePage({ params }: { params: Promise<{ id: string }> }) {
   const [id, setId] = useState("");
   const [raffle, setRaffle] = useState<Raffle | null>(null);
-  const [form, setForm] = useState({ raffleName: "", productName: "", description: "", totalNumbers: "", pricePerNumber: "", endDate: "", imageUrls: [""] });
+  const [form, setForm] = useState({ raffleCode: "", raffleName: "", productName: "", description: "", totalNumbers: "", pricePerNumber: "", endDate: "", imageUrls: [""] });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -79,6 +80,7 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
           const item = data.raffle as Raffle;
           setRaffle(item);
           setForm({
+            raffleCode: item.raffleCode ?? "",
             raffleName: item.name,
             productName: item.productName,
             description: item.description,
@@ -180,6 +182,7 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
         <form className="admin-form" onSubmit={save}>
           <section className="form-section">
             <h2>Informações do anúncio</h2>
+            <label>ID da rifa<input value={form.raffleCode} onChange={(e) => update("raffleCode", e.target.value)} placeholder="Ex.: RIFA-001" /><small>Você pode alterar o ID ou deixar vazio para manter o atual.</small></label>
             <label>Nome da rifa<input required value={form.raffleName} onChange={(e) => update("raffleName", e.target.value)} /></label>
             <label>Nome do produto<input required value={form.productName} onChange={(e) => update("productName", e.target.value)} /></label>
             <label>Descrição<textarea required rows={8} value={form.description} onChange={(e) => update("description", e.target.value)} /></label>
