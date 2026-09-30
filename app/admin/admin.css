@@ -134,3 +134,25 @@
     align-items: center;
   }
 }
+
+
+.draw-date-lock {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fff7e6;
+  border: 1px solid #f0d18a;
+  color: #805f16;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.draw-date-lock.draw-date-ready {
+  background: #eefaf3;
+  border-color: #b8e4c8;
+  color: #167444;
+}
+.draw-result-box .primary-button:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
