@@ -16,7 +16,7 @@ export default async function HomePage() {
     <>
       <header className="site-header"><div className="container site-header-inner">
         <Link className="brand" href="/">Rifas</Link>
-        <div className="header-actions">{user ? <Link className="header-link" href="/minha-conta">Olá, {user.username}</Link> : <Link className="header-link" href="/login">Entrar</Link>}<Link className="header-link" href="/admin">Área administrativa</Link></div>
+        <div className="header-actions">{user ? <Link className="header-link" href="/minha-conta">Olá, {user.username}</Link> : <Link className="header-link" href="/login">Entrar</Link>}</div>
       </div></header>
 
       <main>
