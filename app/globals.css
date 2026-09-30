@@ -276,3 +276,56 @@ a { color: inherit; text-decoration: none; }
   .raffle-result-admin { align-items: stretch; flex-direction: column; }
   .raffle-result-admin input, .raffle-result-admin .compact-button { width: 100%; }
 }
+
+
+/* Categorias das rifas */
+.admin-form select {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 13px;
+  border: 2px solid #dce5ef;
+  border-radius: 11px;
+  outline: none;
+  background: #fff;
+  color: #24344a;
+  font-weight: 600;
+}
+.admin-form select:focus {
+  border-color: #0d75e8;
+  box-shadow: 0 0 0 3px rgba(13,117,232,.1);
+}
+.raffle-admin-category {
+  display: inline-flex;
+  margin: 5px 0 8px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #edf5ff;
+  color: #0d63df;
+  font-size: 11px;
+  font-weight: 900;
+}
+.raffle-category-list { display: grid; gap: 38px; }
+.raffle-category-section { display: grid; gap: 16px; }
+.raffle-category-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e3eaf2;
+}
+.raffle-category-heading h3 {
+  margin: 5px 0 0;
+  color: #142238;
+  font-size: 27px;
+  letter-spacing: -.8px;
+}
+.raffle-category-heading > span {
+  color: #718096;
+  font-size: 13px;
+  font-weight: 800;
+}
+@media (max-width: 640px) {
+  .raffle-category-heading { align-items: start; }
+  .raffle-category-heading h3 { font-size: 23px; }
+}
