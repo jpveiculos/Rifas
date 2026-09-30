@@ -18,6 +18,8 @@ export function normalizeWhatsapp(value: string) {
 export function validateCredentials(name: string, city: string, username: string, whatsapp: string, password: string) {
   const cleanName = name.trim();
   const cleanCity = city.trim();
+  const cleanName = name.trim();
+  const cleanCity = city.trim();
   const cleanUsername = normalizeUsername(username);
   const cleanWhatsapp = normalizeWhatsapp(whatsapp);
 
