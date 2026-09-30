@@ -35,7 +35,6 @@ export default async function HomePage() {
               <h3>{raffle.name}</h3><p>{raffle.description}</p>
               <div className="info-row">
                 <div className="info-item"><span className="info-label">Produto</span><span className="info-value">{raffle.productName}</span></div>
-                <div className="info-item"><span className="info-label">Números</span><span className="info-value">{raffle.totalNumbers.toLocaleString("pt-BR")}</span></div>
                 <div className="info-item"><span className="info-label">Por número</span><span className="info-value">{(raffle.priceInCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span></div>
               </div>
               <div className="raffle-card-actions"><Link className="primary-button" href={"/rifa/" + raffle.id}>Ver rifa e participar</Link><ShareRaffle raffleName={raffle.name} /></div>
