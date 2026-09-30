@@ -21,6 +21,8 @@ export async function GET() {
         priceInCents: true,
         endDate: true,
         status: true,
+        salesClosedAt: true,
+        drawEligibleCount: true,
         createdAt: true
       }
     });
@@ -112,6 +114,53 @@ export async function PATCH(request: Request) {
 
     if (!id || !["ACTIVE", "PAUSED", "ENDED"].includes(status)) {
       return NextResponse.json({ error: "Dados inválidos." }, { status: 400 });
+    }
+
+    if (status === "ENDED") {
+      const result = await prisma.$transaction(async (tx) => {
+        const reservationLimit = new Date(Date.now() - 30 * 60 * 1000);
+        await tx.raffleNumber.updateMany({
+          where: {
+            raffleId: id,
+            status: "RESERVED",
+            reservedAt: { lt: reservationLimit }
+          },
+          data: {
+            status: "AVAILABLE",
+            reservationId: null,
+            reservedAt: null,
+            reservedByUserId: null
+          }
+        });
+
+        await tx.raffleNumber.updateMany({
+          where: { raffleId: id, status: "RESERVED" },
+          data: {
+            status: "AVAILABLE",
+            reservationId: null,
+            reservedAt: null,
+            reservedByUserId: null
+          }
+        });
+
+        const drawEligibleCount = await tx.raffleNumber.count({
+          where: { raffleId: id, status: "CONFIRMED" }
+        });
+
+        const raffle = await tx.raffle.update({
+          where: { id },
+          data: {
+            status: "ENDED",
+            salesClosedAt: new Date(),
+            drawEligibleCount
+          },
+          select: { id: true, status: true, salesClosedAt: true, drawEligibleCount: true }
+        });
+
+        return raffle;
+      });
+
+      return NextResponse.json(result);
     }
 
     const raffle = await prisma.raffle.update({
