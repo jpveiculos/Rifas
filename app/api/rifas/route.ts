@@ -41,6 +41,7 @@ export async function POST(request: Request) {
     const description = String(body.description ?? "").trim();
     const totalNumbers = Number(body.totalNumbers);
     const priceInCents = parsePrice(String(body.pricePerNumber ?? ""));
+    const imageUrls = Array.isArray(body.imageUrls) ? body.imageUrls.map((value: unknown) => String(value).trim()).filter(Boolean).slice(0, 10) : [];
     const rawEndDate = String(body.endDate ?? "").trim();
     const endDate = rawEndDate ? new Date(rawEndDate) : null;
 
@@ -54,7 +55,7 @@ export async function POST(request: Request) {
 
     const raffle = await prisma.$transaction(async (tx) => {
       const created = await tx.raffle.create({
-        data: { name, productName, description, totalNumbers, priceInCents, endDate }
+        data: { name, productName, description, imageUrls, totalNumbers, priceInCents, endDate }
       });
 
       await tx.$executeRaw(
