@@ -9,6 +9,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
       id: true,
       name: true,
       productName: true,
+      category: true,
       description: true,
       totalNumbers: true,
       priceInCents: true,
