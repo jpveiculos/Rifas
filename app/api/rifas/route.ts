@@ -71,3 +71,25 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Não foi possível salvar a rifa." }, { status: 500 });
   }
 }
+
+export async function PATCH(request: Request) {
+  try {
+    const body = await request.json();
+    const id = String(body.id ?? "").trim();
+    const status = String(body.status ?? "");
+
+    if (!id || !["ACTIVE", "PAUSED", "ENDED"].includes(status)) {
+      return NextResponse.json({ error: "Dados inválidos." }, { status: 400 });
+    }
+
+    const raffle = await prisma.raffle.update({
+      where: { id },
+      data: { status: status as "ACTIVE" | "PAUSED" | "ENDED" }
+    });
+
+    return NextResponse.json({ id: raffle.id, status: raffle.status });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Não foi possível alterar a rifa." }, { status: 500 });
+  }
+}
