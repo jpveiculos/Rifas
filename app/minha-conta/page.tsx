@@ -12,6 +12,8 @@ export default async function AccountPage() {
         <Link className="auth-brand" href="/">Rifas</Link>
         <h1>Minha conta</h1>
         <div className="account-info">
+          <div><span>Nome completo</span><strong>{user.name}</strong></div>
+          <div><span>Cidade</span><strong>{user.city}</strong></div>
           <div><span>Usuário</span><strong>{user.username}</strong></div>
           <div><span>WhatsApp / telefone</span><strong>{user.whatsapp}</strong></div>
         </div>
