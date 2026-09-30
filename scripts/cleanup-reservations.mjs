@@ -18,7 +18,25 @@ async function main() {
     }
   });
 
-  console.log(`Reservas expiradas liberadas: ${released.count}`);
+  const rejected = await prisma.raffleParticipation.updateMany({
+    where: {
+      status: "PENDING",
+      createdAt: { lt: cutoff }
+    },
+    data: {
+      status: "REJECTED",
+      mercadopagoStatus: "expired",
+      mercadopagoStatusDetail: "Reserva expirada após 30 minutos sem pagamento."
+    }
+  });
+
+  const sessions = await prisma.session.deleteMany({
+    where: { expiresAt: { lt: new Date() } }
+  });
+
+  console.log(
+    `Limpeza concluída: ${released.count} reservas liberadas, ${rejected.count} pagamentos pendentes expirados e ${sessions.count} sessões expiradas removidas.`
+  );
 }
 
 main()
