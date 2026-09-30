@@ -25,6 +25,7 @@ model Raffle {
   name           String
   productName    String
   description    String        @db.Text
+  imageUrls      String[]      @default([])
   totalNumbers   Int
   priceInCents   Int
   endDate        DateTime?
