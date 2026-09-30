@@ -15,9 +15,21 @@ export function normalizeWhatsapp(value: string) {
   return value.replace(/\D/g, "").trim();
 }
 
-export function validateCredentials(username: string, whatsapp: string, password: string) {
+export function validateCredentials(name: string, city: string, username: string, whatsapp: string, password: string) {
+  const cleanName = name.trim();
+  const cleanCity = city.trim();
+  const cleanName = name.trim();
+  const cleanCity = city.trim();
   const cleanUsername = normalizeUsername(username);
   const cleanWhatsapp = normalizeWhatsapp(whatsapp);
+
+  if (cleanName.length < 3 || cleanName.length > 100) {
+    return "Informe seu nome completo.";
+  }
+
+  if (cleanCity.length < 2 || cleanCity.length > 80) {
+    return "Informe sua cidade.";
+  }
 
   if (!/^[a-z0-9._-]{3,30}$/.test(cleanUsername)) {
     return "O usuário deve ter de 3 a 30 caracteres e usar apenas letras, números, ponto, hífen ou sublinhado.";
@@ -54,8 +66,8 @@ function hashSessionToken(token: string) {
   return createHash("sha256").update(token).digest("hex");
 }
 
-export async function createUser(username: string, whatsapp: string, password: string) {
-  const error = validateCredentials(username, whatsapp, password);
+export async function createUser(name: string, city: string, username: string, whatsapp: string, password: string) {
+  const error = validateCredentials(name, city, username, whatsapp, password);
   if (error) throw new Error(error);
 
   const cleanUsername = normalizeUsername(username);
@@ -72,7 +84,7 @@ export async function createUser(username: string, whatsapp: string, password: s
       whatsapp: cleanWhatsapp,
       passwordHash
     },
-    select: { id: true, username: true, whatsapp: true }
+    select: { id: true, name: true, city: true, username: true, whatsapp: true }
   });
 }
 
@@ -84,7 +96,7 @@ export async function authenticateUser(username: string, password: string) {
     return null;
   }
 
-  return { id: user.id, username: user.username, whatsapp: user.whatsapp };
+  return { id: user.id, name: user.name, city: user.city, username: user.username, whatsapp: user.whatsapp };
 }
 
 export async function startSession(userId: string) {
@@ -116,7 +128,7 @@ export async function getCurrentUser() {
 
   const session = await prisma.session.findUnique({
     where: { tokenHash: hashSessionToken(token) },
-    include: { user: { select: { id: true, username: true, whatsapp: true } } }
+    include: { user: { select: { id: true, name: true, city: true, username: true, whatsapp: true } } }
   });
 
   if (!session) return null;
