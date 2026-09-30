@@ -1,0 +1,1 @@
+ALTER TABLE "Raffle" DROP COLUMN IF EXISTS "category";
