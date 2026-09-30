@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Rifas.top",
+  title: "Rifas.TOP",
   description: "Plataforma de rifas pessoais",
-  applicationName: "Rifas.top",
+  applicationName: "Rifas.TOP",
   appleWebApp: {
     capable: true,
-    title: "Rifas.top",
+    title: "Rifas.TOP",
     statusBarStyle: "black-translucent"
   }
 };
