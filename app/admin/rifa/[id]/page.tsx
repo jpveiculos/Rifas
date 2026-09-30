@@ -122,7 +122,7 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
     setMessage("");
 
     try {
-      const images = [];
+      const images: string[] = [];
       for (const file of files) images.push(await compressImage(file));
 
       setForm((current) => ({
