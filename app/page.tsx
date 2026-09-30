@@ -6,12 +6,19 @@ import { RAFFLE_CATEGORIES } from "@/lib/raffle-categories";
 
 export const dynamic = "force-dynamic";
 
+function formatNumber(value: number | string) {
+  return String(value).padStart(5, "0");
+}
+
 export default async function HomePage() {
   const user = await getCurrentUser();
   const raffles = await prisma.raffle.findMany({
-    where: { status: "ACTIVE" },
+    where: { status: { in: ["ACTIVE", "ENDED"] } },
     orderBy: { createdAt: "desc" }
   });
+
+  const activeCount = raffles.filter((raffle) => raffle.status === "ACTIVE").length;
+  const finishedCount = raffles.filter((raffle) => raffle.status === "ENDED").length;
 
   const groupedRaffles = RAFFLE_CATEGORIES.map((category) => ({
     category,
@@ -43,15 +50,15 @@ export default async function HomePage() {
             <div className="home-hero-copy">
               <span className="hero-kicker">RIFAS.TOP</span>
               <h1>Concorra a prêmios incríveis.</h1>
-              <p>Escolha seus números, faça seu pagamento e participe das nossas rifas de forma simples e rápida.</p>
+              <p>Escolha seus números, acompanhe os resultados da Loteria Federal e confira tudo pela sua área de participante.</p>
               <div className="hero-actions">
-                <Link className="hero-button" href="#rifas">Ver rifas disponíveis</Link>
+                <Link className="hero-button" href="#rifas">Ver rifas</Link>
                 {!user && <Link className="hero-secondary" href="/cadastro">Criar minha conta</Link>}
               </div>
               <div className="hero-benefits">
                 <div><span>01</span><strong>Escolha seus números</strong></div>
                 <div><span>02</span><strong>Pagamento fácil</strong></div>
-                <div><span>03</span><strong>Boa sorte!</strong></div>
+                <div><span>03</span><strong>Confira o resultado</strong></div>
               </div>
             </div>
             <div className="hero-visual" aria-hidden="true">
@@ -70,10 +77,14 @@ export default async function HomePage() {
           <div className="container">
             <div className="section-heading">
               <div>
-                <span className="section-kicker">PARTICIPE AGORA</span>
+                <span className="section-kicker">RIFAS</span>
                 <h2 className="section-title">Rifas em destaque</h2>
               </div>
-              {raffles.length > 0 && <span className="raffle-count">{raffles.length} {raffles.length === 1 ? "rifa disponível" : "rifas disponíveis"}</span>}
+              {raffles.length > 0 && (
+                <span className="raffle-count">
+                  {activeCount} em andamento{finishedCount > 0 ? " · " + finishedCount + " finalizadas" : ""}
+                </span>
+              )}
             </div>
 
             {raffles.length === 0 ? (
@@ -89,26 +100,66 @@ export default async function HomePage() {
                       </div>
                       <span>{group.raffles.length} {group.raffles.length === 1 ? "rifa" : "rifas"}</span>
                     </div>
+
                     <div className="raffle-grid">
-                      {group.raffles.map((raffle) => (
-                        <article className="raffle-card" key={raffle.id}>
-                          {raffle.imageUrls.length > 0 ? (
-                            <img className="raffle-card-image" src={raffle.imageUrls[0]} alt={raffle.productName} />
-                          ) : (
-                            <div className="raffle-card-image raffle-card-placeholder"><span>Rifas.TOP</span></div>
-                          )}
-                          <div className="raffle-card-content">
-                            <span className="badge">EM ANDAMENTO</span>
-                            <div className="raffle-code-public">{raffle.raffleCode ? "ID " + raffle.raffleCode : ""}</div>
-                            <h3>{raffle.productName}</h3>
-                            <p>{raffle.description}</p>
-                            <div className="card-price">{(raffle.priceInCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}<small> por número</small></div>
-                            <div className="raffle-meta"><span>● Ativa</span></div>
-                            <Link className="primary-button" href={"/rifa/" + raffle.id}>Escolher números</Link>
-                            <ShareRaffle raffleName={raffle.name} />
-                          </div>
-                        </article>
-                      ))}
+                      {group.raffles.map((raffle) => {
+                        const winningNumbers = raffle.winningNumbers?.length > 0
+                          ? raffle.winningNumbers
+                          : raffle.winningNumber !== null
+                            ? [raffle.winningNumber]
+                            : [];
+                        const accumulated = raffle.status === "ACTIVE" && raffle.resultStatus === "ACCUMULATED";
+                        const finished = raffle.status === "ENDED";
+
+                        return (
+                          <article className="raffle-card" key={raffle.id}>
+                            {raffle.imageUrls.length > 0 ? (
+                              <img className="raffle-card-image" src={raffle.imageUrls[0]} alt={raffle.productName} />
+                            ) : (
+                              <div className="raffle-card-image raffle-card-placeholder"><span>Rifas.TOP</span></div>
+                            )}
+
+                            <div className="raffle-card-content">
+                              <span className={"badge " + (finished ? "badge-finished" : accumulated ? "badge-accumulated" : "")}>
+                                {finished ? "SORTEIO FINALIZADO" : accumulated ? "ACUMULOU · SEGUE ABERTA" : "EM ANDAMENTO"}
+                              </span>
+                              <div className="raffle-code-public">{raffle.raffleCode ? "ID " + raffle.raffleCode : ""}</div>
+                              <h3>{raffle.productName}</h3>
+                              <p>{raffle.description}</p>
+
+                              {accumulated && raffle.federalNumbers.length > 0 && (
+                                <div className="public-draw-result public-draw-accumulated">
+                                  <span>Última Federal</span>
+                                  <strong>{raffle.federalNumbers.map(formatNumber).join(" · ")}</strong>
+                                  <small>Nenhum número comprado coincidiu. A rifa continua aberta.</small>
+                                </div>
+                              )}
+
+                              {finished && winningNumbers.length > 0 && (
+                                <div className="public-draw-result public-draw-winner">
+                                  <span>Número(s) sorteado(s)</span>
+                                  <strong>{winningNumbers.map(formatNumber).join(" · ")}</strong>
+                                  <small>Rifa finalizada com ganhador.</small>
+                                </div>
+                              )}
+
+                              <div className="card-price">{(raffle.priceInCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}<small> por número</small></div>
+                              <div className="raffle-meta">
+                                <span>{finished ? "● Finalizada" : accumulated ? "● Aberta" : "● Ativa"}</span>
+                              </div>
+
+                              {finished ? (
+                                <Link className="primary-button" href={"/rifa/" + raffle.id}>Ver resultado</Link>
+                              ) : (
+                                <>
+                                  <Link className="primary-button" href={"/rifa/" + raffle.id}>Escolher números</Link>
+                                  <ShareRaffle raffleName={raffle.name} />
+                                </>
+                              )}
+                            </div>
+                          </article>
+                        );
+                      })}
                     </div>
                   </section>
                 ))}
