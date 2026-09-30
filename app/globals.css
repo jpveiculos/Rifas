@@ -64,3 +64,19 @@ a { color: inherit; text-decoration: none; }
 .auth-logout { width: 100%; cursor: pointer; }
 .error-message a { text-decoration: underline; font-weight: 700; }
 @media (max-width: 640px) { .header-actions { gap: 12px; } .header-link { font-size: 13px; } .auth-card { padding: 24px 20px; } }
+
+.raffle-card-actions { display: grid; gap: 12px; }
+.share-box { display: grid; gap: 14px; margin-top: 22px; padding: 18px; border: 1px solid #e1e4e9; border-radius: 14px; background: #f8f9fb; }
+.share-box > div:first-child { display: grid; gap: 4px; }
+.share-box strong { font-size: 15px; }
+.share-box span { color: #686f79; font-size: 13px; line-height: 1.45; }
+.share-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.share-button { min-height: 42px; padding: 0 14px; border: 1px solid #d5d9df; border-radius: 10px; background: #fff; color: #20242b; font-weight: 700; }
+.share-button:hover { background: #f0f2f5; }
+.share-main { background: #111318; border-color: #111318; color: #fff; }
+.share-main:hover { background: #242830; }
+@media (max-width: 640px) {
+  .share-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .share-button { width: 100%; }
+  .share-main { grid-column: 1 / -1; }
+}
