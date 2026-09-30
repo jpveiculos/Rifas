@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
 type Raffle = {
   id: string;
@@ -14,12 +14,51 @@ type Raffle = {
   status: "DRAFT" | "ACTIVE" | "PAUSED" | "ENDED";
 };
 
+const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
+
+function compressImage(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    if (!file.type.startsWith("image/")) {
+      reject(new Error("Selecione apenas arquivos de imagem."));
+      return;
+    }
+    if (file.size > MAX_IMAGE_BYTES) {
+      reject(new Error("A foto deve ter no máximo 8 MB."));
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Não foi possível ler a foto."));
+    reader.onload = () => {
+      const image = new Image();
+      image.onerror = () => reject(new Error("Não foi possível processar a foto."));
+      image.onload = () => {
+        const maxSide = 1400;
+        const scale = Math.min(1, maxSide / Math.max(image.width, image.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.max(1, Math.round(image.width * scale));
+        canvas.height = Math.max(1, Math.round(image.height * scale));
+        const context = canvas.getContext("2d");
+        if (!context) {
+          reject(new Error("Não foi possível preparar a foto."));
+          return;
+        }
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/jpeg", 0.78));
+      };
+      image.src = String(reader.result);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function EditRafflePage({ params }: { params: Promise<{ id: string }> }) {
   const [id, setId] = useState("");
   const [raffle, setRaffle] = useState<Raffle | null>(null);
   const [form, setForm] = useState({ raffleName: "", productName: "", description: "", totalNumbers: "", pricePerNumber: "", endDate: "", imageUrls: [""] });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -68,6 +107,36 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
     });
   }
 
+  async function addUploadedImages(event: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files ?? []);
+    event.target.value = "";
+    if (!files.length) return;
+
+    if (form.imageUrls.filter(Boolean).length + files.length > 10) {
+      setError("Você pode adicionar no máximo 10 fotos.");
+      return;
+    }
+
+    setUploading(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const images = [];
+      for (const file of files) images.push(await compressImage(file));
+
+      setForm((current) => ({
+        ...current,
+        imageUrls: [...current.imageUrls.filter(Boolean), ...images]
+      }));
+      setMessage(files.length === 1 ? "Foto adicionada. Salve as alterações para publicar." : "Fotos adicionadas. Salve as alterações para publicar.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível adicionar a foto.");
+    } finally {
+      setUploading(false);
+    }
+  }
+
   function addImage() {
     if (form.imageUrls.length < 10) setForm((current) => ({ ...current, imageUrls: [...current.imageUrls, ""] }));
   }
@@ -100,6 +169,8 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
   if (loading) return <main className="admin-page"><div className="container admin-container"><div className="admin-empty">Carregando rifa...</div></div></main>;
   if (!raffle) return <main className="admin-page"><div className="container admin-container"><div className="error-message">{error || "Rifa não encontrada."}</div></div></main>;
 
+  const hasImages = form.imageUrls.some(Boolean);
+
   return (
     <main className="admin-page">
       <div className="container admin-container">
@@ -115,17 +186,26 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
           </section>
 
           <section className="form-section">
-            <h2>Foto do anúncio</h2>
-            <p className="form-help">Você pode cadastrar até 10 fotos usando o endereço público da imagem. O espaço fica preparado para substituirmos por upload direto quando o armazenamento de imagens for conectado.</p>
-            <div className="image-admin-list">
-              {form.imageUrls.map((url, index) => (
-                <div className="image-admin-row" key={index}>
-                  <input type="url" placeholder={"URL da foto " + (index + 1)} value={url} onChange={(e) => updateImage(index, e.target.value)} />
-                  {form.imageUrls.length > 1 && <button className="secondary-button compact-button" type="button" onClick={() => removeImage(index)}>Remover</button>}
-                </div>
-              ))}
-            </div>
-            {form.imageUrls.length < 10 && <button className="secondary-button compact-button" type="button" onClick={addImage}>+ Adicionar outra foto</button>}
+            <h2>Fotos do anúncio</h2>
+            <p className="form-help">Escolha as fotos diretamente do celular ou computador. Você pode adicionar até 10 fotos. Elas são reduzidas automaticamente antes de serem salvas.</p>
+
+            <label className="photo-upload-button">
+              <input type="file" accept="image/*" multiple onChange={addUploadedImages} disabled={uploading || form.imageUrls.filter(Boolean).length >= 10} />
+              {uploading ? "Preparando fotos..." : "📷 Escolher fotos"}
+            </label>
+
+            {hasImages && (
+              <div className="image-admin-list">
+                {form.imageUrls.map((url, index) => url ? (
+                  <div className="image-admin-preview" key={index}>
+                    <img src={url} alt={"Foto " + (index + 1)} />
+                    <button className="secondary-button compact-button" type="button" onClick={() => removeImage(index)}>Remover</button>
+                  </div>
+                ) : null)}
+              </div>
+            )}
+
+            {form.imageUrls.filter(Boolean).length < 10 && <button className="secondary-button compact-button" type="button" onClick={addImage}>+ Adicionar endereço de imagem</button>}
           </section>
 
           <section className="form-section">
@@ -143,7 +223,7 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
 
           <div className="form-actions">
             <a className="secondary-button" href={"/rifa/" + raffle.id}>Visualizar anúncio</a>
-            <button className="primary-button" type="submit" disabled={saving}>{saving ? "Salvando..." : "Salvar alterações"}</button>
+            <button className="primary-button" type="submit" disabled={saving || uploading}>{saving ? "Salvando..." : "Salvar alterações"}</button>
           </div>
         </form>
       </div>
