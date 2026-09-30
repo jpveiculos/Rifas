@@ -39,6 +39,8 @@ model Raffle {
   status               RaffleStatus  @default(DRAFT)
   salesClosedAt        DateTime?
   drawEligibleCount    Int?
+  winningNumber        Int?
+  resultPublishedAt    DateTime?
   createdAt             DateTime      @default(now())
   updatedAt             DateTime      @updatedAt
   numbers               RaffleNumber[]
