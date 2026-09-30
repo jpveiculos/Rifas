@@ -1,14 +1,9 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
-import ShareRaffle from "@/app/rifa/ShareRaffle";
-import { RAFFLE_CATEGORIES } from "@/lib/raffle-categories";
+import HomeRaffleBrowser from "@/app/HomeRaffleBrowser";
 
 export const dynamic = "force-dynamic";
-
-function formatNumber(value: number | string) {
-  return String(value).padStart(5, "0");
-}
 
 export default async function HomePage() {
   const user = await getCurrentUser();
@@ -17,13 +12,38 @@ export default async function HomePage() {
     orderBy: { createdAt: "desc" }
   });
 
-  const activeCount = raffles.filter((raffle) => raffle.status === "ACTIVE").length;
-  const finishedCount = raffles.filter((raffle) => raffle.status === "ENDED").length;
+  const activeRaffles = raffles
+    .filter((raffle) => raffle.status === "ACTIVE")
+    .map((raffle) => ({
+      id: raffle.id,
+      raffleCode: raffle.raffleCode,
+      name: raffle.name,
+      productName: raffle.productName,
+      category: raffle.category,
+      description: raffle.description,
+      imageUrls: raffle.imageUrls,
+      priceInCents: raffle.priceInCents,
+      winningNumber: raffle.winningNumber,
+      winningNumbers: raffle.winningNumbers
+    }));
 
-  const groupedRaffles = RAFFLE_CATEGORIES.map((category) => ({
-    category,
-    raffles: raffles.filter((raffle) => raffle.category === category)
-  })).filter((group) => group.raffles.length > 0);
+  const finishedRaffles = raffles
+    .filter((raffle) => raffle.status === "ENDED")
+    .map((raffle) => ({
+      id: raffle.id,
+      raffleCode: raffle.raffleCode,
+      name: raffle.name,
+      productName: raffle.productName,
+      category: raffle.category,
+      description: raffle.description,
+      imageUrls: raffle.imageUrls,
+      priceInCents: raffle.priceInCents,
+      winningNumber: raffle.winningNumber,
+      winningNumbers: raffle.winningNumbers
+    }));
+
+  const activeCount = activeRaffles.length;
+  const finishedCount = finishedRaffles.length;
 
   return (
     <>
@@ -78,7 +98,7 @@ export default async function HomePage() {
             <div className="section-heading">
               <div>
                 <span className="section-kicker">RIFAS</span>
-                <h2 className="section-title">Rifas em destaque</h2>
+                <h2 className="section-title">Encontre sua rifa</h2>
               </div>
               {raffles.length > 0 && (
                 <span className="raffle-count">
@@ -88,73 +108,12 @@ export default async function HomePage() {
             </div>
 
             {raffles.length === 0 ? (
-              <div className="empty-state"><h3>Nenhuma rifa publicada ainda.</h3><p>As rifas criadas e ativadas no painel administrativo aparecerão aqui.</p></div>
-            ) : (
-              <div className="raffle-category-list">
-                {groupedRaffles.map((group) => (
-                  <section className="raffle-category-section" key={group.category}>
-                    <div className="raffle-category-heading">
-                      <div>
-                        <span className="section-kicker">CATEGORIA</span>
-                        <h3>{group.category}</h3>
-                      </div>
-                      <span>{group.raffles.length} {group.raffles.length === 1 ? "rifa" : "rifas"}</span>
-                    </div>
-
-                    <div className="raffle-grid">
-                      {group.raffles.map((raffle) => {
-                        const winningNumbers = raffle.winningNumbers?.length > 0
-                          ? raffle.winningNumbers
-                          : raffle.winningNumber !== null
-                            ? [raffle.winningNumber]
-                            : [];
-                        const finished = raffle.status === "ENDED";
-
-                        return (
-                          <article className="raffle-card" key={raffle.id}>
-                            {raffle.imageUrls.length > 0 ? (
-                              <img className="raffle-card-image" src={raffle.imageUrls[0]} alt={raffle.productName} />
-                            ) : (
-                              <div className="raffle-card-image raffle-card-placeholder"><span>Rifas.TOP</span></div>
-                            )}
-
-                            <div className="raffle-card-content">
-                              <span className={"badge " + (finished ? "badge-finished" : "")}>
-                                {finished ? "SORTEIO FINALIZADO" : "EM ANDAMENTO"}
-                              </span>
-                              <div className="raffle-code-public">{raffle.raffleCode ? "ID " + raffle.raffleCode : ""}</div>
-                              <h3>{raffle.productName}</h3>
-                              <p>{raffle.description}</p>
-
-                              {finished && winningNumbers.length > 0 && (
-                                <div className="public-draw-result public-draw-winner">
-                                  <span>Número(s) sorteado(s)</span>
-                                  <strong>{winningNumbers.map(formatNumber).join(" · ")}</strong>
-                                  <small>Rifa finalizada com ganhador.</small>
-                                </div>
-                              )}
-
-                              <div className="card-price">{(raffle.priceInCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}<small> por número</small></div>
-                              <div className="raffle-meta">
-                                <span>{finished ? "● Finalizada" : "● Ativa"}</span>
-                              </div>
-
-                              {finished ? (
-                                <Link className="primary-button" href={"/rifa/" + raffle.id}>Ver resultado</Link>
-                              ) : (
-                                <>
-                                  <Link className="primary-button" href={"/rifa/" + raffle.id}>Escolher números</Link>
-                                  <ShareRaffle raffleName={raffle.name} />
-                                </>
-                              )}
-                            </div>
-                          </article>
-                        );
-                      })}
-                    </div>
-                  </section>
-                ))}
+              <div className="empty-state">
+                <h3>Nenhuma rifa publicada ainda.</h3>
+                <p>As rifas criadas e ativadas no painel administrativo aparecerão aqui.</p>
               </div>
+            ) : (
+              <HomeRaffleBrowser activeRaffles={activeRaffles} finishedRaffles={finishedRaffles} />
             )}
           </div>
         </section>
