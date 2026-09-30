@@ -38,7 +38,7 @@ export default function ShareRaffle({ raffleName }: Props) {
   return (
     <div className="share-box">
       <div>
-        <strong>Divulgue esta rifa e aumente suas chances de ganhar.</strong>
+        <strong>Compartilhe e aumente sua chance de ganhar.</strong>
       </div>
       <div className="share-actions">
         <button type="button" className="share-button share-main" onClick={share}>
