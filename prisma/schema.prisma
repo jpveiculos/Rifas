@@ -37,8 +37,10 @@ model Raffle {
 
 model User {
   id           String    @id @default(cuid())
-  username     String    @unique
+  name         String
+  city         String
   whatsapp     String
+  username     String    @unique
   passwordHash String
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
@@ -59,16 +61,16 @@ model Session {
 }
 
 model RaffleNumber {
-  id              String       @id @default(cuid())
-  raffleId        String
-  number          Int
-  status          NumberStatus @default(AVAILABLE)
-  reservationId   String?
-  reservedAt      DateTime?
-  confirmedAt     DateTime?
-  reservedByUserId String?
-  raffle          Raffle       @relation(fields: [raffleId], references: [id], onDelete: Cascade)
-  reservedByUser  User?        @relation(fields: [reservedByUserId], references: [id], onDelete: SetNull)
+  id                 String       @id @default(cuid())
+  raffleId           String
+  number             Int
+  status             NumberStatus @default(AVAILABLE)
+  reservationId      String?
+  reservedAt         DateTime?
+  confirmedAt        DateTime?
+  reservedByUserId   String?
+  raffle             Raffle       @relation(fields: [raffleId], references: [id], onDelete: Cascade)
+  reservedByUser     User?        @relation(fields: [reservedByUserId], references: [id], onDelete: SetNull)
 
   @@unique([raffleId, number])
   @@index([raffleId, status])
