@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
+import ShareRaffle from "@/app/rifa/ShareRaffle";
 
 export const dynamic = "force-dynamic";
 
@@ -37,7 +38,7 @@ export default async function HomePage() {
                 <div className="info-item"><span className="info-label">Números</span><span className="info-value">{raffle.totalNumbers.toLocaleString("pt-BR")}</span></div>
                 <div className="info-item"><span className="info-label">Por número</span><span className="info-value">{(raffle.priceInCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span></div>
               </div>
-              <Link className="primary-button" href={"/rifa/" + raffle.id}>Participar</Link>
+              <div className="raffle-card-actions"><Link className="primary-button" href={"/rifa/" + raffle.id}>Ver rifa e participar</Link><ShareRaffle raffleName={raffle.name} /></div>
             </div></article>
           ))}
         </div></section>
