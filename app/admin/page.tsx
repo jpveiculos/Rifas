@@ -35,6 +35,7 @@ export default function AdminPage() {
   const [loadingList, setLoadingList] = useState(true);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   async function loadRaffles() {
     setLoadingList(true);
@@ -87,6 +88,10 @@ export default function AdminPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  async function editRaffle(id: string) {
+    window.location.href = "/admin/rifa/" + id;
   }
 
   async function changeStatus(id: string, status: "ACTIVE" | "PAUSED" | "ENDED") {
@@ -193,6 +198,7 @@ export default function AdminPage() {
                   </div>
                   <div className="raffle-admin-actions">
                     <a className="secondary-button compact-button" href={"/rifa/" + raffle.id}>Abrir</a>
+                    <button className="secondary-button compact-button" type="button" onClick={() => editRaffle(raffle.id)}>Editar</button>
                     {raffle.status === "DRAFT" && <button className="primary-button compact-button" type="button" onClick={() => changeStatus(raffle.id, "ACTIVE")}>Publicar</button>}
                     {raffle.status === "ACTIVE" && <button className="secondary-button compact-button" type="button" onClick={() => changeStatus(raffle.id, "PAUSED")}>Pausar</button>}
                     {raffle.status === "PAUSED" && <button className="primary-button compact-button" type="button" onClick={() => changeStatus(raffle.id, "ACTIVE")}>Reativar</button>}
