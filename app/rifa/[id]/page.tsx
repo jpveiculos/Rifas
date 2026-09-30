@@ -19,7 +19,7 @@ export default async function RafflePage({ params }: Props) {
   return (
     <>
       <header className="site-header"><div className="container site-header-inner">
-        <Link className="brand" href="/">Rifas</Link>
+        <Link className="brand" href="/"><span>Rifas<span className="brand-dot">.</span><strong>TOP</strong></span></Link>
         <Link className="header-link" href="/">Voltar</Link>
       </div></header>
       <main className="section"><div className="container">
