@@ -46,6 +46,8 @@ export async function GET() {
         raffleCode: true,
         name: true,
         city: true,
+        topicId: true,
+        topic: { select: { name: true } },
         productName: true,
         totalNumbers: true,
         priceInCents: true,
@@ -102,7 +104,7 @@ export async function POST(request: Request) {
 
     if (raffleCodeInput && !/^[A-Z0-9-]{3,30}$/.test(raffleCodeInput)) return NextResponse.json({ error: "O ID da rifa deve ter de 3 a 30 caracteres, usando apenas letras, números e hífen." }, { status: 400 });
 
-    if (!name || !city || !productName || !Number.isInteger(totalNumbers) || totalNumbers < 1 || totalNumbers > 1_000_000 || !priceInCents || (endDate && Number.isNaN(endDate.getTime()))) {
+    if (!name || !productName || !Number.isInteger(totalNumbers) || totalNumbers < 1 || totalNumbers > 1_000_000 || !priceInCents || (endDate && Number.isNaN(endDate.getTime()))) {
       return NextResponse.json({ error: "Preencha todos os campos corretamente." }, { status: 400 });
     }
 
@@ -131,8 +133,11 @@ export async function POST(request: Request) {
         if (!topic) throw new Error("Tópico não encontrado.");
       }
 
+      const selectedTopic = topicId ? await tx.raffleTopic.findUnique({ where: { id: topicId }, select: { name: true } }) : null;
+      const raffleCity = city || selectedTopic?.name || newTopicName;
+      if (!raffleCity) throw new Error("Tópico não informado.");
       const created = await tx.raffle.create({
-        data: { raffleCode, name, city, topicId, productName, description, imageUrls, totalNumbers, priceInCents, endDate }
+        data: { raffleCode, name, city: raffleCity, topicId, productName, description, imageUrls, totalNumbers, priceInCents, endDate }
       });
 
       await tx.$executeRaw(
@@ -175,7 +180,7 @@ export async function PATCH(request: Request) {
       const imageUrls = Array.isArray(body.imageUrls) ? body.imageUrls.map((value: unknown) => String(value).trim()).filter(Boolean).slice(0, 10) : [];
 
         if (raffleCodeInput && !/^[A-Z0-9-]{3,30}$/.test(raffleCodeInput)) return NextResponse.json({ error: "O ID da rifa deve ter de 3 a 30 caracteres, usando apenas letras, números e hífen." }, { status: 400 });
-      if (!id || !name || !city || !productName || !Number.isInteger(totalNumbers) || totalNumbers < 1 || totalNumbers > 1_000_000 || !priceInCents || (endDate && Number.isNaN(endDate.getTime()))) {
+      if (!id || !name || !productName || !Number.isInteger(totalNumbers) || totalNumbers < 1 || totalNumbers > 1_000_000 || !priceInCents || (endDate && Number.isNaN(endDate.getTime()))) {
         return NextResponse.json({ error: "Preencha todos os campos corretamente." }, { status: 400 });
       }
       if (endDate && endDate <= new Date()) return NextResponse.json({ error: "A data do sorteio precisa ser futura." }, { status: 400 });
@@ -204,9 +209,12 @@ export async function PATCH(request: Request) {
       const duplicate = await prisma.raffle.findFirst({ where: { raffleCode, NOT: { id } }, select: { id: true } });
       if (duplicate) return NextResponse.json({ error: "Esse ID de rifa já está sendo usado. Escolha outro." }, { status: 409 });
 
+      const selectedTopic = topicId ? await prisma.raffleTopic.findUnique({ where: { id: topicId }, select: { name: true } }) : null;
+      const raffleCity = city || selectedTopic?.name || newTopicName;
+      if (!raffleCity) return NextResponse.json({ error: "Tópico não informado." }, { status: 400 });
       await prisma.raffle.update({
         where: { id },
-        data: { raffleCode, name, city, topicId, productName, description, priceInCents, endDate, imageUrls }
+        data: { raffleCode, name, city: raffleCity, topicId, productName, description, priceInCents, endDate, imageUrls }
       });
       return NextResponse.json({ id, ok: true });
     }
