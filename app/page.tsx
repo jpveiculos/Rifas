@@ -24,7 +24,7 @@ export default async function HomePage() {
       raffleCode: raffle.raffleCode,
       name: raffle.name,
       city: raffle.city,
-      topicName: raffle.topicId ?? raffle.city,
+      topicName: raffle.topic?.name ?? raffle.city,
       productName: raffle.productName,
       description: raffle.description,
       imageUrls: raffle.imageUrls,
@@ -86,7 +86,7 @@ export default async function HomePage() {
       <footer className="footer">
         <div className="container footer-inner">
           <span>Coloque na rifa</span>
-          <a className="footer-contact" href={"https://wa.me/" + siteSettings?.contactWhatsapp ?? "77998315360"} target="_blank" rel="noreferrer">
+          <a className="footer-contact" href={"https://wa.me/" + (siteSettings?.contactWhatsapp ?? "77998315360")} target="_blank" rel="noreferrer">
             Entrar em contato
           </a>
         </div>
