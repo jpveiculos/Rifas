@@ -370,7 +370,7 @@ export default function AdminPage() {
                   if (e.target.value) update("newTopicName", "");
                 }}>
                   <option value="">Selecione um tópico</option>
-                  {topics.map((topic) => <option value={topic.id} key={topic.id}>{topic.name}</option>)}
+                  {topics.map((topic) => <option value={topic.id} key={topic.id}>Rifas em {topic.name}</option>)}
                 </select>
                 <small>As rifas do mesmo tópico aparecem juntas na página principal.</small>
               </label>
@@ -378,8 +378,8 @@ export default function AdminPage() {
                 <input value={form.newTopicName} onChange={(e) => {
                   update("newTopicName", e.target.value);
                   if (e.target.value.trim()) update("topicId", "");
-                }} placeholder="Ex.: Paramirim-BA" />
-                <small>Preencha somente se quiser criar um novo tópico junto com esta rifa.</small>
+                }} placeholder="Ex.: Paramirim" />
+                <small>Digite somente o nome do local. Ex.: Paramirim. O sistema exibirá como "Rifas em Paramirim".</small>
               </label>
               <label>Nome do produto<input required value={form.productName} onChange={(e) => update("productName", e.target.value)} placeholder="Ex.: Chevrolet Celta 2012" /></label>
                 <label>Descrição<textarea required value={form.description} onChange={(e) => update("description", e.target.value)} placeholder="Descreva o produto e as informações importantes." rows={6} /></label>
