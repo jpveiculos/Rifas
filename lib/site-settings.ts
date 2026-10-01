@@ -1,0 +1,30 @@
+import { prisma } from "@/lib/prisma";
+
+const DEFAULT_INSTAGRAM = "_rifas.top";
+
+export async function ensureSiteInstagramColumn() {
+  await prisma.$executeRawUnsafe(
+    'ALTER TABLE "SiteSettings" ADD COLUMN IF NOT EXISTS "instagramHandle" TEXT NOT NULL DEFAULT '_rifas.top''
+  );
+}
+
+export function cleanInstagramHandle(value: unknown) {
+  return String(value ?? "")
+    .trim()
+    .replace(/^https?:\/\/(www\.)?instagram\.com\//i, "")
+    .replace(/^@+/, "")
+    .replace(/[/?#].*$/, "")
+    .trim()
+    .slice(0, 60);
+}
+
+export async function getSiteInstagramHandle() {
+  await ensureSiteInstagramColumn();
+  const rows = await prisma.$queryRaw<Array<{ instagramHandle: string }>>`
+    SELECT "instagramHandle"
+    FROM "SiteSettings"
+    WHERE id = 1
+    LIMIT 1
+  `;
+  return cleanInstagramHandle(rows[0]?.instagramHandle || DEFAULT_INSTAGRAM) || DEFAULT_INSTAGRAM;
+}
