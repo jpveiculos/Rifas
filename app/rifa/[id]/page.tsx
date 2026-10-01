@@ -28,7 +28,7 @@ export default async function RafflePage({ params }: Props) {
     <>
       <header className="site-header"><div className="container site-header-inner">
         <Link className="brand" href="/"><span>Rifas<span className="brand-dot">.</span><strong>TOP</strong></span></Link>
-        <Link className="header-link" href={user ? "/minha-conta" : "/"}>←</Link>
+        <Link className="header-link" href={user ? "/minha-conta" : "/"}>← Voltar</Link>
       </div></header>
 
       <main className="section"><div className="container">
