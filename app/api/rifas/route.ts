@@ -18,7 +18,10 @@ async function generateRaffleCode() {
 }
 
 function normalizeTopicName(value: string) {
-  return value.trim().replace(/\s+/g, " ");
+  return value
+    .trim()
+    .replace(/^rifas\s+em\s+/i, "")
+    .replace(/\s+/g, " ");
 }
 
 function normalizeTopicKey(value: string) {
@@ -63,6 +66,29 @@ export async function GET() {
       }
     });
 
+    // Converte rifas antigas, criadas antes dos tópicos, em tópicos regionais.
+    // Isso é feito somente na área administrativa e é idempotente.
+    for (const raffle of raffles) {
+      if (!raffle.topicId && raffle.city.trim()) {
+        const name = normalizeTopicName(raffle.city);
+        const normalized = normalizeTopicKey(name);
+        const topic = await prisma.raffleTopic.upsert({
+          where: { normalized },
+          update: {},
+          create: { name, normalized }
+        });
+        await prisma.raffle.update({
+          where: { id: raffle.id },
+          data: { topicId: topic.id, city: name }
+        });
+      }
+    }
+
+    const topicsAfterMigration = await prisma.raffleTopic.findMany({
+      orderBy: { name: "asc" },
+      select: { id: true, name: true }
+    });
+
     const confirmedCounts = await prisma.raffleNumber.groupBy({
       by: ["raffleId"],
       where: { status: "CONFIRMED", raffleId: { in: raffles.map((raffle) => raffle.id) } },
@@ -74,7 +100,7 @@ export async function GET() {
     );
 
     return NextResponse.json({
-      topics,
+      topics: topicsAfterMigration,
       raffles: raffles.map((raffle) => ({
         ...raffle,
         confirmedCount: confirmedByRaffle.get(raffle.id) ?? 0
