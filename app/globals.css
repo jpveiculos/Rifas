@@ -33,60 +33,7 @@ a { color: inherit; text-decoration: none; }
   font-size: 14px; font-weight: 800; background: rgba(255,255,255,.05);
 }
 .header-login:hover { background: #ffd21a; color: #0d1b2a; }
-
-.home-hero {
-  overflow: hidden;
-  position: relative;
-  background: linear-gradient(110deg, #ffd83d 0%, #ffc928 42%, #0c91e8 100%);
-}
-.home-hero::before {
-  content: ""; position: absolute; width: 520px; height: 520px; border-radius: 50%;
-  left: -180px; top: -260px; background: rgba(255,255,255,.18);
-}
-.home-hero::after {
-  content: ""; position: absolute; width: 380px; height: 380px; border-radius: 50%;
-  right: -130px; bottom: -230px; background: rgba(255,255,255,.14);
-}
-.home-hero-grid { min-height: 480px; display: grid; grid-template-columns: 1.03fr .97fr; align-items: center; gap: 24px; position: relative; z-index: 1; }
-.home-hero-copy { padding: 54px 0; }
 .hero-kicker, .section-kicker { display: inline-block; font-size: 12px; font-weight: 900; letter-spacing: 1.7px; color: #0d1b2a; }
-.home-hero h1 { max-width: 650px; margin: 10px 0 16px; font-size: clamp(42px, 6vw, 68px); line-height: .98; letter-spacing: -3px; color: #10233a; }
-.home-hero p { max-width: 610px; margin: 0; font-size: 19px; line-height: 1.55; color: #24364d; }
-.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
-.hero-button, .hero-secondary {
-  min-height: 50px; display: inline-flex; align-items: center; justify-content: center;
-  padding: 0 22px; border-radius: 12px; font-weight: 900;
-}
-.hero-button { background: #0d63df; color: #fff; box-shadow: 0 8px 18px rgba(13,99,223,.25); }
-.hero-secondary { background: rgba(255,255,255,.75); color: #0d1b2a; border: 1px solid rgba(13,27,42,.12); }
-.hero-benefits { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 30px; }
-.hero-benefits div { display: flex; align-items: center; gap: 9px; font-size: 13px; }
-.hero-benefits span {
-  display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%;
-  background: #fff; color: #1265df; font-weight: 900; box-shadow: 0 4px 10px rgba(13,27,42,.1);
-}
-.hero-benefits strong { color: #172940; }
-
-.hero-visual { min-height: 420px; position: relative; display: grid; place-items: center; }
-.hero-circle {
-  width: 285px; height: 285px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(145deg, #fff, #eef5ff); border: 12px solid rgba(255,255,255,.68);
-  box-shadow: 0 25px 55px rgba(13,48,90,.25); transform: rotate(-5deg); font-size: 42px; font-weight: 900;
-  color: #10233a; position: relative; z-index: 3;
-}
-.hero-circle b { color: #ffb400; }
-.ticket {
-  position: absolute; z-index: 2; padding: 20px 34px; border-radius: 12px;
-  background: linear-gradient(135deg, #ffca1c, #ff8d00); border: 4px dashed #fff;
-  color: #0d1b2a; font-weight: 900; box-shadow: 0 14px 25px rgba(18,49,86,.2);
-}
-.ticket-one { top: 58px; left: 4%; transform: rotate(-18deg); }
-.ticket-two { right: 2%; top: 86px; transform: rotate(17deg); font-size: 28px; }
-.ticket-three { bottom: 62px; left: 10%; transform: rotate(10deg); background: linear-gradient(135deg, #0d63df, #18a9ff); color: #fff; }
-.hero-orbit { position: absolute; width: 350px; height: 350px; border: 2px dashed rgba(255,255,255,.65); border-radius: 50%; }
-.hero-spark { position: absolute; color: #fff; font-size: 32px; z-index: 4; }
-.spark-one { top: 20px; right: 14%; }
-.spark-two { bottom: 45px; right: 8%; color: #ffec4b; }
 
 .section { padding: 54px 0 76px; }
 .raffle-section {
@@ -324,17 +271,9 @@ a { color: inherit; text-decoration: none; }
 .auth-footer { display: flex; justify-content: center; gap: 5px; margin-top: 22px; font-size: 14px; color: #707680; }
 .auth-footer a { color: #0d63df; font-weight: 800; }
 .auth-back { display: block; margin-top: 22px; text-align: center; color: #707680; font-size: 14px; }
-.account-info { display: grid; gap: 12px; margin: 22px 0; }
-.account-info div { display: grid; gap: 5px; padding: 14px; background: #f5f8fc; border-radius: 12px; }
-.account-info span { color: #77727b; font-size: 12px; }
-.account-info strong { font-size: 16px; }
-.auth-logout { width: 100%; cursor: pointer; }
 .error-message a { text-decoration: underline; font-weight: 700; }
 
 @media (max-width: 850px) {
-  .home-hero-grid { grid-template-columns: 1fr; }
-  .home-hero-copy { padding: 48px 0 0; }
-  .hero-visual { min-height: 340px; }
   .raffle-grid { grid-template-columns: repeat(2, 1fr); }
   .header-actions .header-link { display: none; }
 }
@@ -343,13 +282,7 @@ a { color: inherit; text-decoration: none; }
   .site-header-inner { min-height: 68px; }
   .brand { font-size: 23px; }
   .header-actions { gap: 8px; }
-  .home-hero h1 { font-size: 45px; letter-spacing: -2px; }
-  .home-hero p { font-size: 17px; }
-  .hero-benefits { gap: 12px; }
-  .hero-benefits div { font-size: 11px; }
-  .hero-visual { min-height: 280px; transform: scale(.82); margin: -20px 0; }
   .section { padding: 40px 0 58px; }
-  .section-heading { align-items: start; flex-direction: column; }
   .raffle-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .raffle-card { border-radius: 13px; }
   .raffle-card-image { height: 108px; }
@@ -386,22 +319,11 @@ a { color: inherit; text-decoration: none; }
     justify-content: center;
   }
   .auth-card { padding: 24px 20px; }
-  .hero-actions { display: grid; }
-  .hero-button, .hero-secondary { width: 100%; }
 }
 
 /* Minha Área */
 .account-page { min-height: calc(100vh - 78px); padding: 42px 0 76px; background: linear-gradient(180deg, #eef6ff 0, #f7f9fc 300px); }
 .account-container { max-width: 1060px; }
-.account-heading { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 24px; }
-.account-heading h1 { margin: 7px 0 8px; font-size: clamp(34px, 5vw, 48px); letter-spacing: -2px; color: #142238; }
-.account-heading p { margin: 0; color: #657386; font-size: 15px; }
-.account-back-button { min-height: 44px; display: inline-flex; align-items: center; padding: 0 18px; border-radius: 11px; background: #0d63df; color: #fff; font-weight: 800; }
-.account-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }
-.account-summary > div { min-height: 108px; padding: 18px; display: flex; flex-direction: column; justify-content: center; border: 1px solid #dce6f1; border-radius: 16px; background: #fff; box-shadow: 0 8px 22px rgba(22,42,65,.06); }
-.account-summary strong { font-size: 30px; color: #0d63df; line-height: 1; }
-.account-summary span { margin-top: 8px; color: #68778a; font-size: 12px; font-weight: 700; }
-.account-summary-prize strong { color: #e5a800; }
 .account-section { margin-top: 24px; padding: 24px; border: 1px solid #dce6f1; border-radius: 20px; background: #fff; box-shadow: 0 8px 24px rgba(22,42,65,.05); }
 .account-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 18px; }
 .account-section-heading h2 { margin: 5px 0 0; font-size: 25px; letter-spacing: -.7px; }
@@ -415,33 +337,18 @@ a { color: inherit; text-decoration: none; }
 .account-card-content > p { margin: 0; color: #6c7888; font-size: 13px; }
 .account-status { display: inline-flex; padding: 6px 10px; border-radius: 999px; font-size: 11px; font-weight: 900; }
 .status-active { background: #dff8e9; color: #128c4d; }
-.status-pending { background: #fff4cf; color: #9a6a00; }
-.status-finished { background: #e9eef5; color: #526274; }
-.status-winner { background: #fff0b8; color: #9b6b00; }
 .account-numbers { margin-top: 15px; padding: 12px; border-radius: 12px; background: #f1f7fd; }
 .account-numbers > span { display: block; margin-bottom: 8px; color: #64748b; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
 .account-numbers > div { display: flex; flex-wrap: wrap; gap: 7px; }
 .account-numbers b { min-width: 55px; padding: 8px 7px; border-radius: 8px; text-align: center; background: #0d63df; color: #fff; font-size: 12px; }
 .account-numbers b.winning-number { background: #f2b500; color: #17263b; box-shadow: 0 0 0 2px #ffe68b; }
-.account-card-footer { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin: 14px 0; color: #718096; font-size: 12px; }
-.account-card-footer strong { color: #142238; font-size: 15px; }
 .account-button { width: 100%; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 0 16px; border: 1px solid #d4dfeb; border-radius: 10px; background: #fff; color: #0d63df; font-weight: 800; }
 .account-result { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; padding: 13px 14px; border-radius: 11px; background: #fff5c9; color: #745100; }
 .account-result span { font-size: 12px; font-weight: 700; }
 .account-result strong { font-size: 18px; }
-.account-result-muted { background: #f2f5f8; color: #667386; }
-.account-winner-card { border-color: #f0d46a; background: linear-gradient(145deg, #fffdf1, #fff); }
 .account-empty { padding: 28px; border: 2px dashed #d7e0ea; border-radius: 14px; text-align: center; color: #68778a; }
 .account-empty strong, .account-empty span { display: block; }
 .account-empty span { margin-top: 6px; font-size: 13px; }
-.account-history-list { display: grid; gap: 8px; }
-.account-history-row { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 14px; padding: 13px 14px; border-radius: 11px; background: #f6f8fb; }
-.account-history-row div { display: grid; gap: 3px; }
-.account-history-row div span { color: #778397; font-size: 12px; }
-.account-history-row > span { color: #475569; font-size: 13px; }
-.account-history-row > b { color: #a33a43; font-size: 11px; }
-.account-data-section { margin-bottom: 0; }
-.account-info-grid { grid-template-columns: repeat(2, 1fr); }
 
 .raffle-result-admin { display: flex; align-items: center; gap: 7px; width: 100%; margin-top: 8px; }
 .raffle-result-admin input { min-height: 40px; width: 120px; padding: 0 10px; border: 1px solid #d7e0ea; border-radius: 9px; background: #fff; }
@@ -450,24 +357,11 @@ a { color: inherit; text-decoration: none; }
 
 @media (max-width: 700px) {
   .account-page { padding: 28px 0 54px; }
-  .account-heading { align-items: start; flex-direction: column; }
-  .account-back-button { width: 100%; justify-content: center; }
-  .account-summary { grid-template-columns: repeat(2, 1fr); }
   .account-section { padding: 17px; }
   .account-raffle-card { grid-template-columns: 1fr; }
   .account-card-image, .account-card-image img { min-height: 190px; max-height: 220px; }
-  .account-history-row { grid-template-columns: 1fr auto; }
-  .account-history-row > b { grid-column: 1 / -1; }
-  .account-info-grid { grid-template-columns: 1fr; }
   .raffle-result-admin { align-items: stretch; flex-direction: column; }
   .raffle-result-admin input, .raffle-result-admin .compact-button { width: 100%; }
-}
-
-
-/* Resultado da Loteria Federal */
-.badge-accumulated {
-  background: #fff2c7;
-  color: #8a6200;
 }
 .badge-finished {
   background: #e8edf4;
@@ -484,100 +378,11 @@ a { color: inherit; text-decoration: none; }
 }
 .admin-draw-status strong { font-size: 12px; }
 .admin-draw-status span { color: #68778a; }
-.admin-draw-accumulated {
-  background: #fff9e8;
-  border-color: #f2df9b;
-}
-.admin-draw-accumulated strong { color: #8a6200; }
 .admin-draw-winner {
   background: #effaf4;
   border-color: #bde7ce;
 }
 .admin-draw-winner strong { color: #137747; }
-.federal-result-box {
-  display: grid;
-  gap: 10px;
-  width: 100%;
-  margin-top: 10px;
-  padding: 14px;
-  border: 2px solid #d9e5f1;
-  border-radius: 14px;
-  background: linear-gradient(145deg, #f7fbff, #fffdf4);
-}
-.federal-result-box > div:first-child {
-  display: grid;
-  gap: 4px;
-}
-.federal-result-box > div:first-child strong {
-  color: #17263b;
-  font-size: 14px;
-}
-.federal-result-box > div:first-child span {
-  color: #6b7888;
-  font-size: 12px;
-  line-height: 1.4;
-}
-.federal-number-inputs {
-  display: grid !important;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 7px;
-}
-.federal-number-inputs input {
-  width: 100%;
-  min-width: 0;
-  min-height: 44px;
-  padding: 0 6px;
-  border: 2px solid #d7e1ec;
-  border-radius: 9px;
-  background: #fff;
-  color: #142238;
-  text-align: center;
-  font-weight: 900;
-  letter-spacing: 1px;
-}
-.federal-number-inputs input:focus {
-  outline: none;
-  border-color: #0d75e8;
-  box-shadow: 0 0 0 3px rgba(13,117,232,.1);
-}
-.federal-preview {
-  display: grid;
-  gap: 10px;
-  padding: 12px;
-  border-radius: 11px;
-}
-.federal-preview > strong { font-size: 13px; }
-.federal-preview > p {
-  margin: 0;
-  color: #667386;
-  font-size: 12px;
-  line-height: 1.45;
-}
-.federal-preview-winner {
-  background: #effaf4;
-  border: 1px solid #bde7ce;
-}
-.federal-preview-winner > strong { color: #137747; }
-.federal-preview-accumulated {
-  background: #fff9e8;
-  border: 1px solid #f2df9b;
-}
-.federal-preview-accumulated > strong { color: #8a6200; }
-.federal-winners {
-  display: grid;
-  gap: 8px;
-}
-.federal-winners > div {
-  display: grid;
-  gap: 2px;
-  padding: 10px;
-  border-radius: 9px;
-  background: rgba(255,255,255,.78);
-  border: 1px solid rgba(0,0,0,.07);
-}
-.federal-winners b { color: #17263b; font-size: 14px; }
-.federal-winners span { color: #26364a; font-size: 13px; font-weight: 800; }
-.federal-winners small { color: #6b7888; font-size: 11px; }
 .public-draw-result {
   display: grid;
   gap: 4px;
@@ -600,25 +405,12 @@ a { color: inherit; text-decoration: none; }
   font-size: 11px;
   line-height: 1.4;
 }
-.public-draw-accumulated {
-  background: #fff9e8;
-  border: 1px solid #f2df9b;
-}
-.public-draw-accumulated span,
-.public-draw-accumulated strong { color: #8a6200; }
 .public-draw-winner {
   background: #effaf4;
   border: 1px solid #bde7ce;
 }
 .public-draw-winner span,
 .public-draw-winner strong { color: #137747; }
-.account-result-accumulated {
-  display: grid;
-  gap: 5px;
-  background: #fff9e8;
-  color: #8a6200;
-}
-.account-result-accumulated strong { letter-spacing: .5px; }
 .account-result-accumulated small,
 .account-result-winner small {
   display: block;
@@ -633,15 +425,6 @@ a { color: inherit; text-decoration: none; }
   color: #137747;
 }
 .account-result-winner strong { letter-spacing: .5px; }
-@media (max-width: 520px) {
-  .federal-number-inputs { gap: 5px; }
-  .federal-number-inputs input {
-    min-height: 42px;
-    padding: 0 2px;
-    font-size: 13px;
-  }
-}
-
 
 /* Cards compactos da página principal */
 @media (max-width: 640px) {
@@ -711,8 +494,6 @@ a { color: inherit; text-decoration: none; }
   .raffle-card .primary-button { min-height: 40px; font-size: 11px; }
 }
 
-
-
 .raffle-city-groups {
   display: grid;
   gap: 34px;
@@ -764,7 +545,6 @@ a { color: inherit; text-decoration: none; }
     white-space: nowrap;
   }
 }
-
 
 /* Conta do participante — layout limpo */
 .account-page-clean {
@@ -875,23 +655,6 @@ a { color: inherit; text-decoration: none; }
   font-size: 17px;
   letter-spacing: .4px;
 }
-.account-important {
-  margin-top: 18px;
-  padding: 14px 16px;
-  border: 1px solid #dce6f1;
-  border-radius: 13px;
-  background: #fff;
-}
-.account-important strong {
-  color: #17263b;
-  font-size: 13px;
-}
-.account-important p {
-  margin: 5px 0 0;
-  color: #68778a;
-  font-size: 12px;
-  line-height: 1.45;
-}
 
 @media (max-width: 700px) {
   .account-page-clean {
@@ -972,7 +735,6 @@ a { color: inherit; text-decoration: none; }
   }
 }
 
-
 /* Cabeçalhos da Minha Conta sempre em uma linha no celular */
 @media (max-width: 700px) {
   .account-page-clean .account-section-heading {
@@ -1005,7 +767,6 @@ a { color: inherit; text-decoration: none; }
   }
 }
 
-
 /* Rodapé da conta sempre visível e com espaço reservado no conteúdo */
 .account-page-clean {
   padding-bottom: 115px;
@@ -1015,7 +776,6 @@ a { color: inherit; text-decoration: none; }
     padding-bottom: 125px;
   }
 }
-
 
 /* Destaque do título Minhas rifas */
 .account-title-card {
@@ -1065,7 +825,6 @@ a { color: inherit; text-decoration: none; }
   }
 }
 
-
 /* Compartilhamento dentro da Minha Conta: compacto e sem corte no celular */
 @media (max-width: 700px) {
   .account-page-clean .share-box {
@@ -1091,7 +850,6 @@ a { color: inherit; text-decoration: none; }
     font-size: 14px;
   }
 }
-
 
 /* Compartilhar nas rifas da Minha Conta: contido, centralizado e sem corte */
 .account-page-clean .account-raffle-card {
@@ -1144,7 +902,6 @@ a { color: inherit; text-decoration: none; }
   }
 }
 
-
 /* Compartilhamento ocupando toda a largura do card da rifa */
 .account-raffle-share {
   grid-column: 1 / -1;
@@ -1173,14 +930,6 @@ a { color: inherit; text-decoration: none; }
     line-height: 1.2;
   }
 }
-
-
-.footer-link {
-  color: #fff;
-  font-weight: 800;
-  text-decoration: none;
-}
-.footer-link:hover { text-decoration: underline; }
 
 .terms-page {
   min-height: 100vh;
@@ -1240,7 +989,6 @@ a { color: inherit; text-decoration: none; }
   .terms-card h1 { font-size: 27px; }
   .terms-card p, .terms-card li { font-size: 14px; }
 }
-
 
 .download-page {
   min-height: 100vh;
@@ -1306,10 +1054,6 @@ a { color: inherit; text-decoration: none; }
   font-weight: 900;
   text-decoration: none;
 }
-.download-button-disabled {
-  opacity: .65;
-  cursor: default;
-}
 .download-card small {
   display: block;
   margin-top: 10px;
@@ -1345,7 +1089,6 @@ a { color: inherit; text-decoration: none; }
   .download-hero h1 { font-size: 26px; }
   .download-card { padding: 20px 18px; border-radius: 15px; }
 }
-
 
 .quick-links-section {
   padding: 48px 0 55px;
@@ -1399,11 +1142,6 @@ a { color: inherit; text-decoration: none; }
   text-overflow: clip !important;
   word-break: break-word;
   overflow-wrap: anywhere;
-}
-
-.header-logout-form {
-  display: inline-flex;
-  margin: 0;
 }
 
 .header-logout {
