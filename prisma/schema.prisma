@@ -32,6 +32,12 @@ enum RaffleResultStatus {
   WINNER
 }
 
+model SiteSettings {
+  id             Int      @id @default(1)
+  contactWhatsapp String   @default("77998315360")
+  updatedAt      DateTime @updatedAt
+}
+
 model RaffleTopic {
   id          String   @id @default(cuid())
   name        String
