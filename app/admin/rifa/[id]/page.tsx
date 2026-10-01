@@ -7,6 +7,8 @@ type Raffle = {
   raffleCode: string | null;
   name: string;
   city: string;
+  topicId: string | null;
+  topicName: string | null;
   productName: string;
   description: string;
   totalNumbers: number;
@@ -57,7 +59,8 @@ function compressImage(file: File): Promise<string> {
 export default function EditRafflePage({ params }: { params: Promise<{ id: string }> }) {
   const [id, setId] = useState("");
   const [raffle, setRaffle] = useState<Raffle | null>(null);
-  const [form, setForm] = useState({ raffleCode: "", raffleName: "", city: "", productName: "", description: "", totalNumbers: "", pricePerNumber: "", endDate: "", imageUrls: [""] });
+  const [topics, setTopics] = useState<{ id: string; name: string }[]>([]);
+  const [form, setForm] = useState({ raffleCode: "", raffleName: "", topicId: "", newTopicName: "", productName: "", description: "", totalNumbers: "", pricePerNumber: "", endDate: "", imageUrls: [""] });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -72,6 +75,7 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
         .then((data) => {
           const found = data.raffles?.find((item: Raffle) => item.id === raffleId);
           if (!found) throw new Error("Rifa não encontrada.");
+          setTopics(data.topics ?? []);
           return fetch("/api/rifas/" + raffleId, { cache: "no-store" }).then(async (response) => {
             if (!response.ok) throw new Error("Não foi possível carregar a rifa.");
             return response.json();
@@ -83,7 +87,8 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
           setForm({
             raffleCode: item.raffleCode ?? "",
             raffleName: item.name,
-            city: item.city ?? "",
+            topicId: found.topicId ?? "",
+            newTopicName: "",
             productName: item.productName,
             description: item.description,
             totalNumbers: String(item.totalNumbers),
@@ -162,6 +167,7 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
           id,
           edit: true,
           ...form,
+          city: "",
           endDate: form.endDate ? new Date(form.endDate).toISOString() : "",
           imageUrls: form.imageUrls.filter(Boolean)
         })
@@ -192,7 +198,23 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
             <h2>Informações do anúncio</h2>
             <label>ID da rifa<input value={form.raffleCode} onChange={(e) => update("raffleCode", e.target.value)} placeholder="Ex.: RIFA-001" /><small>Você pode alterar o ID ou deixar vazio para manter o atual.</small></label>
             <label>Nome da rifa<input required value={form.raffleName} onChange={(e) => update("raffleName", e.target.value)} /></label>
-            <label>Cidade da rifa<input required value={form.city} onChange={(e) => update("city", e.target.value)} placeholder="Ex.: Paramirim" /></label>
+            <label>Tópico regional da rifa
+              <select value={form.topicId} onChange={(e) => {
+                update("topicId", e.target.value);
+                if (e.target.value) update("newTopicName", "");
+              }}>
+                <option value="">Selecione um tópico</option>
+                {topics.map((topic) => <option value={topic.id} key={topic.id}>{topic.name}</option>)}
+              </select>
+              <small>As rifas do mesmo tópico aparecem juntas na página principal.</small>
+            </label>
+            <label>Novo tópico regional
+              <input value={form.newTopicName} onChange={(e) => {
+                update("newTopicName", e.target.value);
+                if (e.target.value.trim()) update("topicId", "");
+              }} placeholder="Ex.: Paramirim-BA" />
+              <small>Use somente se quiser criar um novo tópico para esta rifa.</small>
+            </label>
             <label>Nome do produto<input required value={form.productName} onChange={(e) => update("productName", e.target.value)} /></label>
             <label>Descrição<textarea required rows={8} value={form.description} onChange={(e) => update("description", e.target.value)} /></label>
           </section>
