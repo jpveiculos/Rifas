@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth";
+import LogoutButton from "@/app/LogoutButton";
 
 export default async function SiteHeader() {
   const user = await getCurrentUser();
@@ -18,9 +19,7 @@ export default async function SiteHeader() {
           {user ? (
             <>
               <Link className="header-login" href="/minha-conta">Minha Conta</Link>
-              <form className="header-logout-form" action="/api/auth/logout" method="post">
-                <button className="header-logout" type="submit">Sair</button>
-              </form>
+              <LogoutButton />
             </>
           ) : (
             <Link className="header-login" href="/login">Entrar</Link>
