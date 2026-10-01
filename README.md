@@ -7,3 +7,6 @@ Projeto desenvolvido para gerenciamento de rifas próprias, com cadastro de prod
 Deploy: projeto Rifas independente do MyBets.
 
 Produção: Railway.
+
+
+Categorias removidas do projeto: as rifas são exibidas diretamente na página inicial.
