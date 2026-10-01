@@ -328,6 +328,18 @@ export default function AdminPage() {
     <main className="admin-page">
       <div className="container admin-container">
         <div className="admin-heading">
+          <div className="admin-header-actions">
+            <button
+              className="secondary-button compact-button"
+              type="button"
+              onClick={async () => {
+                await fetch("/api/admin/logout", { method: "POST" });
+                window.location.href = "/admin/login";
+              }}
+            >
+              Sair
+            </button>
+          </div>
           <div>
             <a className="back-link" href="/">← Voltar para a página inicial</a>
             <h1>Área administrativa</h1>
