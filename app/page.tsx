@@ -85,7 +85,7 @@ export default async function HomePage() {
 
       <footer className="footer">
         <div className="container footer-inner">
-          <span>Coloque na rifa</span>
+          <span>Coloque um item seu para vender no Rifas.TOP</span>
           <a className="footer-contact" href={"https://wa.me/" + (siteSettings?.contactWhatsapp ?? "77998315360")} target="_blank" rel="noreferrer">
             Entrar em contato
           </a>
