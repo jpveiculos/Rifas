@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 
 const baseUrl = "https://rifas.top";
 
+export const dynamic = "force-dynamic";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const raffles = await prisma.raffle.findMany({
     where: { status: { in: ["ACTIVE", "ENDED"] } },
