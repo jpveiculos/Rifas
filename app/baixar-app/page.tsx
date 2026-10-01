@@ -19,11 +19,9 @@ export default function BaixarAppPage() {
 
         <section className="download-card">
           <h2>Android</h2>
-          <p>Quando o APK estiver disponível, você poderá baixá-lo aqui e instalar o aplicativo no seu aparelho.</p>
-          <div className="download-button download-button-disabled" aria-disabled="true">
-            APK em breve
-          </div>
-          <small>O arquivo do aplicativo será disponibilizado nesta página após a compilação.</small>
+          <p>Baixe o aplicativo Rifas.TOP para Android diretamente por aqui.</p>
+          <a className="download-button" href="/app/RifasTOP.apk" download>Baixar APK</a>
+          <small>Após o download, abra o arquivo no Android para iniciar a instalação.</small>
         </section>
 
         <section className="download-card">
@@ -44,11 +42,7 @@ export default function BaixarAppPage() {
           </div>
         </section>
 
-        <section className="download-card">
-          <h2>Aplicativo em breve</h2>
-          <p>Estamos preparando a versão do aplicativo do Rifas.TOP. Assim que o APK estiver compilado, o botão de download desta página será atualizado.</p>
-        </section>
-      </div>
+              </div>
     </main>
   );
 }
