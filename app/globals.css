@@ -185,6 +185,36 @@ a { color: inherit; text-decoration: none; }
 
 .footer { padding: 28px 0; border-top: 1px solid #dce4ee; background: #0d1b2a; color: #b9c5d4; font-size: 13px; }
 
+.info-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 22px 0 4px;
+}
+.info-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  min-width: 0;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #f7faff;
+  border: 1px solid #dce7f3;
+}
+.info-label {
+  color: #68778a;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.info-value {
+  color: #17263b;
+  font-size: 17px;
+  font-weight: 900;
+  text-align: right;
+}
+
 .participant-box {
   margin-top: 28px; padding: 22px; border-radius: 18px; background: #f8fbff; border: 2px solid #dce7f3;
 }
@@ -202,8 +232,13 @@ a { color: inherit; text-decoration: none; }
 .generated-numbers p { margin: 14px 0 0; font-size: 13px; color: #68606c; }
 .error-message { margin-top: 14px; padding: 12px 14px; border-radius: 11px; background: #fff0f0; border: 1px solid #ffc5c5; color: #a32d38; font-size: 14px; }
 .share-box { display: grid; gap: 14px; margin-top: 22px; padding: 18px; border: 2px solid #dce7f3; border-radius: 16px; background: #f5faff; }
-.share-box > div:first-child { display: grid; gap: 4px; }
-.share-box strong { font-size: 15px; }
+.share-box > div:first-child { display: block; min-width: 0; }
+.share-box strong {
+  display: block;
+  font-size: clamp(13px, 3.7vw, 18px);
+  line-height: 1.2;
+  white-space: nowrap;
+}
 .share-box span { color: #68778a; font-size: 13px; line-height: 1.45; }
 .share-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .share-button { min-height: 42px; padding: 0 14px; border: 1px solid #d5dce5; border-radius: 10px; background: #fff; color: #20242b; font-weight: 700; }
@@ -268,6 +303,21 @@ a { color: inherit; text-decoration: none; }
   .raffle-card .card-price small { font-size: 9px; }
   .raffle-card .raffle-meta { margin: 8px 0; padding-top: 7px; font-size: 9px; }
   .raffle-card .primary-button { min-height: 38px; padding: 0 7px; border-radius: 9px; font-size: 11px; }
+  .info-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 18px;
+  }
+  .info-item {
+    padding: 12px 13px;
+  }
+  .info-label { font-size: 12px; }
+  .info-value { font-size: 15px; }
+  .share-box { padding: 16px 13px; }
+  .share-box strong {
+    font-size: 13px;
+    white-space: nowrap;
+  }
   .auth-card { padding: 24px 20px; }
   .hero-actions { display: grid; }
   .hero-button, .hero-secondary { width: 100%; }
