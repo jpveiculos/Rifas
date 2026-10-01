@@ -364,21 +364,30 @@ export default function AdminPage() {
             <section className="form-section form-section-nested">
               <label>ID da rifa<input value={form.raffleCode} onChange={(e) => update("raffleCode", e.target.value)} placeholder="Ex.: RIFA-001 ou deixe vazio" /><small>Se deixar vazio, o sistema gera um ID automaticamente.</small></label>
                             <label>Tópico regional da rifa
-                <select value={form.topicId} onChange={(e) => {
-                  update("topicId", e.target.value);
-                  if (e.target.value) update("newTopicName", "");
-                }}>
+                <select
+                  value={form.topicId}
+                  disabled={Boolean(form.newTopicName.trim())}
+                  onChange={(e) => {
+                    update("topicId", e.target.value);
+                    if (e.target.value) update("newTopicName", "");
+                  }}
+                >
                   <option value="">Selecione um tópico</option>
                   {topics.map((topic) => <option value={topic.id} key={topic.id}>Rifas em {topic.name.replace(/^Rifas em\s+/i, "")}</option>)}
                 </select>
-                <small>As rifas do mesmo tópico aparecem juntas na página principal.</small>
+                <small>Escolha um tópico existente ou deixe este campo e o próximo em branco para usar um novo tópico.</small>
               </label>
               <label>Novo tópico regional
-                <input value={form.newTopicName} onChange={(e) => {
-                  update("newTopicName", e.target.value);
-                  if (e.target.value.trim()) update("topicId", "");
-                }} placeholder="Ex.: Paramirim" />
-                <small>Digite somente o nome do local. Ex.: Paramirim. O sistema exibirá como "Rifas em Paramirim".</small>
+                <input
+                  value={form.newTopicName}
+                  disabled={Boolean(form.topicId)}
+                  onChange={(e) => {
+                    update("newTopicName", e.target.value);
+                    if (e.target.value.trim()) update("topicId", "");
+                  }}
+                  placeholder="Ex.: Paramirim"
+                />
+                <small>Digite somente o nome do local. Ao preencher, o tópico existente fica desativado. O sistema exibirá como "Rifas em Paramirim".</small>
               </label>
               <label>Nome do produto<input required value={form.productName} onChange={(e) => update("productName", e.target.value)} placeholder="Ex.: Chevrolet Celta 2012" /></label>
                 <label>Descrição<textarea required value={form.description} onChange={(e) => update("description", e.target.value)} placeholder="Descreva o produto e as informações importantes." rows={6} /></label>
