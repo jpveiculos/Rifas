@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://rifas.top"),
   title: "Rifas.TOP",
   description: "Plataforma de Rifas",
   applicationName: "Rifas.TOP",
