@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Rifas.TOP",
-  description: "Plataforma de rifas pessoais",
+  description: "Plataforma de Rifas",
   applicationName: "Rifas.TOP",
   appleWebApp: {
     capable: true,
