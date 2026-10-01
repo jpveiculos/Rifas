@@ -69,14 +69,6 @@ export default async function HomePage() {
       <main>
         <section className="section raffle-section" id="rifas">
           <div className="container">
-            <div className="section-heading home-raffle-heading">
-              <div>
-                <h2 className="section-title">Escolha uma rifa e participe</h2>
-                <p className="home-raffle-subtitle">Confira as rifas disponíveis e selecione os números.</p>
-              </div>
-
-            </div>
-
             {raffles.length === 0 ? (
               <div className="empty-state">
                 <h3>Nenhuma rifa publicada ainda.</h3>
