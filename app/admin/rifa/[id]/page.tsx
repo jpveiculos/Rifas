@@ -58,7 +58,7 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
   const [id, setId] = useState("");
   const [raffle, setRaffle] = useState<Raffle | null>(null);
   const [topics, setTopics] = useState<{ id: string; name: string }[]>([]);
-  const [form, setForm] = useState({ raffleCode: "", raffleName: "", topicId: "", newTopicName: "", productName: "", description: "", totalNumbers: "", pricePerNumber: "", endDate: "", imageUrls: [""] });
+  const [form, setForm] = useState({ raffleCode: "", topicId: "", newTopicName: "", productName: "", description: "", totalNumbers: "", pricePerNumber: "", endDate: "", imageUrls: [""] });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -84,7 +84,6 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
           setRaffle(item);
           setForm({
             raffleCode: item.raffleCode ?? "",
-            raffleName: item.name,
             topicId: item.topicId ?? "",
             newTopicName: "",
             productName: item.productName,
@@ -153,7 +152,6 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
           id,
           edit: true,
           ...form,
-          city: "",
           endDate: form.endDate ? new Date(form.endDate).toISOString() : "",
           imageUrls: form.imageUrls.filter(Boolean)
         })
@@ -183,7 +181,6 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
           <section className="form-section">
             <h2>Informações do anúncio</h2>
             <label>ID da rifa<input value={form.raffleCode} onChange={(e) => update("raffleCode", e.target.value)} placeholder="Ex.: RIFA-001" /><small>Você pode alterar o ID ou deixar vazio para manter o atual.</small></label>
-            <label>Nome da rifa<input required value={form.raffleName} onChange={(e) => update("raffleName", e.target.value)} /></label>
             <label>Tópico regional da rifa
               <select value={form.topicId} onChange={(e) => {
                 update("topicId", e.target.value);
@@ -234,7 +231,6 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
               <label>Valor por número<input required inputMode="decimal" value={form.pricePerNumber} onChange={(e) => update("pricePerNumber", e.target.value)} /></label>
             </div>
             <label>Data e hora do sorteio<input type="datetime-local" value={form.endDate} onChange={(e) => update("endDate", e.target.value)} /></label>
-            <p className="form-help">A data continua opcional e pode ser divulgada posteriormente.</p>
           </section>
 
           {message && <div className="success-message">{message}</div>}
