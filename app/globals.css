@@ -1003,3 +1003,14 @@ a { color: inherit; text-decoration: none; }
     font-size: clamp(19px, 5.8vw, 24px);
   }
 }
+
+
+/* Rodapé da conta sempre visível e com espaço reservado no conteúdo */
+.account-page-clean {
+  padding-bottom: 115px;
+}
+@media (max-width: 700px) {
+  .account-page-clean {
+    padding-bottom: 125px;
+  }
+}
