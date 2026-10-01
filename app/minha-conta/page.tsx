@@ -148,9 +148,9 @@ export default async function AccountPage() {
                         <Link className="secondary-button account-button" href={"/rifa/" + item.raffle.id}>
                           Ver rifa
                         </Link>
-                        <ShareRaffle
-                          raffleName={item.raffle.productName}
-                        />
+                      </div>
+                      <div className="account-raffle-share">
+                        <ShareRaffle raffleName={item.raffle.productName} />
                       </div>
                     </article>
                   );
