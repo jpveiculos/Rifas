@@ -1063,3 +1063,30 @@ a { color: inherit; text-decoration: none; }
     padding-bottom: 145px !important;
   }
 }
+
+
+/* Compartilhamento dentro da Minha Conta: compacto e sem corte no celular */
+@media (max-width: 700px) {
+  .account-page-clean .share-box {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 10px;
+    padding: 13px 12px;
+    gap: 10px;
+    overflow: hidden;
+  }
+  .account-page-clean .share-box strong {
+    font-size: 13px;
+    line-height: 1.25;
+    white-space: nowrap;
+    text-overflow: clip;
+  }
+  .account-page-clean .share-actions {
+    width: 100%;
+  }
+  .account-page-clean .share-main {
+    min-height: 38px;
+    padding: 0 18px;
+    font-size: 14px;
+  }
+}
