@@ -119,7 +119,11 @@ a { color: inherit; text-decoration: none; }
   background: rgba(13,27,42,.08);
 }
 .raffle-section > .container { position: relative; z-index: 1; }
-.home-raffle-heading { margin-bottom: 30px; }
+.home-raffle-heading {
+  margin-bottom: 30px;
+  position: relative;
+  z-index: 2;
+}
 .home-raffle-heading .section-title {
   margin: 0;
   font-size: clamp(38px, 5vw, 54px);
@@ -600,7 +604,25 @@ a { color: inherit; text-decoration: none; }
   .raffle-section { padding: 42px 0 64px; }
   .raffle-section .section-title { font-size: 36px; letter-spacing: -1.5px; }
   .home-raffle-subtitle { font-size: 14px; }
-  .raffle-count { align-self: stretch; text-align: center; }
+  .home-raffle-heading {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+  .home-raffle-heading > div {
+    min-width: 0;
+  }
+  .raffle-count {
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    align-self: flex-start;
+    text-align: center;
+    margin: 0;
+    position: relative;
+    z-index: 3;
+  }
   .raffle-section .section-heading { margin-bottom: 20px; }
   .category-browser { padding: 15px; }
   .category-browser .browser-heading { margin-bottom: 14px; }
