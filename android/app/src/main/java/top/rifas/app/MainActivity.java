@@ -31,7 +31,7 @@ public class MainActivity extends Activity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) { return false; }
         });
-        webView.loadUrl("https://rifas.top/");
+        webView.loadUrl("https://rifastop.com.br/");
     }
 
     @Override
