@@ -54,10 +54,6 @@ const initialForm = {
   endDate: ""
 };
 
-function formatDateTimeInput(value: string | null) {
-  return value ? new Date(value).toISOString().slice(0, 16) : "";
-}
-
 const statusLabel: Record<Raffle["status"], string> = {
   DRAFT: "Rascunho",
   ACTIVE: "Ativa",
