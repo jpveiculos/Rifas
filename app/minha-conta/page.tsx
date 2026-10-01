@@ -209,6 +209,7 @@ export default async function AccountPage() {
       <footer className="footer account-footer">
         <div className="container footer-inner">
           <span>Coloque um item na Rifa</span>
+          <Link className="footer-link" href="/termos-de-uso">Termos de Uso</Link>
           <a
             className="footer-contact"
             href={"https://wa.me/" + (siteSettings?.contactWhatsapp ?? "77998315360")}
