@@ -72,7 +72,7 @@ function RaffleCard({
         {finished ? (
           <Link className="primary-button" href={"/rifa/" + raffle.id}>Ver resultado</Link>
         ) : (
-          <Link className="primary-button" href={"/rifa/" + raffle.id}>Escolher números</Link>
+          <Link className="primary-button" href={"/rifa/" + raffle.id}>Participar agora</Link>
         )}
       </div>
     </article>
