@@ -340,7 +340,6 @@ export default function AdminPage() {
             </button>
           </div>
           <div>
-            <a className="back-link" href="/">← Voltar para a página inicial</a>
             <h1>Área administrativa</h1>
             <div className="admin-contact-setting">
               <label>WhatsApp de contato
