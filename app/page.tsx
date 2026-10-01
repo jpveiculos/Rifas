@@ -50,6 +50,8 @@ export default async function HomePage() {
       winningNumbers: raffle.winningNumbers
     }));
 
+  const whatsapp = siteSettings?.contactWhatsapp ?? "77998315360";
+
   return (
     <>
       <SiteHeader />
@@ -72,6 +74,27 @@ export default async function HomePage() {
                 <Link className="quick-link app-link" href="/baixar-app">Baixar Aplicativo</Link>
               </div>
             </section>
+
+            <section className="social-links-section" aria-label="Redes sociais e contato">
+              <div className="social-links">
+                <a
+                  className="social-link instagram-link"
+                  href="https://instagram.com/_rifas.top"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Instagram
+                </a>
+                <a
+                  className="social-link whatsapp-link"
+                  href={"https://wa.me/" + whatsapp}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  WhatsApp
+                </a>
+              </div>
+            </section>
           </div>
         </section>
       </main>
@@ -79,7 +102,7 @@ export default async function HomePage() {
       <footer className="footer">
         <div className="container footer-inner">
           <span>Coloque um item na Rifa</span>
-          <a className="footer-contact" href={"https://wa.me/" + (siteSettings?.contactWhatsapp ?? "77998315360")} target="_blank" rel="noreferrer">
+          <a className="footer-contact" href={"https://wa.me/" + whatsapp} target="_blank" rel="noreferrer">
             Entrar em contato
           </a>
         </div>
