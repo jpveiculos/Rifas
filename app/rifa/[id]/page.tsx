@@ -41,7 +41,7 @@ export default async function RafflePage({ params }: Props) {
           {raffle.raffleCode && <div className="raffle-code-public raffle-code-detail">ID {raffle.raffleCode}</div>}
           {raffle.imageUrls.length > 0 && <div className="raffle-gallery">{raffle.imageUrls.map((url) => <img key={url} src={url} alt={raffle.productName} />)}</div>}
           <h3>{raffle.productName}</h3>
-          <p>{raffle.description}</p>
+          <p className="raffle-description">{raffle.description}</p>
 
           <div className="info-row">
             <div className="info-item"><span className="info-label">Preço por número</span><span className="info-value">{(raffle.priceInCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span></div>
