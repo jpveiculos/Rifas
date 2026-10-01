@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import RaffleParticipant from "./RaffleParticipant";
 import ShareRaffle from "../ShareRaffle";
+import { getCurrentUser } from "@/lib/auth";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -12,6 +13,7 @@ function formatNumber(value: number | string) {
 
 export default async function RafflePage({ params }: Props) {
   const { id } = await params;
+  const user = await getCurrentUser();
   const raffle = await prisma.raffle.findUnique({ where: { id } });
 
   if (!raffle) notFound();
@@ -26,7 +28,7 @@ export default async function RafflePage({ params }: Props) {
     <>
       <header className="site-header"><div className="container site-header-inner">
         <Link className="brand" href="/"><span>Rifas<span className="brand-dot">.</span><strong>TOP</strong></span></Link>
-        <Link className="header-link" href="/">Voltar</Link>
+        <Link className="header-link" href={user ? "/minha-conta" : "/"}>{user ? "← Voltar para Minha Conta" : "← Voltar"}</Link>
       </div></header>
 
       <main className="section"><div className="container">
