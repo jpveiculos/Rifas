@@ -37,11 +37,6 @@ function parsePrice(value: string) {
 
 export async function GET() {
   try {
-    const topics = await prisma.raffleTopic.findMany({
-      orderBy: { name: "asc" },
-      select: { id: true, name: true }
-    });
-
     const raffles = await prisma.raffle.findMany({
       orderBy: { createdAt: "desc" },
       select: {
