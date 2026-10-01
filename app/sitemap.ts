@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
 
-const baseUrl = "https://rifas.top";
+const baseUrl = "https://rifastop.com.br";
 
 export const dynamic = "force-dynamic";
 
