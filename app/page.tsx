@@ -7,10 +7,9 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const user = await getCurrentUser();
-  const siteSettings = await prisma.siteSettings.upsert({
+  const siteSettings = await prisma.siteSettings.findUnique({
     where: { id: 1 },
-    update: {},
-    create: { id: 1, contactWhatsapp: "77998315360" }
+    select: { contactWhatsapp: true }
   });
   const raffles = await prisma.raffle.findMany({
     where: { status: { in: ["ACTIVE", "ENDED"] } },
@@ -50,9 +49,6 @@ export default async function HomePage() {
       winningNumbers: raffle.winningNumbers
     }));
 
-  const activeCount = activeRaffles.length;
-  const finishedCount = finishedRaffles.length;
-
   return (
     <>
       <header className="site-header">
@@ -90,7 +86,7 @@ export default async function HomePage() {
       <footer className="footer">
         <div className="container footer-inner">
           <span>Coloque na rifa</span>
-          <a className="footer-contact" href={"https://wa.me/" + siteSettings.contactWhatsapp} target="_blank" rel="noreferrer">
+          <a className="footer-contact" href={"https://wa.me/" + siteSettings?.contactWhatsapp ?? "77998315360"} target="_blank" rel="noreferrer">
             Entrar em contato
           </a>
         </div>
