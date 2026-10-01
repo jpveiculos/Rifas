@@ -41,6 +41,7 @@ type Raffle = {
 const initialForm = {
   raffleCode: "",
   raffleName: "",
+  city: "",
   productName: "",
   description: "",
   totalNumbers: "10000",
@@ -312,6 +313,7 @@ export default function AdminPage() {
               <h3>Identificação</h3>
               <label>ID da rifa<input value={form.raffleCode} onChange={(e) => update("raffleCode", e.target.value)} placeholder="Ex.: RIFA-001 ou deixe vazio" /><small>Se deixar vazio, o sistema gera um ID automaticamente.</small></label>
               <label>Nome da rifa<input required value={form.raffleName} onChange={(e) => update("raffleName", e.target.value)} placeholder="Ex.: Rifa Paramirim" /></label>
+              <label>Cidade da rifa<input required value={form.city} onChange={(e) => update("city", e.target.value)} placeholder="Ex.: Paramirim" /></label>
               <label>Nome do produto<input required value={form.productName} onChange={(e) => update("productName", e.target.value)} placeholder="Ex.: Chevrolet Celta 2012" /></label>
                 <label>Descrição<textarea required value={form.description} onChange={(e) => update("description", e.target.value)} placeholder="Descreva o produto e as informações importantes." rows={6} /></label>
             </section>
