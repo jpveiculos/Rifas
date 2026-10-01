@@ -109,10 +109,8 @@ export default async function AccountPage() {
           <section className="account-section account-participations">
             <div className="account-section-heading">
               <div>
-                <span className="section-kicker">MINHA CONTA</span>
                 <h1>Minhas rifas</h1>
               </div>
-              <Link className="account-back-button" href="/#rifas">Ver rifas</Link>
             </div>
 
             {participations.length === 0 ? (
