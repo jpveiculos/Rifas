@@ -6,9 +6,7 @@ type Raffle = {
   id: string;
   raffleCode: string | null;
   name: string;
-  city: string;
   topicId: string | null;
-  topicName: string | null;
   productName: string;
   description: string;
   totalNumbers: number;
@@ -108,14 +106,6 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
     setError("");
   }
 
-  function updateImage(index: number, value: string) {
-    setForm((current) => {
-      const imageUrls = [...current.imageUrls];
-      imageUrls[index] = value;
-      return { ...current, imageUrls };
-    });
-  }
-
   async function addUploadedImages(event: ChangeEvent<HTMLInputElement>) {
     const files = Array.from(event.target.files ?? []);
     event.target.value = "";
@@ -144,10 +134,6 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
     } finally {
       setUploading(false);
     }
-  }
-
-  function addImage() {
-    if (form.imageUrls.length < 10) setForm((current) => ({ ...current, imageUrls: [...current.imageUrls, ""] }));
   }
 
   function removeImage(index: number) {
@@ -239,7 +225,6 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
               </div>
             )}
 
-            {form.imageUrls.filter(Boolean).length < 10 && <button className="secondary-button compact-button" type="button" onClick={addImage}>+ Adicionar endereço de imagem</button>}
           </section>
 
           <section className="form-section">
