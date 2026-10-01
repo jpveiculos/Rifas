@@ -203,13 +203,6 @@ export default async function AccountPage() {
               </div>
             )}
           </section>
-
-          <section className="account-important">
-            <strong>Importante</strong>
-            <p>
-              Os resultados são atualizados automaticamente nesta área sempre que uma rifa é finalizada e o resultado é publicado.
-            </p>
-          </section>
         </div>
       </main>
     </>
