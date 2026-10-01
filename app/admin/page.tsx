@@ -463,17 +463,10 @@ export default function AdminPage() {
 
                       {raffle.resultStatus === "WINNER" && winningNumbers.length > 0 && (
                         <div className="admin-draw-status admin-draw-winner">
-                          <strong>RESULTADO PUBLICADO — ganhador encontrado</strong>
+                          <strong>Resultado publicado</strong>
                           <span>Número(s): {winningNumbers.map(formatNumber).join(" · ")}</span>
                         </div>
                       )}
-
-                      <div className="raffle-admin-meta">
-                        <span>{raffle.totalNumbers.toLocaleString("pt-BR")} números</span>
-                        <span>{(raffle.priceInCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} cada</span>
-                        <span>{raffle.endDate ? "Sorteio em " + new Date(raffle.endDate).toLocaleString("pt-BR") : "Data do sorteio ainda não definida"}</span>
-                        {raffle.status === "ENDED" && <span>{raffle.drawEligibleCount ?? 0} números que concorreram</span>}
-                      </div>
                     </div>
 
                     <div className="raffle-admin-actions">
@@ -486,45 +479,24 @@ export default function AdminPage() {
 
                       {raffle.status === "ACTIVE" && (
                         <div className="draw-result-box">
-                          <div>
-                            <strong>Sorteio aleatório</strong>
-                            <span>Somente números com pagamento confirmado participam. Números disponíveis ou apenas reservados ficam fora do sorteio.</span>
-                          </div>
-
-                          <div className="draw-count">
-                            <b>{raffle.confirmedCount.toLocaleString("pt-BR")}</b>
-                            <span>números confirmados concorrendo</span>
-                          </div>
-
                           {(() => {
                             const hasDrawDate = Boolean(raffle.endDate);
                             const drawDateReached = hasDrawDate && new Date(raffle.endDate as string).getTime() <= now;
                             const canDraw = hasDrawDate && drawDateReached && raffle.confirmedCount > 0 && !drawing[raffle.id];
 
                             return (
-                              <>
-                                <div className={"draw-date-lock " + (canDraw ? "draw-date-ready" : "")}>
-                                  {!hasDrawDate
-                                    ? "🔒 Defina a data e o horário do sorteio em “Editar” para liberar o botão."
-                                    : !drawDateReached
-                                      ? "🔒 Aguardando a data e o horário definidos para o sorteio."
-                                      : raffle.confirmedCount === 0
-                                        ? "🔒 A data chegou, mas ainda não há números com pagamento confirmado."
-                                        : "🟢 Data e horário atingidos. O sorteio está liberado."}
-                                </div>
-                                <button
-                                  className="primary-button compact-button"
-                                  type="button"
-                                  disabled={!canDraw}
-                                  onClick={() => drawRaffle(raffle.id)}
-                                >
-                                  {drawing[raffle.id]
-                                    ? "Sorteando..."
-                                    : canDraw
-                                      ? "Realizar sorteio"
-                                      : "Sorteio bloqueado"}
-                                </button>
-                              </>
+                              <button
+                                className="primary-button compact-button"
+                                type="button"
+                                disabled={!canDraw}
+                                onClick={() => drawRaffle(raffle.id)}
+                              >
+                                {drawing[raffle.id]
+                                  ? "Sorteando..."
+                                  : canDraw
+                                    ? "Realizar sorteio"
+                                    : "Sorteio bloqueado"}
+                              </button>
                             );
                           })()}
                         </div>
@@ -532,13 +504,10 @@ export default function AdminPage() {
 
                       {drawResults[raffle.id] && (
                         <div className="draw-preview draw-preview-winner">
-                          <strong>🎉 Resultado publicado</strong>
+                          <strong>Resultado publicado</strong>
                           <span>Número sorteado: <b>{formatNumber(drawResults[raffle.id].number)}</b></span>
                           {drawResults[raffle.id].winner.user && (
-                            <>
-                              <span>Ganhador: <b>{drawResults[raffle.id].winner.user?.name}</b></span>
-                              <small>WhatsApp: {drawResults[raffle.id].winner.user?.whatsapp}</small>
-                            </>
+                            <small>Ganhador: <b>{drawResults[raffle.id].winner.user?.name}</b></small>
                           )}
                         </div>
                       )}
