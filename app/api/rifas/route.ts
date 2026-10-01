@@ -128,7 +128,6 @@ export async function PATCH(request: Request) {
       const raffleCodeInput = normalizeRaffleCode(String(body.raffleCode ?? ""));
       const name = String(body.raffleName ?? "").trim();
       const productName = String(body.productName ?? "").trim();
-      const category = String(body.category ?? "OUTROS").trim();
       const description = String(body.description ?? "").trim();
       const totalNumbers = Number(body.totalNumbers);
       const priceInCents = parsePrice(String(body.pricePerNumber ?? ""));
