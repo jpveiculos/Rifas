@@ -87,7 +87,7 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
           setForm({
             raffleCode: item.raffleCode ?? "",
             raffleName: item.name,
-            topicId: found.topicId ?? "",
+            topicId: item.topicId ?? "",
             newTopicName: "",
             productName: item.productName,
             description: item.description,
