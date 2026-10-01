@@ -7,6 +7,9 @@ on:
       - "android/**"
       - ".github/workflows/build-apk.yml"
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,11 +27,22 @@ jobs:
           gradle-version: "8.9"
       - name: Build APK
         run: gradle :app:assembleDebug --stacktrace
-      - name: Prepare APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk RifasTOP.apk
-      - name: Upload APK
+      - name: Publish APK
+        run: |
+          mkdir -p public/app
+          cp android/app/build/outputs/apk/debug/app-debug.apk public/app/RifasTOP.apk
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/app/RifasTOP.apk
+          if git diff --cached --quiet; then
+            echo "APK sem alterações para publicar."
+          else
+            git commit -m "Publicar APK do Rifas.TOP"
+            git push
+          fi
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: RifasTOP-APK
-          path: RifasTOP.apk
+          path: public/app/RifasTOP.apk
           retention-days: 30
