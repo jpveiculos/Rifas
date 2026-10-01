@@ -79,16 +79,16 @@ export default async function HomePage() {
             ) : (
               <HomeRaffleBrowser activeRaffles={activeRaffles} finishedRaffles={finishedRaffles} />
             )}
+
+            <section className="quick-links-section home-quick-links">
+              <div className="quick-links">
+                <Link className="quick-link terms-link" href="/termos-de-uso">Termos de Uso</Link>
+                <Link className="quick-link app-link" href="/baixar-app">Baixar Aplicativo</Link>
+              </div>
+            </section>
           </div>
         </section>
       </main>
-
-        <section className="quick-links-section">
-          <div className="container quick-links">
-            <Link className="quick-link terms-link" href="/termos-de-uso">Termos de Uso</Link>
-            <Link className="quick-link app-link" href="/baixar-app">Baixar Aplicativo</Link>
-          </div>
-        </section>
 
       <footer className="footer">
         <div className="container footer-inner">
