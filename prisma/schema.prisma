@@ -36,6 +36,7 @@ model Raffle {
   id                   String             @id @default(cuid())
   raffleCode           String?            @unique
   name                 String
+  city                 String             @default("")
   productName          String
   description          String             @db.Text
   imageUrls            String[]           @default([])
