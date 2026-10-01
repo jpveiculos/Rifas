@@ -83,10 +83,16 @@ export default async function HomePage() {
         </section>
       </main>
 
+        <section className="quick-links-section">
+          <div className="container quick-links">
+            <Link className="quick-link terms-link" href="/termos-de-uso">Termos de Uso</Link>
+            <Link className="quick-link app-link" href="/baixar-app">Baixar Aplicativo</Link>
+          </div>
+        </section>
+
       <footer className="footer">
         <div className="container footer-inner">
           <span>Coloque um item na Rifa</span>
-          <Link className="footer-link" href="/termos-de-uso">Termos de Uso</Link>
           <a className="footer-contact" href={"https://wa.me/" + (siteSettings?.contactWhatsapp ?? "77998315360")} target="_blank" rel="noreferrer">
             Entrar em contato
           </a>
