@@ -19,6 +19,7 @@ export default async function HomePage() {
       raffleCode: raffle.raffleCode,
       name: raffle.name,
       city: raffle.city,
+      topicName: raffle.topic?.name ?? raffle.city,
       productName: raffle.productName,
       description: raffle.description,
       imageUrls: raffle.imageUrls,
