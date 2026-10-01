@@ -6,6 +6,7 @@ type RaffleCardData = {
   id: string;
   raffleCode: string | null;
   name: string;
+  city: string;
   productName: string;
   description: string;
   imageUrls: string[];
@@ -79,14 +80,52 @@ function RaffleCard({
   );
 }
 
+function getRaffleCity(raffle: RaffleCardData) {
+  const city = raffle.city?.trim();
+  if (city) return city;
+  const fallback = raffle.name.replace(/^rifa\s*/i, "").trim();
+  return fallback || "Região";
+}
+
+function RaffleGroups({
+  raffles,
+  finished = false
+}: {
+  raffles: RaffleCardData[];
+  finished?: boolean;
+}) {
+  const groups = new Map<string, RaffleCardData[]>();
+
+  for (const raffle of raffles) {
+    const city = getRaffleCity(raffle);
+    const current = groups.get(city) ?? [];
+    current.push(raffle);
+    groups.set(city, current);
+  }
+
+  return (
+    <div className="raffle-city-groups">
+      {Array.from(groups.entries()).map(([city, cityRaffles]) => (
+        <section className="raffle-city-group" key={city}>
+          <div className="raffle-city-heading">
+            <span>RIFAS EM</span>
+            <h3>{city}</h3>
+          </div>
+          <div className="raffle-grid raffle-mosaic">
+            {cityRaffles.map((raffle) => (
+              <RaffleCard raffle={raffle} finished={finished} key={raffle.id} />
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  );
+}
+
 export default function HomeRaffleBrowser({ activeRaffles, finishedRaffles }: Props) {
   return (
     <div className="home-raffle-browser">
-      <div className="raffle-grid raffle-mosaic">
-        {activeRaffles.map((raffle) => (
-          <RaffleCard raffle={raffle} key={raffle.id} />
-        ))}
-      </div>
+      <RaffleGroups raffles={activeRaffles} />
 
       {finishedRaffles.length > 0 && (
         <section className="finished-raffles">
@@ -97,11 +136,7 @@ export default function HomeRaffleBrowser({ activeRaffles, finishedRaffles }: Pr
             </div>
             <span>{finishedRaffles.length} finalizada{finishedRaffles.length === 1 ? "" : "s"}</span>
           </div>
-          <div className="raffle-grid finished-raffle-grid">
-            {finishedRaffles.map((raffle) => (
-              <RaffleCard raffle={raffle} finished key={raffle.id} />
-            ))}
-          </div>
+          <RaffleGroups raffles={finishedRaffles} finished />
         </section>
       )}
     </div>
