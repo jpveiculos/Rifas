@@ -10,3 +10,5 @@ Produção: Railway.
 
 
 Categorias removidas do projeto: as rifas são exibidas diretamente na página inicial.
+
+Deploy: limpeza da navegação por categorias aplicada.
