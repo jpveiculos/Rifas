@@ -150,7 +150,6 @@ export default async function AccountPage() {
                         </Link>
                         <ShareRaffle
                           raffleName={item.raffle.productName}
-                          raffleUrl={"/rifa/" + item.raffle.id}
                         />
                       </div>
                     </article>
