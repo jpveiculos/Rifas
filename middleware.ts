@@ -34,11 +34,10 @@ function isAuthorized(request: NextRequest) {
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const adminPage = pathname === "/admin" || pathname.startsWith("/admin/");
-  const adminMutation =
-    (pathname === "/api/rifas" || pathname === "/api/config") &&
-    ["POST", "PATCH", "DELETE"].includes(request.method);
+  const adminApi =
+    pathname === "/api/rifas" || pathname === "/api/config";
 
-  if (!adminPage && !adminMutation) {
+  if (!adminPage && !adminApi) {
     return NextResponse.next();
   }
 
