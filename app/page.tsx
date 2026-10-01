@@ -14,7 +14,8 @@ export default async function HomePage() {
   });
   const raffles = await prisma.raffle.findMany({
     where: { status: { in: ["ACTIVE", "ENDED"] } },
-    orderBy: { createdAt: "desc" }
+    orderBy: { createdAt: "desc" },
+    include: { topic: { select: { name: true } } }
   });
 
   const activeRaffles = raffles
