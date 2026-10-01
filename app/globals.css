@@ -303,6 +303,7 @@ a { color: inherit; text-decoration: none; }
 .share-main { background: linear-gradient(100deg, #0d63df, #128ee9); border-color: transparent; color: #fff; }
 .raffle-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 22px 0; }
 .raffle-gallery img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 14px; border: 2px solid #dce7f3; background: #f4f7fa; }
+.raffle-description { margin: 0; color: #697689; line-height: 1.55; font-size: 15px; white-space: pre-wrap; overflow: visible; display: block; max-height: none; height: auto; word-break: break-word; overflow-wrap: anywhere; }
 .payment-box { margin-top: 18px; padding: 18px; border: 2px solid #cfe1f1; border-radius: 16px; background: linear-gradient(145deg, #eff8ff, #fff9e8); text-align: center; }
 .payment-qr { display: block; width: min(280px, 100%); height: auto; margin: 16px auto; border-radius: 10px; background: #fff; }
 .payment-code-label { display: grid; gap: 8px; text-align: left; margin-top: 12px; }
