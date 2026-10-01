@@ -43,7 +43,6 @@ type Raffle = {
 
 const initialForm = {
   raffleCode: "",
-  raffleName: "",
   topicId: "",
   newTopicName: "",
   city: "",
@@ -218,7 +217,7 @@ export default function AdminPage() {
       const response = await fetch("/api/rifas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, endDate: toServerDateTime(form.endDate), imageUrls: images })
+        body: JSON.stringify({ ...form, productName: form.productName, endDate: toServerDateTime(form.endDate), imageUrls: images })
       });
       const data = await response.json();
 
@@ -366,8 +365,7 @@ export default function AdminPage() {
           <form className="admin-form" onSubmit={submit}>
             <section className="form-section form-section-nested">
               <label>ID da rifa<input value={form.raffleCode} onChange={(e) => update("raffleCode", e.target.value)} placeholder="Ex.: RIFA-001 ou deixe vazio" /><small>Se deixar vazio, o sistema gera um ID automaticamente.</small></label>
-              <label>Nome da rifa<input required value={form.raffleName} onChange={(e) => update("raffleName", e.target.value)} placeholder="Ex.: Rifa Paramirim" /></label>
-              <label>Tópico regional da rifa
+                            <label>Tópico regional da rifa
                 <select value={form.topicId} onChange={(e) => {
                   update("topicId", e.target.value);
                   if (e.target.value) update("newTopicName", "");
@@ -458,8 +456,7 @@ export default function AdminPage() {
                     <div className="raffle-admin-main">
                       <span className={"admin-status status-" + raffle.status.toLowerCase()}>{statusLabel[raffle.status]}</span>
                       <div className="raffle-admin-id">{raffle.raffleCode ? "ID: " + raffle.raffleCode : "ID ainda não definido"}</div>
-                      <h3>{raffle.name}</h3>
-                      <p>{raffle.productName}</p>
+                      <h3>{raffle.productName}</h3>
 
                       {raffle.resultStatus === "WINNER" && winningNumbers.length > 0 && (
                         <div className="admin-draw-status admin-draw-winner">
