@@ -368,7 +368,7 @@ export default function AdminPage() {
               <h3>Identificação</h3>
               <label>ID da rifa<input value={form.raffleCode} onChange={(e) => update("raffleCode", e.target.value)} placeholder="Ex.: RIFA-001 ou deixe vazio" /><small>Se deixar vazio, o sistema gera um ID automaticamente.</small></label>
               <label>Nome da rifa<input required value={form.raffleName} onChange={(e) => update("raffleName", e.target.value)} placeholder="Ex.: Rifa Paramirim" /></label>
-              <label>Tópico regional da rifa>
+              <label>Tópico regional da rifa
                 <select value={form.topicId} onChange={(e) => {
                   update("topicId", e.target.value);
                   if (e.target.value) update("newTopicName", "");
