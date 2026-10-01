@@ -10,7 +10,6 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
       raffleCode: true,
       name: true,
       productName: true,
-      category: true,
       description: true,
       totalNumbers: true,
       priceInCents: true,
