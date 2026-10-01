@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import HomeRaffleBrowser from "@/app/HomeRaffleBrowser";
+import SiteHeader from "@/app/SiteHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -51,22 +52,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <header className="site-header">
-        <div className="container site-header-inner">
-          <Link className="brand" href="/">
-            <span>Rifas<span className="brand-dot">.</span><strong>TOP</strong></span>
-          </Link>
-          <div className="header-actions">
-            <Link className="header-link" href="/">Início</Link>
-            <Link className="header-link" href="#rifas">Rifas</Link>
-            {user ? (
-              <Link className="header-login" href="/minha-conta">Minha Conta</Link>
-            ) : (
-              <Link className="header-login" href="/login">Entrar</Link>
-            )}
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main>
         <section className="section raffle-section" id="rifas">
