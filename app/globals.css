@@ -1090,3 +1090,55 @@ a { color: inherit; text-decoration: none; }
     font-size: 14px;
   }
 }
+
+
+/* Compartilhar nas rifas da Minha Conta: contido, centralizado e sem corte */
+.account-page-clean .account-raffle-card {
+  min-width: 0;
+}
+.account-page-clean .account-card-content {
+  min-width: 0;
+}
+.account-page-clean .share-box {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 12px 0 0;
+  text-align: center;
+  overflow: hidden;
+}
+.account-page-clean .share-box > div:first-child {
+  min-width: 0;
+  width: 100%;
+}
+.account-page-clean .share-box strong {
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.account-page-clean .share-actions {
+  width: 100%;
+  justify-content: center;
+}
+.account-page-clean .share-main {
+  margin: 0 auto;
+}
+@media (max-width: 700px) {
+  .account-page-clean .share-box {
+    padding: 12px 10px;
+    gap: 9px;
+    border-radius: 14px;
+  }
+  .account-page-clean .share-box strong {
+    font-size: 12px;
+    line-height: 1.25;
+    white-space: normal;
+  }
+  .account-page-clean .share-main {
+    min-height: 38px;
+    padding: 0 20px;
+    font-size: 14px;
+  }
+}
