@@ -324,11 +324,24 @@ export async function PATCH(request: Request) {
       });
     }
 
-    if (!id || !["ACTIVE", "PAUSED", "ENDED"].includes(status)) {
+    if (!id || !["ACTIVE", "PAUSED"].includes(status)) {
       return NextResponse.json({ error: "Dados inválidos." }, { status: 400 });
     }
 
-    if (status === "ENDED") {
+    const currentRaffle = await prisma.raffle.findUnique({
+      where: { id },
+      select: { id: true, resultStatus: true, status: true }
+    });
+
+    if (!currentRaffle) {
+      return NextResponse.json({ error: "Rifa não encontrada." }, { status: 404 });
+    }
+
+    if (currentRaffle.resultStatus === "WINNER" || currentRaffle.status === "ENDED") {
+      return NextResponse.json({ error: "Esta rifa já foi finalizada e não pode ser reativada." }, { status: 409 });
+    }
+
+    {
       const result = await prisma.$transaction(async (tx) => {
         await tx.raffleNumber.updateMany({
           where: {
