@@ -356,16 +356,8 @@ export default function AdminPage() {
                 {savingWhatsapp ? "Salvando..." : "Salvar WhatsApp"}
               </button>
             </div>
-            <p>Crie e controle suas rifas e realize o sorteio diretamente pelo servidor.</p>
           </div>
-          <span className="admin-badge">ADMINISTRAÇÃO</span>
         </div>
-
-        <section className="admin-overview">
-          <div><strong>{raffles.length}</strong><span>rifas cadastradas</span></div>
-          <div><strong>{raffles.filter((raffle) => raffle.status === "ACTIVE").length}</strong><span>rifas ativas</span></div>
-          <div><strong>{raffles.filter((raffle) => raffle.status === "DRAFT").length}</strong><span>rascunhos</span></div>
-        </section>
 
         <section className="form-section">
           <h2>Criar nova rifa</h2>
@@ -373,7 +365,6 @@ export default function AdminPage() {
 
           <form className="admin-form" onSubmit={submit}>
             <section className="form-section form-section-nested">
-              <h3>Identificação</h3>
               <label>ID da rifa<input value={form.raffleCode} onChange={(e) => update("raffleCode", e.target.value)} placeholder="Ex.: RIFA-001 ou deixe vazio" /><small>Se deixar vazio, o sistema gera um ID automaticamente.</small></label>
               <label>Nome da rifa<input required value={form.raffleName} onChange={(e) => update("raffleName", e.target.value)} placeholder="Ex.: Rifa Paramirim" /></label>
               <label>Tópico regional da rifa
