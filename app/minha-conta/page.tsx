@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import ShareRaffle from "@/app/rifa/ShareRaffle";
+import SiteHeader from "@/app/SiteHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -92,16 +93,7 @@ export default async function AccountPage() {
 
   return (
     <>
-      <header className="site-header">
-        <div className="container site-header-inner">
-          <Link className="brand" href="/">
-            <span>Rifas<span className="brand-dot">.</span><strong>TOP</strong></span>
-          </Link>
-          <div className="header-actions">
-            <Link className="header-login" href="/">← Voltar</Link>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="account-page account-page-clean">
         <div className="container account-container">
