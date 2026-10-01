@@ -81,8 +81,12 @@ function RaffleCard({
   );
 }
 
+function getTopicName(value: string) {
+  return value.replace(/^rifas\s+em\s+/i, "").trim();
+}
+
 function getRaffleCity(raffle: RaffleCardData) {
-  const city = raffle.topicName?.trim() || raffle.city?.trim();
+  const city = getTopicName(raffle.topicName?.trim() || raffle.city?.trim());
   if (city) return city;
   const fallback = raffle.name.replace(/^rifa\s*/i, "").trim();
   return fallback || "Região";
