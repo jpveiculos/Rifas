@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SiteHeader from "@/app/SiteHeader";
 
 export const metadata = {
   title: "Baixar App | Rifas.TOP",
@@ -7,7 +8,9 @@ export const metadata = {
 
 export default function BaixarAppPage() {
   return (
-    <main className="download-page">
+    <>
+      <SiteHeader />
+      <main className="download-page">
       <div className="container download-container">
         <Link className="back-link" href="/">← Voltar</Link>
 
@@ -43,6 +46,7 @@ export default function BaixarAppPage() {
         </section>
 
               </div>
-    </main>
+      </main>
+    </>
   );
 }
