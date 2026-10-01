@@ -7,6 +7,11 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const user = await getCurrentUser();
+  const siteSettings = await prisma.siteSettings.upsert({
+    where: { id: 1 },
+    update: {},
+    create: { id: 1, contactWhatsapp: "77998315360" }
+  });
   const raffles = await prisma.raffle.findMany({
     where: { status: { in: ["ACTIVE", "ENDED"] } },
     orderBy: { createdAt: "desc" }
@@ -81,7 +86,14 @@ export default async function HomePage() {
         </section>
       </main>
 
-      <footer className="footer"><div className="container">Rifas.TOP · Plataforma pessoal</div></footer>
+      <footer className="footer">
+        <div className="container footer-inner">
+          <span>Coloque na rifa</span>
+          <a className="footer-contact" href={"https://wa.me/" + siteSettings.contactWhatsapp} target="_blank" rel="noreferrer">
+            Entrar em contato
+          </a>
+        </div>
+      </footer>
     </>
   );
 }
