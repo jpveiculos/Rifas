@@ -25,6 +25,8 @@ type Raffle = {
   raffleCode: string | null;
   name: string;
   city: string;
+  topicId: string | null;
+  topicName: string | null;
   productName: string;
   totalNumbers: number;
   priceInCents: number;
@@ -42,6 +44,8 @@ type Raffle = {
 const initialForm = {
   raffleCode: "",
   raffleName: "",
+  topicId: "",
+  newTopicName: "",
   city: "",
   productName: "",
   description: "",
@@ -68,6 +72,7 @@ function formatNumber(value: number | string) {
 export default function AdminPage() {
   const [form, setForm] = useState(initialForm);
   const [raffles, setRaffles] = useState<Raffle[]>([]);
+  const [topics, setTopics] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingList, setLoadingList] = useState(true);
   const [message, setMessage] = useState("");
@@ -84,6 +89,7 @@ export default function AdminPage() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "Não foi possível carregar as rifas.");
       setRaffles(data.raffles ?? []);
+      setTopics(data.topics ?? []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível carregar as rifas.");
     } finally {
@@ -314,14 +320,22 @@ export default function AdminPage() {
               <h3>Identificação</h3>
               <label>ID da rifa<input value={form.raffleCode} onChange={(e) => update("raffleCode", e.target.value)} placeholder="Ex.: RIFA-001 ou deixe vazio" /><small>Se deixar vazio, o sistema gera um ID automaticamente.</small></label>
               <label>Nome da rifa<input required value={form.raffleName} onChange={(e) => update("raffleName", e.target.value)} placeholder="Ex.: Rifa Paramirim" /></label>
-              <label>Cidade da rifa
-                <input required list="raffle-cities" value={form.city} onChange={(e) => update("city", e.target.value)} placeholder="Ex.: Paramirim" />
-                <datalist id="raffle-cities">
-                  {Array.from(new Set(raffles.map((raffle) => raffle.city?.trim()).filter(Boolean))).sort().map((city) => (
-                    <option value={city} key={city} />
-                  ))}
-                </datalist>
-                <small>Selecione uma cidade já usada ou digite uma nova. As cidades só aparecem na página quando houver rifa ativa nela.</small>
+              <label>Tópico regional da rifa>
+                <select required value={form.topicId} onChange={(e) => {
+                  update("topicId", e.target.value);
+                  if (e.target.value) update("newTopicName", "");
+                }}>
+                  <option value="">Selecione um tópico</option>
+                  {topics.map((topic) => <option value={topic.id} key={topic.id}>{topic.name}</option>)}
+                </select>
+                <small>As rifas do mesmo tópico aparecem juntas na página principal.</small>
+              </label>
+              <label>Novo tópico regional
+                <input value={form.newTopicName} onChange={(e) => {
+                  update("newTopicName", e.target.value);
+                  if (e.target.value.trim()) update("topicId", "");
+                }} placeholder="Ex.: Paramirim-BA" />
+                <small>Preencha somente se quiser criar um novo tópico junto com esta rifa.</small>
               </label>
               <label>Nome do produto<input required value={form.productName} onChange={(e) => update("productName", e.target.value)} placeholder="Ex.: Chevrolet Celta 2012" /></label>
                 <label>Descrição<textarea required value={form.description} onChange={(e) => update("description", e.target.value)} placeholder="Descreva o produto e as informações importantes." rows={6} /></label>
