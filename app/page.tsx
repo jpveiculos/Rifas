@@ -70,11 +70,7 @@ export default async function HomePage() {
                 <h2 className="section-title">Escolha uma rifa</h2>
                 <p className="home-raffle-subtitle">Confira as rifas disponíveis e selecione os números.</p>
               </div>
-              {raffles.length > 0 && (
-                <span className="raffle-count">
-                  {activeCount} {activeCount === 1 ? "rifa em andamento" : "rifas em andamento"}{finishedCount > 0 ? " · " + finishedCount + (finishedCount === 1 ? " rifa finalizada" : " rifas finalizadas") : ""}
-                </span>
-              )}
+
             </div>
 
             {raffles.length === 0 ? (
