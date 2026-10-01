@@ -21,6 +21,11 @@ export default async function AccountPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
+  const siteSettings = await prisma.siteSettings.findUnique({
+    where: { id: 1 },
+    select: { contactWhatsapp: true }
+  });
+
   const participations = await prisma.raffleParticipation.findMany({
     where: {
       userId: user.id,
