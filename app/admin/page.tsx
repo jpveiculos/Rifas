@@ -24,6 +24,7 @@ type Raffle = {
   id: string;
   raffleCode: string | null;
   name: string;
+  city: string;
   productName: string;
   totalNumbers: number;
   priceInCents: number;
@@ -313,7 +314,15 @@ export default function AdminPage() {
               <h3>Identificação</h3>
               <label>ID da rifa<input value={form.raffleCode} onChange={(e) => update("raffleCode", e.target.value)} placeholder="Ex.: RIFA-001 ou deixe vazio" /><small>Se deixar vazio, o sistema gera um ID automaticamente.</small></label>
               <label>Nome da rifa<input required value={form.raffleName} onChange={(e) => update("raffleName", e.target.value)} placeholder="Ex.: Rifa Paramirim" /></label>
-              <label>Cidade da rifa<input required value={form.city} onChange={(e) => update("city", e.target.value)} placeholder="Ex.: Paramirim" /></label>
+              <label>Cidade da rifa
+                <input required list="raffle-cities" value={form.city} onChange={(e) => update("city", e.target.value)} placeholder="Ex.: Paramirim" />
+                <datalist id="raffle-cities">
+                  {Array.from(new Set(raffles.map((raffle) => raffle.city?.trim()).filter(Boolean))).sort().map((city) => (
+                    <option value={city} key={city} />
+                  ))}
+                </datalist>
+                <small>Selecione uma cidade já usada ou digite uma nova. As cidades só aparecem na página quando houver rifa ativa nela.</small>
+              </label>
               <label>Nome do produto<input required value={form.productName} onChange={(e) => update("productName", e.target.value)} placeholder="Ex.: Chevrolet Celta 2012" /></label>
                 <label>Descrição<textarea required value={form.description} onChange={(e) => update("description", e.target.value)} placeholder="Descreva o produto e as informações importantes." rows={6} /></label>
             </section>
