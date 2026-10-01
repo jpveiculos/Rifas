@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SiteHeader from "@/app/SiteHeader";
 
 export const metadata = {
   title: "Termos de Uso | Rifas.TOP",
@@ -7,7 +8,9 @@ export const metadata = {
 
 export default function TermosDeUsoPage() {
   return (
-    <main className="terms-page">
+    <>
+      <SiteHeader />
+      <main className="terms-page">
       <div className="container terms-container">
         <Link className="back-link" href="/">← Voltar</Link>
 
@@ -86,6 +89,7 @@ export default function TermosDeUsoPage() {
           <div className="terms-footer-brand"><strong>Rifas.TOP</strong><span>Plataforma de Rifas</span></div>
         </article>
       </div>
-    </main>
+      </main>
+    </>
   );
 }
