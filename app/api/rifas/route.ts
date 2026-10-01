@@ -61,32 +61,17 @@ export async function GET() {
       }
     });
 
-    // Converte rifas antigas, criadas antes dos tópicos, em tópicos regionais.
-    // Isso é feito somente na área administrativa e é idempotente.
-    for (const raffle of raffles) {
-      if (!raffle.topicId && raffle.city.trim()) {
-        const name = normalizeTopicName(raffle.city);
-        const normalized = normalizeTopicKey(name);
-        const topic = await prisma.raffleTopic.upsert({
-          where: { normalized },
-          update: {},
-          create: { name, normalized }
-        });
-        await prisma.raffle.update({
-          where: { id: raffle.id },
-          data: { topicId: topic.id, city: name }
-        });
-      }
-    }
-
-    const topicsAfterMigration = await prisma.raffleTopic.findMany({
+    const topics = await prisma.raffleTopic.findMany({
       orderBy: { name: "asc" },
       select: { id: true, name: true }
     });
 
     const confirmedCounts = await prisma.raffleNumber.groupBy({
       by: ["raffleId"],
-      where: { status: "CONFIRMED", raffleId: { in: raffles.map((raffle) => raffle.id) } },
+      where: {
+        status: "CONFIRMED",
+        raffleId: { in: raffles.map((raffle) => raffle.id) }
+      },
       _count: { _all: true }
     });
 
@@ -95,7 +80,7 @@ export async function GET() {
     );
 
     return NextResponse.json({
-      topics: topicsAfterMigration,
+      topics,
       raffles: raffles.map((raffle) => ({
         ...raffle,
         confirmedCount: confirmedByRaffle.get(raffle.id) ?? 0
@@ -188,11 +173,11 @@ export async function PATCH(request: Request) {
 
     if (isEdit) {
       const raffleCodeInput = normalizeRaffleCode(String(body.raffleCode ?? ""));
-      const name = String(body.raffleName ?? "").trim();
+      const productName = String(body.productName ?? "").trim();
+      const name = productName;
       const city = String(body.city ?? "").trim();
       const topicIdInput = String(body.topicId ?? "").trim();
       const newTopicName = normalizeTopicName(String(body.newTopicName ?? ""));
-      const productName = String(body.productName ?? "").trim();
       const description = String(body.description ?? "").trim();
       const totalNumbers = Number(body.totalNumbers);
       const priceInCents = parsePrice(String(body.pricePerNumber ?? ""));
