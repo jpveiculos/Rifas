@@ -35,7 +35,7 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const adminPage = pathname === "/admin" || pathname.startsWith("/admin/");
   const adminMutation =
-    pathname === "/api/rifas" &&
+    (pathname === "/api/rifas" || pathname === "/api/config") &&
     ["POST", "PATCH", "DELETE"].includes(request.method);
 
   if (!adminPage && !adminMutation) {
