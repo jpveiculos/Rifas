@@ -112,8 +112,7 @@ function RaffleGroups({
       {Array.from(groups.values()).map(({ city, raffles: cityRaffles }) => (
         <section className="raffle-city-group" key={city}>
           <div className="raffle-city-heading">
-            <span>RIFAS EM</span>
-            <h3>{city}</h3>
+            <h3>Rifas em {city.replace(/-BA$/i, ", Bahia")}</h3>
           </div>
           <div className="raffle-grid raffle-mosaic">
             {cityRaffles.map((raffle) => (
