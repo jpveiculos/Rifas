@@ -265,6 +265,35 @@ export default function AdminPage() {
     }
   }
 
+  async function deleteRaffle(id: string, productName: string) {
+    const confirmation = window.confirm(
+      `Excluir a rifa "${productName}"? Esta ação é permanente e também removerá os números e participações vinculados a ela.`
+    );
+    if (!confirmation) return;
+
+    setError("");
+    setMessage("");
+
+    try {
+      const response = await fetch("/api/rifas", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id })
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error ?? "Não foi possível excluir a rifa.");
+        return;
+      }
+
+      setMessage("Rifa excluída com sucesso.");
+      await loadRaffles();
+    } catch {
+      setError("Não foi possível conectar ao servidor.");
+    }
+  }
+
   async function drawRaffle(id: string) {
     const raffle = raffles.find((item) => item.id === id);
     if (!raffle) return;
@@ -473,6 +502,7 @@ export default function AdminPage() {
                     <div className="raffle-admin-actions">
                       <a className="secondary-button compact-button" href={"/rifa/" + raffle.id}>Abrir</a>
                       <button className="secondary-button compact-button" type="button" onClick={() => editRaffle(raffle.id)}>Editar</button>
+                      <button className="danger-button compact-button" type="button" onClick={() => deleteRaffle(raffle.id, raffle.productName)}>Excluir</button>
 
                       {raffle.status === "DRAFT" && <button className="primary-button compact-button" type="button" onClick={() => changeStatus(raffle.id, "ACTIVE")}>Publicar rifa</button>}
                       {raffle.status === "ACTIVE" && <button className="secondary-button compact-button" type="button" onClick={() => changeStatus(raffle.id, "PAUSED")}>Pausar</button>}
