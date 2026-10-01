@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
+import ShareRaffle from "@/app/rifa/ShareRaffle";
 
 export const dynamic = "force-dynamic";
 
@@ -147,6 +148,10 @@ export default async function AccountPage() {
                         <Link className="secondary-button account-button" href={"/rifa/" + item.raffle.id}>
                           Ver rifa
                         </Link>
+                        <ShareRaffle
+                          raffleName={item.raffle.productName}
+                          raffleUrl={"/rifa/" + item.raffle.id}
+                        />
                       </div>
                     </article>
                   );
