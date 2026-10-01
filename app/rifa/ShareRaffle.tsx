@@ -10,7 +10,7 @@ export default function ShareRaffle({ raffleName }: Props) {
   const [copied, setCopied] = useState(false);
 
   async function share() {
-    const url = window.location.origin + "/";
+    const url = window.location.href;
     const text = "Confira esta rifa: " + raffleName;
 
     if (navigator.share) {
