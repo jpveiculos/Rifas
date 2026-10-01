@@ -73,6 +73,8 @@ export default function AdminPage() {
   const [form, setForm] = useState(initialForm);
   const [raffles, setRaffles] = useState<Raffle[]>([]);
   const [topics, setTopics] = useState<{ id: string; name: string }[]>([]);
+  const [contactWhatsapp, setContactWhatsapp] = useState("77998315360");
+  const [savingWhatsapp, setSavingWhatsapp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingList, setLoadingList] = useState(true);
   const [message, setMessage] = useState("");
@@ -97,8 +99,41 @@ export default function AdminPage() {
     }
   }
 
+  async function loadSettings() {
+    try {
+      const response = await fetch("/api/config", { cache: "no-store" });
+      const data = await response.json();
+      if (response.ok && data.contactWhatsapp) setContactWhatsapp(data.contactWhatsapp);
+    } catch {}
+  }
+
+  async function saveWhatsapp() {
+    setSavingWhatsapp(true);
+    setError("");
+    setMessage("");
+    try {
+      const response = await fetch("/api/config", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contactWhatsapp })
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        setError(data.error ?? "Não foi possível salvar o WhatsApp.");
+        return;
+      }
+      setContactWhatsapp(data.contactWhatsapp);
+      setMessage("WhatsApp de contato atualizado.");
+    } catch {
+      setError("Não foi possível conectar ao servidor.");
+    } finally {
+      setSavingWhatsapp(false);
+    }
+  }
+
   useEffect(() => {
     loadRaffles();
+    loadSettings();
     const timer = window.setInterval(() => setNow(Date.now()), 1000);
     return () => window.clearInterval(timer);
   }, []);
@@ -300,6 +335,19 @@ export default function AdminPage() {
           <div>
             <a className="back-link" href="/">← Voltar para a página inicial</a>
             <h1>Área administrativa</h1>
+            <div className="admin-contact-setting">
+              <label>WhatsApp de contato
+                <input
+                  value={contactWhatsapp}
+                  onChange={(e) => setContactWhatsapp(e.target.value.replace(/\D/g, ""))}
+                  inputMode="numeric"
+                  placeholder="77998315360"
+                />
+              </label>
+              <button className="primary-button compact-button" type="button" onClick={saveWhatsapp} disabled={savingWhatsapp}>
+                {savingWhatsapp ? "Salvando..." : "Salvar WhatsApp"}
+              </button>
+            </div>
             <p>Crie e controle suas rifas e realize o sorteio diretamente pelo servidor.</p>
           </div>
           <span className="admin-badge">ADMINISTRAÇÃO</span>
