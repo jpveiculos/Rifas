@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import RaffleParticipant from "./RaffleParticipant";
 import ShareRaffle from "../ShareRaffle";
 import { getCurrentUser } from "@/lib/auth";
+import SiteHeader from "@/app/SiteHeader";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -26,10 +27,7 @@ export default async function RafflePage({ params }: Props) {
 
   return (
     <>
-      <header className="site-header"><div className="container site-header-inner">
-        <Link className="brand" href="/"><span>Rifas<span className="brand-dot">.</span><strong>TOP</strong></span></Link>
-        <Link className="header-link" href={user ? "/minha-conta" : "/"}>← Voltar</Link>
-      </div></header>
+      <SiteHeader />
 
       <main className="section"><div className="container">
         <article className="raffle-card"><div className="raffle-card-content">
