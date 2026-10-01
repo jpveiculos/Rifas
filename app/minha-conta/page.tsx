@@ -108,7 +108,7 @@ export default async function AccountPage() {
         <div className="container account-container">
           <section className="account-section account-participations">
             <div className="account-section-heading">
-              <div>
+              <div className="account-title-card">
                 <h1>Minhas rifas</h1>
               </div>
             </div>
@@ -203,6 +203,20 @@ export default async function AccountPage() {
           </section>
         </div>
       </main>
+
+      <footer className="footer account-footer">
+        <div className="container footer-inner">
+          <span>Coloque um item na Rifa</span>
+          <a
+            className="footer-contact"
+            href={"https://wa.me/" + (siteSettings?.contactWhatsapp ?? "77998315360")}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Entrar em contato
+          </a>
+        </div>
+      </footer>
     </>
   );
 }
