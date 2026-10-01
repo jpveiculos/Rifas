@@ -7,6 +7,7 @@ type RaffleCardData = {
   raffleCode: string | null;
   name: string;
   city: string;
+  topicName: string;
   productName: string;
   description: string;
   imageUrls: string[];
@@ -81,7 +82,7 @@ function RaffleCard({
 }
 
 function getRaffleCity(raffle: RaffleCardData) {
-  const city = raffle.city?.trim();
+  const city = raffle.topicName?.trim() || raffle.city?.trim();
   if (city) return city;
   const fallback = raffle.name.replace(/^rifa\s*/i, "").trim();
   return fallback || "Região";
