@@ -69,7 +69,9 @@ export default function AdminPage() {
   const [raffles, setRaffles] = useState<Raffle[]>([]);
   const [topics, setTopics] = useState<{ id: string; name: string }[]>([]);
   const [contactWhatsapp, setContactWhatsapp] = useState("77998315360");
+  const [instagramHandle, setInstagramHandle] = useState("_rifas.top");
   const [savingWhatsapp, setSavingWhatsapp] = useState(false);
+  const [savingInstagram, setSavingInstagram] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingList, setLoadingList] = useState(true);
   const [message, setMessage] = useState("");
@@ -99,6 +101,7 @@ export default function AdminPage() {
       const response = await fetch("/api/config", { cache: "no-store" });
       const data = await response.json();
       if (response.ok && data.contactWhatsapp) setContactWhatsapp(data.contactWhatsapp);
+      if (response.ok && data.instagramHandle) setInstagramHandle(data.instagramHandle);
     } catch {}
   }
 
@@ -123,6 +126,30 @@ export default function AdminPage() {
       setError("Não foi possível conectar ao servidor.");
     } finally {
       setSavingWhatsapp(false);
+    }
+  }
+
+  async function saveInstagram() {
+    setSavingInstagram(true);
+    setError("");
+    setMessage("");
+    try {
+      const response = await fetch("/api/config", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contactWhatsapp, instagramHandle })
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        setError(data.error ?? "Não foi possível salvar o Instagram.");
+        return;
+      }
+      setInstagramHandle(data.instagramHandle);
+      setMessage("Instagram atualizado.");
+    } catch {
+      setError("Não foi possível conectar ao servidor.");
+    } finally {
+      setSavingInstagram(false);
     }
   }
 
@@ -381,6 +408,21 @@ export default function AdminPage() {
               </label>
               <button className="primary-button compact-button" type="button" onClick={saveWhatsapp} disabled={savingWhatsapp}>
                 {savingWhatsapp ? "Salvando..." : "Salvar WhatsApp"}
+              </button>
+            </div>
+            <div className="admin-contact-setting">
+              <label>Instagram
+                <input
+                  value={instagramHandle}
+                  onChange={(e) => setInstagramHandle(e.target.value.replace(/^@+/, "").replace(/\s/g, ""))}
+                  placeholder="_rifas.top"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                />
+              </label>
+              <button className="primary-button compact-button" type="button" onClick={saveInstagram} disabled={savingInstagram}>
+                {savingInstagram ? "Salvando..." : "Salvar Instagram"}
               </button>
             </div>
           </div>
