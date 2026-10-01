@@ -89,14 +89,73 @@ a { color: inherit; text-decoration: none; }
 .spark-two { bottom: 45px; right: 8%; color: #ffec4b; }
 
 .section { padding: 54px 0 76px; }
-.raffle-section { background: #f5f7fb; }
-.section-heading { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 24px; }
-.section-title { margin: 6px 0 0; font-size: 32px; color: #142238; letter-spacing: -1px; }
-.raffle-count { color: #64748b; font-size: 14px; font-weight: 700; }
+.raffle-section {
+  position: relative;
+  overflow: hidden;
+  padding: 64px 0 88px;
+  background:
+    radial-gradient(circle at 8% 12%, rgba(255,255,255,.30) 0 110px, transparent 111px),
+    radial-gradient(circle at 94% 18%, rgba(255,255,255,.18) 0 150px, transparent 151px),
+    linear-gradient(125deg, #ffd21a 0%, #ffb900 27%, #18a7ed 72%, #0d63df 100%);
+}
+.raffle-section::before {
+  content: "";
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  right: -210px;
+  bottom: -250px;
+  background: rgba(255,255,255,.12);
+}
+.raffle-section::after {
+  content: "";
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  left: -150px;
+  bottom: -170px;
+  background: rgba(13,27,42,.08);
+}
+.raffle-section > .container { position: relative; z-index: 1; }
+.home-raffle-heading { margin-bottom: 30px; }
+.home-raffle-heading .section-title {
+  margin: 0;
+  font-size: clamp(38px, 5vw, 54px);
+  color: #fff;
+  letter-spacing: -2px;
+  text-shadow: 0 3px 16px rgba(13,27,42,.18);
+}
+.home-raffle-subtitle {
+  margin: 10px 0 0;
+  color: rgba(255,255,255,.94);
+  font-size: 17px;
+  line-height: 1.45;
+  font-weight: 600;
+}
+.raffle-count {
+  color: #fff;
+  font-size: 15px;
+  font-weight: 900;
+  padding: 10px 15px;
+  border-radius: 999px;
+  background: rgba(13,27,42,.20);
+  border: 1px solid rgba(255,255,255,.24);
+  backdrop-filter: blur(8px);
+}
 .raffle-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 .raffle-card {
-  overflow: hidden; background: #fff; border: 1px solid #e4eaf2; border-radius: 18px;
-  box-shadow: 0 10px 28px rgba(22, 42, 65, .09);
+  overflow: hidden;
+  background: rgba(255,255,255,.98);
+  border: 1px solid rgba(255,255,255,.75);
+  border-radius: 20px;
+  box-shadow: 0 16px 34px rgba(9, 38, 72, .20);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.raffle-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 40px rgba(9, 38, 72, .25);
 }
 .raffle-card-image { display: block; width: 100%; height: 190px; object-fit: cover; background: #eaf1f8; }
 .raffle-card-placeholder {
@@ -469,8 +528,10 @@ a { color: inherit; text-decoration: none; }
 
 /* Cards compactos da página principal */
 @media (max-width: 640px) {
-  .raffle-section { padding-top: 26px; }
-  .raffle-section .section-title { font-size: 34px; letter-spacing: -1.4px; }
+  .raffle-section { padding: 42px 0 64px; }
+  .raffle-section .section-title { font-size: 36px; letter-spacing: -1.5px; }
+  .home-raffle-subtitle { font-size: 14px; }
+  .raffle-count { align-self: stretch; text-align: center; }
   .raffle-section .section-heading { margin-bottom: 20px; }
   .category-browser { padding: 15px; }
   .category-browser .browser-heading { margin-bottom: 14px; }
