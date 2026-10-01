@@ -20,9 +20,9 @@ export default function BaixarAppPage() {
         <section className="download-card">
           <h2>Android</h2>
           <p>Quando o APK estiver disponível, você poderá baixá-lo aqui e instalar o aplicativo no seu aparelho.</p>
-          <a className="download-button download-button-disabled" href="#" aria-disabled="true" onClick={(event) => event.preventDefault()}>
+          <div className="download-button download-button-disabled" aria-disabled="true">
             APK em breve
-          </a>
+          </div>
           <small>O arquivo do aplicativo será disponibilizado nesta página após a compilação.</small>
         </section>
 
