@@ -1175,34 +1175,48 @@ a { color: inherit; text-decoration: none; }
 .social-links {
   display: flex;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .social-link {
   flex: 1 1 170px;
   max-width: 180px;
-  min-height: 44px;
+  min-height: 50px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0 14px;
-  border-radius: 11px;
-  font-size: 13px;
+  gap: 9px;
+  padding: 0 16px;
+  border-radius: 14px;
+  font-size: 14px;
   font-weight: 900;
-  border: 2px solid transparent;
   text-decoration: none;
+  box-shadow: 0 7px 16px rgba(9,38,72,.14);
+  transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
+}
+
+.social-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(9,38,72,.18);
+  filter: brightness(1.02);
+}
+
+.social-icon {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
 }
 
 .instagram-link {
-  background: #fff;
-  color: #17263b;
-  border-color: #17263b;
+  color: #fff;
+  border: 0;
+  background: linear-gradient(135deg, #f9ce34 0%, #ee2a7b 48%, #6228d7 100%);
 }
 
 .whatsapp-link {
-  background: #16a34a;
   color: #fff;
-  box-shadow: 0 5px 14px rgba(0,0,0,.12);
+  border: 0;
+  background: #20b858;
 }
 
 @media (max-width: 640px) {
@@ -1211,13 +1225,20 @@ a { color: inherit; text-decoration: none; }
   }
 
   .social-links {
-    gap: 8px;
+    gap: 10px;
   }
 
   .social-link {
     flex-basis: 0;
-    min-height: 42px;
-    padding: 0 10px;
-    font-size: 12px;
+    min-height: 48px;
+    padding: 0 12px;
+    border-radius: 13px;
+    font-size: 13px;
+  }
+
+  .social-icon {
+    width: 22px;
+    height: 22px;
+    flex-basis: 22px;
   }
 }
