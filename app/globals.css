@@ -1014,3 +1014,52 @@ a { color: inherit; text-decoration: none; }
     padding-bottom: 125px;
   }
 }
+
+
+/* Destaque do título Minhas rifas */
+.account-title-card {
+  display: inline-flex;
+  align-items: center;
+  min-height: 58px;
+  padding: 10px 22px;
+  border: 1px solid #d7e2ef;
+  border-radius: 15px;
+  background: #eaf2fb;
+}
+.account-title-card h1 {
+  margin: 0 !important;
+  color: #17263b;
+  font-size: 30px;
+  line-height: 1;
+  white-space: nowrap;
+  letter-spacing: -.8px;
+}
+
+/* Rodapé da conta sobrepõe o navegador sem esconder o conteúdo */
+.account-footer {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+.account-page-clean {
+  padding-bottom: 135px !important;
+}
+@media (max-width: 700px) {
+  .account-title-card {
+    width: 100%;
+    min-height: 54px;
+    padding: 9px 17px;
+  }
+  .account-title-card h1 {
+    font-size: clamp(23px, 7vw, 29px);
+  }
+  .account-footer .footer-inner {
+    min-height: 48px;
+  }
+  .account-footer .footer-contact {
+    white-space: nowrap;
+  }
+  .account-page-clean {
+    padding-bottom: 145px !important;
+  }
+}
