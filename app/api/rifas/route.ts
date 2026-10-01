@@ -111,11 +111,11 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const raffleCodeInput = normalizeRaffleCode(String(body.raffleCode ?? ""));
-    const name = String(body.raffleName ?? "").trim();
+    const productName = String(body.productName ?? "").trim();
+    const name = productName;
     const city = String(body.city ?? "").trim();
     const topicIdInput = String(body.topicId ?? "").trim();
     const newTopicName = normalizeTopicName(String(body.newTopicName ?? ""));
-    const productName = String(body.productName ?? "").trim();
     const description = String(body.description ?? "").trim();
     const totalNumbers = Number(body.totalNumbers);
     const priceInCents = parsePrice(String(body.pricePerNumber ?? ""));
@@ -125,7 +125,7 @@ export async function POST(request: Request) {
 
     if (raffleCodeInput && !/^[A-Z0-9-]{3,30}$/.test(raffleCodeInput)) return NextResponse.json({ error: "O ID da rifa deve ter de 3 a 30 caracteres, usando apenas letras, números e hífen." }, { status: 400 });
 
-    if (!name || !productName || !Number.isInteger(totalNumbers) || totalNumbers < 1 || totalNumbers > 1_000_000 || !priceInCents || (endDate && Number.isNaN(endDate.getTime()))) {
+    if (!productName || !Number.isInteger(totalNumbers) || totalNumbers < 1 || totalNumbers > 1_000_000 || !priceInCents || (endDate && Number.isNaN(endDate.getTime()))) {
       return NextResponse.json({ error: "Preencha todos os campos corretamente." }, { status: 400 });
     }
 
