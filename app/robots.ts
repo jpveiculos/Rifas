@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const baseUrl = "https://rifas.top";
+const baseUrl = "https://rifastop.com.br";
 
 export default function robots(): MetadataRoute.Robots {
   return {
