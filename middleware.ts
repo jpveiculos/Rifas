@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ADMIN_COOKIE, verifyAdminSessionToken } from "@/lib/admin-auth-edge";
 
+const PRIMARY_HOST = "rifastop.com.br";
+const OLD_HOSTS = new Set(["rifas.top", "www.rifas.top"]);
+
 function unauthorizedApi() {
   return NextResponse.json({ error: "Autenticação administrativa necessária." }, {
     status: 401,
@@ -10,6 +13,15 @@ function unauthorizedApi() {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const hostname = request.nextUrl.hostname.toLowerCase();
+
+  if (OLD_HOSTS.has(hostname)) {
+    const url = request.nextUrl.clone();
+    url.protocol = "https:";
+    url.hostname = PRIMARY_HOST;
+    return NextResponse.redirect(url, 308);
+  }
+
   const adminPage = pathname === "/admin" || pathname.startsWith("/admin/");
   const adminApi =
     pathname === "/api/rifas" || pathname === "/api/config";
@@ -48,5 +60,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/rifas", "/api/config"]
+  matcher: ["/admin/:path*", "/api/rifas", "/api/config", "/((?!_next/static|_next/image|favicon.ico).*)"]
 };
