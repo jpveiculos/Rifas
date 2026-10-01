@@ -94,18 +94,22 @@ function RaffleGroups({
   raffles: RaffleCardData[];
   finished?: boolean;
 }) {
-  const groups = new Map<string, RaffleCardData[]>();
+  const groups = new Map<string, { city: string; raffles: RaffleCardData[] }>();
 
   for (const raffle of raffles) {
     const city = getRaffleCity(raffle);
-    const current = groups.get(city) ?? [];
-    current.push(raffle);
-    groups.set(city, current);
+    const key = city.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    const current = groups.get(key);
+    if (current) {
+      current.raffles.push(raffle);
+    } else {
+      groups.set(key, { city, raffles: [raffle] });
+    }
   }
 
   return (
     <div className="raffle-city-groups">
-      {Array.from(groups.entries()).map(([city, cityRaffles]) => (
+      {Array.from(groups.values()).map(({ city, raffles: cityRaffles }) => (
         <section className="raffle-city-group" key={city}>
           <div className="raffle-city-heading">
             <span>RIFAS EM</span>
