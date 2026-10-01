@@ -4,7 +4,7 @@ const DEFAULT_INSTAGRAM = "_rifas.top";
 
 export async function ensureSiteInstagramColumn() {
   await prisma.$executeRawUnsafe(
-    'ALTER TABLE "SiteSettings" ADD COLUMN IF NOT EXISTS "instagramHandle" TEXT NOT NULL DEFAULT '_rifas.top''
+    'ALTER TABLE "SiteSettings" ADD COLUMN IF NOT EXISTS "instagramHandle" TEXT NOT NULL DEFAULT \'_rifas.top\''
   );
 }
 
