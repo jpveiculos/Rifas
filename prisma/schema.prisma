@@ -32,11 +32,24 @@ enum RaffleResultStatus {
   WINNER
 }
 
+model RaffleTopic {
+  id          String   @id @default(cuid())
+  name        String
+  normalized  String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  raffles     Raffle[]
+
+  @@index([name])
+}
+
 model Raffle {
   id                   String             @id @default(cuid())
   raffleCode           String?            @unique
   name                 String
   city                 String             @default("")
+  topicId              String?
+  topic                RaffleTopic?       @relation(fields: [topicId], references: [id], onDelete: SetNull)
   productName          String
   description          String             @db.Text
   imageUrls            String[]           @default([])
@@ -55,6 +68,8 @@ model Raffle {
   updatedAt             DateTime           @updatedAt
   numbers              RaffleNumber[]
   participations       RaffleParticipation[]
+
+  @@index([topicId])
 }
 
 model User {
