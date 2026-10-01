@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import HomeRaffleBrowser from "@/app/HomeRaffleBrowser";
 import SiteHeader from "@/app/SiteHeader";
+import { getSiteInstagramHandle } from "@/lib/site-settings";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +13,7 @@ export default async function HomePage() {
     where: { id: 1 },
     select: { contactWhatsapp: true }
   });
+  const instagramHandle = await getSiteInstagramHandle();
   const raffles = await prisma.raffle.findMany({
     where: { status: { in: ["ACTIVE", "ENDED"] } },
     orderBy: { createdAt: "desc" },
@@ -72,7 +74,7 @@ export default async function HomePage() {
               <div className="social-links">
                 <a
                   className="social-link instagram-link"
-                  href="https://instagram.com/_rifas.top"
+                  href={"https://instagram.com/" + instagramHandle}
                   target="_blank"
                   rel="noreferrer"
                 >
