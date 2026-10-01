@@ -4,14 +4,13 @@ import { useState } from "react";
 
 type Props = {
   raffleName: string;
-  raffleUrl?: string;
 };
 
-export default function ShareRaffle({ raffleName, raffleUrl }: Props) {
+export default function ShareRaffle({ raffleName }: Props) {
   const [copied, setCopied] = useState(false);
 
   async function share() {
-    const url = raffleUrl ? new URL(raffleUrl, window.location.origin).toString() : window.location.href;
+    const url = window.location.origin + "/";
     const text = "Confira esta rifa: " + raffleName;
 
     if (navigator.share) {
