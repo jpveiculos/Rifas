@@ -69,7 +69,7 @@ export default async function HomePage() {
           <div className="container">
             <div className="section-heading home-raffle-heading">
               <div>
-                <h2 className="section-title">Escolha uma rifa</h2>
+                <h2 className="section-title">Escolha uma rifa e participe</h2>
                 <p className="home-raffle-subtitle">Confira as rifas disponíveis e selecione os números.</p>
               </div>
 
