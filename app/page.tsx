@@ -83,7 +83,12 @@ export default async function HomePage() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Instagram
+                  <svg className="social-icon instagram-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" strokeWidth="2"/>
+                    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" strokeWidth="2"/>
+                    <circle cx="17.5" cy="6.5" r="1.25" fill="currentColor"/>
+                  </svg>
+                  <span>Instagram</span>
                 </a>
                 <a
                   className="social-link whatsapp-link"
@@ -91,7 +96,11 @@ export default async function HomePage() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  WhatsApp
+                  <svg className="social-icon whatsapp-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M20.5 11.6a8.4 8.4 0 0 1-12.45 7.3L4 20l1.15-3.85A8.4 8.4 0 1 1 20.5 11.6Z" fill="none" stroke="currentColor" strokeWidth="2"/>
+                    <path d="M8.7 8.5c.25-.55.52-.56.76-.57h.63c.2 0 .4.08.5.34l.7 1.7c.1.23.07.42-.08.6l-.48.56c-.13.15-.27.3-.12.56.15.27.65 1.08 1.4 1.74.95.83 1.75 1.08 2.01 1.2.25.12.4.1.55-.08l.78-.92c.16-.2.34-.2.57-.12l1.65.78c.24.11.4.16.46.26.06.1.06.57-.14 1.1-.2.52-1.16 1-1.6 1.06-.41.05-.92.07-1.48-.1-.34-.1-.77-.25-1.33-.5-.56-.24-2.2-.96-3.75-2.4-1.3-1.18-2.18-2.64-2.43-3.1-.25-.46-.56-1.27-.56-1.94 0-.67.35-1.3.49-1.47Z" fill="currentColor"/>
+                  </svg>
+                  <span>WhatsApp</span>
                 </a>
               </div>
             </section>
