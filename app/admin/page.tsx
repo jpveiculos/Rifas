@@ -395,7 +395,6 @@ export default function AdminPage() {
 
             <section className="form-section form-section-nested">
               <h3>Fotos do produto</h3>
-              <p className="form-help">Adicione até 10 fotos. Elas serão comprimidas automaticamente antes de serem salvas.</p>
               <label className="photo-upload-button">
                 <span>📷 Adicionar fotos</span>
                 <input type="file" accept="image/*" multiple onChange={handleImages} />
