@@ -97,9 +97,7 @@ export default async function AccountPage() {
             <span>Rifas<span className="brand-dot">.</span><strong>TOP</strong></span>
           </Link>
           <div className="header-actions">
-            <Link className="header-link" href="/">Início</Link>
-            <Link className="header-link" href="/#rifas">Rifas</Link>
-            <span className="header-login">Olá, {user.username}</span>
+            <Link className="header-login" href="/">← Voltar</Link>
           </div>
         </div>
       </header>
