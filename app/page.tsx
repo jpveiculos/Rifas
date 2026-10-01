@@ -86,6 +86,7 @@ export default async function HomePage() {
       <footer className="footer">
         <div className="container footer-inner">
           <span>Coloque um item na Rifa</span>
+          <Link className="footer-link" href="/termos-de-uso">Termos de Uso</Link>
           <a className="footer-contact" href={"https://wa.me/" + (siteSettings?.contactWhatsapp ?? "77998315360")} target="_blank" rel="noreferrer">
             Entrar em contato
           </a>
