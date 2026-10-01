@@ -17,6 +17,14 @@ async function generateRaffleCode() {
   throw new Error("Não foi possível gerar um ID único para a rifa.");
 }
 
+function normalizeTopicName(value: string) {
+  return value.trim().replace(/\s+/g, " ");
+}
+
+function normalizeTopicKey(value: string) {
+  return normalizeTopicName(value).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
 function parsePrice(value: string) {
   const normalized = value.replace(/\./g, "").replace(",", ".");
   const amount = Number(normalized);
@@ -26,6 +34,11 @@ function parsePrice(value: string) {
 
 export async function GET() {
   try {
+    const topics = await prisma.raffleTopic.findMany({
+      orderBy: { name: "asc" },
+      select: { id: true, name: true }
+    });
+
     const raffles = await prisma.raffle.findMany({
       orderBy: { createdAt: "desc" },
       select: {
@@ -59,6 +72,7 @@ export async function GET() {
     );
 
     return NextResponse.json({
+      topics,
       raffles: raffles.map((raffle) => ({
         ...raffle,
         confirmedCount: confirmedByRaffle.get(raffle.id) ?? 0
@@ -76,6 +90,8 @@ export async function POST(request: Request) {
     const raffleCodeInput = normalizeRaffleCode(String(body.raffleCode ?? ""));
     const name = String(body.raffleName ?? "").trim();
     const city = String(body.city ?? "").trim();
+    const topicIdInput = String(body.topicId ?? "").trim();
+    const newTopicName = normalizeTopicName(String(body.newTopicName ?? ""));
     const productName = String(body.productName ?? "").trim();
     const description = String(body.description ?? "").trim();
     const totalNumbers = Number(body.totalNumbers);
@@ -94,11 +110,29 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "A data de encerramento precisa ser futura." }, { status: 400 });
     }
 
+    if (!topicIdInput && !newTopicName) {
+      return NextResponse.json({ error: "Selecione um tópico ou crie um novo tópico para a rifa." }, { status: 400 });
+    }
+
     const raffleCode = raffleCodeInput || await generateRaffleCode();
 
     const raffle = await prisma.$transaction(async (tx) => {
+      let topicId = topicIdInput || null;
+      if (newTopicName) {
+        const normalized = normalizeTopicKey(newTopicName);
+        const topic = await tx.raffleTopic.upsert({
+          where: { normalized },
+          update: {},
+          create: { name: newTopicName, normalized }
+        });
+        topicId = topic.id;
+      } else if (topicId) {
+        const topic = await tx.raffleTopic.findUnique({ where: { id: topicId }, select: { id: true } });
+        if (!topic) throw new Error("Tópico não encontrado.");
+      }
+
       const created = await tx.raffle.create({
-        data: { raffleCode, name, city, productName, description, imageUrls, totalNumbers, priceInCents, endDate }
+        data: { raffleCode, name, city, topicId, productName, description, imageUrls, totalNumbers, priceInCents, endDate }
       });
 
       await tx.$executeRaw(
@@ -130,6 +164,8 @@ export async function PATCH(request: Request) {
       const raffleCodeInput = normalizeRaffleCode(String(body.raffleCode ?? ""));
       const name = String(body.raffleName ?? "").trim();
       const city = String(body.city ?? "").trim();
+      const topicIdInput = String(body.topicId ?? "").trim();
+      const newTopicName = normalizeTopicName(String(body.newTopicName ?? ""));
       const productName = String(body.productName ?? "").trim();
       const description = String(body.description ?? "").trim();
       const totalNumbers = Number(body.totalNumbers);
@@ -148,6 +184,20 @@ export async function PATCH(request: Request) {
       if (!current) return NextResponse.json({ error: "Rifa não encontrada." }, { status: 404 });
       if (totalNumbers !== current.totalNumbers) return NextResponse.json({ error: "A quantidade de números é fixa depois que a rifa é criada." }, { status: 400 });
 
+      let topicId = topicIdInput || null;
+      if (newTopicName) {
+        const normalized = normalizeTopicKey(newTopicName);
+        const topic = await prisma.raffleTopic.upsert({
+          where: { normalized },
+          update: {},
+          create: { name: newTopicName, normalized }
+        });
+        topicId = topic.id;
+      } else if (topicId) {
+        const topic = await prisma.raffleTopic.findUnique({ where: { id: topicId }, select: { id: true } });
+        if (!topic) return NextResponse.json({ error: "Tópico não encontrado." }, { status: 400 });
+      }
+
       const raffleCode = raffleCodeInput || (await prisma.raffle.findUnique({ where: { id }, select: { raffleCode: true } }))?.raffleCode;
       if (!raffleCode) return NextResponse.json({ error: "ID da rifa não encontrado." }, { status: 400 });
 
@@ -156,7 +206,7 @@ export async function PATCH(request: Request) {
 
       await prisma.raffle.update({
         where: { id },
-        data: { raffleCode, name, city, productName, description, priceInCents, endDate, imageUrls }
+        data: { raffleCode, name, city, topicId, productName, description, priceInCents, endDate, imageUrls }
       });
       return NextResponse.json({ id, ok: true });
     }
