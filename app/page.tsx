@@ -67,12 +67,12 @@ export default async function HomePage() {
           <div className="container">
             <div className="section-heading home-raffle-heading">
               <div>
-                <h2 className="section-title">Escolha sua rifa</h2>
-                <p className="home-raffle-subtitle">Veja as rifas disponíveis e escolha seus números.</p>
+                <h2 className="section-title">Escolha uma rifa</h2>
+                <p className="home-raffle-subtitle">Confira as rifas disponíveis e selecione os números.</p>
               </div>
               {raffles.length > 0 && (
                 <span className="raffle-count">
-                  {activeCount} em andamento{finishedCount > 0 ? " · " + finishedCount + " finalizadas" : ""}
+                  {activeCount} {activeCount === 1 ? "rifa em andamento" : "rifas em andamento"}{finishedCount > 0 ? " · " + finishedCount + (finishedCount === 1 ? " rifa finalizada" : " rifas finalizadas") : ""}
                 </span>
               )}
             </div>
