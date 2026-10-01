@@ -341,54 +341,6 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: "Esta rifa já foi finalizada e não pode ser reativada." }, { status: 409 });
     }
 
-    {
-      const result = await prisma.$transaction(async (tx) => {
-        await tx.raffleNumber.updateMany({
-          where: {
-            raffleId: id,
-            status: "RESERVED",
-            reservedAt: { lt: new Date(Date.now() - 30 * 60 * 1000) }
-          },
-          data: {
-            status: "AVAILABLE",
-            reservationId: null,
-            reservedAt: null,
-            reservedByUserId: null
-          }
-        });
-
-        await tx.raffleNumber.updateMany({
-          where: { raffleId: id, status: "RESERVED" },
-          data: {
-            status: "AVAILABLE",
-            reservationId: null,
-            reservedAt: null,
-            reservedByUserId: null
-          }
-        });
-
-        const drawEligibleCount = await tx.raffleNumber.count({
-          where: { raffleId: id, status: "CONFIRMED" }
-        });
-
-        return tx.raffle.update({
-          where: { id },
-          data: {
-            status: "ENDED",
-            salesClosedAt: new Date(),
-            drawEligibleCount
-          },
-          select: { id: true, status: true, salesClosedAt: true, drawEligibleCount: true }
-        });
-      });
-
-      revalidatePath("/");
-      revalidatePath("/rifa/" + id);
-      revalidatePath("/minha-conta");
-
-      return NextResponse.json(result);
-    }
-
     const raffle = await prisma.raffle.update({
       where: { id },
       data: { status: status as "ACTIVE" | "PAUSED" }
