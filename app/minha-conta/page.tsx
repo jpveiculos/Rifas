@@ -109,7 +109,7 @@ export default async function AccountPage() {
           <section className="account-section account-participations">
             <div className="account-section-heading">
               <div className="account-title-card">
-                <h1>Minhas rifas</h1>
+                <h1>Minhas Rifas</h1>
               </div>
             </div>
 
