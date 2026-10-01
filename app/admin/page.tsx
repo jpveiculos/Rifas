@@ -370,7 +370,7 @@ export default function AdminPage() {
                   if (e.target.value) update("newTopicName", "");
                 }}>
                   <option value="">Selecione um tópico</option>
-                  {topics.map((topic) => <option value={topic.id} key={topic.id}>Rifas em {topic.name}</option>)}
+                  {topics.map((topic) => <option value={topic.id} key={topic.id}>Rifas em {topic.name.replace(/^Rifas em\s+/i, "")}</option>)}
                 </select>
                 <small>As rifas do mesmo tópico aparecem juntas na página principal.</small>
               </label>
