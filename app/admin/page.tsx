@@ -360,8 +360,6 @@ export default function AdminPage() {
 
         <section className="form-section">
           <h2>Criar nova rifa</h2>
-          <p className="form-help">Preencha os dados abaixo. A rifa será criada como rascunho para você revisar antes de publicar.</p>
-
           <form className="admin-form" onSubmit={submit}>
             <section className="form-section form-section-nested">
               <label>ID da rifa<input value={form.raffleCode} onChange={(e) => update("raffleCode", e.target.value)} placeholder="Ex.: RIFA-001 ou deixe vazio" /><small>Se deixar vazio, o sistema gera um ID automaticamente.</small></label>
