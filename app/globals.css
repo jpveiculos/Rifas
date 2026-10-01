@@ -306,7 +306,7 @@ a { color: inherit; text-decoration: none; }
   .hero-visual { min-height: 280px; transform: scale(.82); margin: -20px 0; }
   .section { padding: 40px 0 58px; }
   .section-heading { align-items: start; flex-direction: column; }
-  .raffle-grid { grid-template-columns: 1fr; gap: 16px; }
+  .raffle-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .raffle-card { border-radius: 13px; }
   .raffle-card-image { height: 108px; }
   .raffle-card-content { padding: 10px; }
@@ -635,16 +635,16 @@ a { color: inherit; text-decoration: none; }
   .browser-results-heading h3 { font-size: 21px; }
   .raffle-mosaic { gap: 9px; }
   .raffle-card { border-radius: 12px; box-shadow: 0 5px 16px rgba(22,42,65,.07); }
-  .raffle-card-image { height: 165px; }
-  .raffle-card-content { padding: 14px 15px 15px; }
+  .raffle-card-image { height: 125px; object-fit: contain; background: #eef3f8; }
+  .raffle-card-content { padding: 10px; }
   .raffle-card .badge { font-size: 7px; padding: 4px 6px; }
-  .raffle-card .raffle-code-public { font-size: 10px; }
-  .raffle-card h3 { font-size: 19px; line-height: 1.2; }
-  .raffle-card p { font-size: 13px; line-height: 1.35; -webkit-line-clamp: 2; }
-  .raffle-card .card-price { font-size: 22px; }
-  .raffle-card .card-price small { font-size: 11px; }
-  .raffle-card .raffle-meta { font-size: 11px; }
-  .raffle-card .primary-button { min-height: 46px; font-size: 14px; }
+  .raffle-card .raffle-code-public { font-size: 8px; }
+  .raffle-card h3 { font-size: 14px; line-height: 1.15; }
+  .raffle-card p { font-size: 10px; line-height: 1.25; -webkit-line-clamp: 2; }
+  .raffle-card .card-price { font-size: 17px; }
+  .raffle-card .card-price small { font-size: 9px; }
+  .raffle-card .raffle-meta { font-size: 9px; }
+  .raffle-card .primary-button { min-height: 40px; font-size: 11px; }
 }
 
 
