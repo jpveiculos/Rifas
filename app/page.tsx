@@ -13,7 +13,7 @@ function displayTopicName(topicName: string | null | undefined, city: string) {
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 
-  return normalized?.startsWith("botupora") ? "Paramirim" : topicName ?? city;
+  return normalized?.startsWith("botupora") || normalized === "paramirim" ? "Paramirim-BA" : topicName ?? city;
 }
 
 export default async function HomePage() {
