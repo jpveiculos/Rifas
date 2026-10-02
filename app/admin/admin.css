@@ -261,3 +261,48 @@
     width: 100%;
   }
 }
+
+.topic-delete-action {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px dashed #e3c3c3;
+}
+.topic-delete-target {
+  flex: 1 1 auto;
+  min-width: 180px;
+  min-height: 42px;
+  padding: 8px 11px;
+  border: 2px solid #e0c5c5;
+  border-radius: 10px;
+  background: #fff;
+  color: #6f3030;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+}
+.topic-delete-action .topic-delete-button {
+  flex: 0 0 auto;
+  min-width: 190px;
+  background: #fff0f0 !important;
+  border: 2px solid #dc7d7d !important;
+  color: #a12626 !important;
+}
+.topic-delete-action .topic-delete-button:hover:not(:disabled) {
+  background: #ffdede !important;
+  border-color: #c95f5f !important;
+}
+@media (max-width: 640px) {
+  .topic-delete-action {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .topic-delete-target,
+  .topic-delete-action .topic-delete-button {
+    width: 100%;
+    min-width: 0;
+  }
+}
