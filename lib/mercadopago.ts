@@ -201,6 +201,7 @@ export async function createMercadoPagoParticipation({
         type: "online",
         total_amount: amount,
         external_reference: `rifas_participation_${participation.id}`,
+        description: `Rifa - ${String(raffle.name || raffle.productName || "Rifa").slice(0, 140)}`,
         processing_mode: "automatic",
         transactions: {
           payments: [{
