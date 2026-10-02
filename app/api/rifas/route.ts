@@ -37,6 +37,41 @@ function parsePrice(value: string) {
 
 export async function GET() {
   try {
+    await prisma.$transaction(async (tx) => {
+      let paramirim = await tx.raffleTopic.findFirst({
+        where: { normalized: "paramirim" },
+        select: { id: true, name: true }
+      });
+
+      if (!paramirim) {
+        paramirim = await tx.raffleTopic.create({
+          data: { name: "Paramirim", normalized: "paramirim" },
+          select: { id: true, name: true }
+        });
+      }
+
+      const botupora = await tx.raffleTopic.findFirst({
+        where: { normalized: "botupora" },
+        select: { id: true }
+      });
+
+      if (botupora) {
+        await tx.raffle.updateMany({
+          where: { topicId: botupora.id },
+          data: { topicId: paramirim.id, city: "Paramirim" }
+        });
+        await tx.raffleTopic.delete({ where: { id: botupora.id } });
+      }
+
+      await tx.raffle.updateMany({
+        where: {
+          topicId: null,
+          city: { equals: "Botuporã", mode: "insensitive" }
+        },
+        data: { topicId: paramirim.id, city: "Paramirim" }
+      });
+    });
+
     const raffles = await prisma.raffle.findMany({
       orderBy: { createdAt: "desc" },
       select: {
@@ -66,24 +101,6 @@ export async function GET() {
       select: { id: true, name: true }
     });
 
-    // Corrige registros antigos que ficaram sem topicId quando Botuporã foi excluído
-    // antes da regra de transferência. Paramirim é o único tópico que permanece.
-    const paramirimTopic = topics.find(
-      (topic) => normalizeTopicKey(topic.name) === "paramirim"
-    );
-    if (paramirimTopic) {
-      await prisma.raffle.updateMany({
-        where: {
-          topicId: null,
-          city: { equals: "Botuporã", mode: "insensitive" }
-        },
-        data: {
-          topicId: paramirimTopic.id,
-          city: "Paramirim"
-        }
-      });
-    }
-
     const confirmedCounts = await prisma.raffleNumber.groupBy({
       by: ["raffleId"],
       where: {
@@ -110,9 +127,7 @@ export async function GET() {
       topics,
       raffles: raffles.map((raffle) => ({
         ...raffle,
-        topicName:
-          raffle.topic?.name ??
-          (normalizeTopicKey(raffle.city) === "botupora" ? "Paramirim" : raffle.city),
+        topicName: raffle.topic?.name ?? raffle.city,
         confirmedCount: Math.max(0, (confirmedByRaffle.get(raffle.id) ?? 0) - (bonusByRaffle.get(raffle.id) ?? 0)),
         bonusCount: bonusByRaffle.get(raffle.id) ?? 0
       }))
