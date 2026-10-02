@@ -231,3 +231,6 @@
 @media (max-width: 640px) {
   .draw-winner-whatsapp { width: 100%; }
 }
+
+.topic-delete-button { background: #fff0f0; border-color: #efb4b4; color: #a12626; }
+.topic-delete-button:hover:not(:disabled) { background: #ffe3e3; border-color: #dc7d7d; }
