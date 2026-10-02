@@ -436,6 +436,64 @@ export async function PATCH(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const body = await request.json();
+    const topicId = String(body.topicId ?? "").trim();
+
+    if (topicId) {
+      const topic = await prisma.raffleTopic.findUnique({
+        where: { id: topicId },
+        select: { id: true, name: true, _count: { select: { raffles: true } } }
+      });
+
+      if (!topic) {
+        return NextResponse.json({ error: "Tópico não encontrado." }, { status: 404 });
+      }
+
+      // Exclui somente o tópico. As rifas vinculadas continuam existindo;
+      // a relação topicId vira nula e o nome/local da rifa é preservado.
+      await prisma.raffleTopic.delete({ where: { id: topicId } });
+
+      revalidatePath("/");
+      revalidatePath("/minha-conta");
+      revalidatePath("/admin");
+
+      return NextResponse.json({
+        id: topicId,
+        message: topic._count.raffles > 0
+          ? "Tópico excluído. As rifas vinculadas foram mantidas."
+          : "Tópico excluído com sucesso."
+      });
+    }
+
+    const id = String(body.id ?? "").trim();
+
+    if (!id) {
+      return NextResponse.json({ error: "Rifa não encontrada." }, { status: 400 });
+    }
+
+    const raffle = await prisma.raffle.findUnique({
+      where: { id },
+      select: { id: true }
+    });
+
+    if (!raffle) {
+      return NextResponse.json({ error: "Rifa não encontrada." }, { status: 404 });
+    }
+
+    await prisma.raffle.delete({ where: { id } });
+
+    revalidatePath("/");
+    revalidatePath("/minha-conta");
+    revalidatePath("/admin");
+
+    return NextResponse.json({ id, message: "Rifa excluída com sucesso." });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Não foi possível excluir o item." }, { status: 500 });
+  }
+}
+
+  try {
+    const body = await request.json();
     const id = String(body.id ?? "").trim();
 
     if (!id) {
