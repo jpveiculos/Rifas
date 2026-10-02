@@ -97,7 +97,14 @@ a { color: inherit; text-decoration: none; }
   transform: translateY(-3px);
   box-shadow: 0 20px 40px rgba(9, 38, 72, .25);
 }
-.raffle-card-image { display: block; width: 100%; height: 190px; object-fit: cover; background: #eaf1f8; }
+.raffle-card-image {
+  display: block;
+  width: 100%;
+  height: 190px;
+  object-fit: contain;
+  object-position: center;
+  background: #eaf1f8;
+}
 .raffle-card-placeholder {
   display: grid; place-items: center; background: linear-gradient(135deg, #0d63df, #13a8ed 55%, #ffd21a);
   color: #fff; font-size: 28px; font-weight: 900;
@@ -340,6 +347,45 @@ a { color: inherit; text-decoration: none; }
   .auth-card { padding: 24px 20px; }
 }
 
+/* Imagens de anúncios: preservar a foto inteira em qualquer formato */
+.image-admin-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.image-admin-preview {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid #dce5ef;
+  border-radius: 12px;
+  background: #f8fbff;
+}
+
+.image-admin-preview img {
+  display: block;
+  width: 100%;
+  height: 180px;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 8px;
+  background: #eef3f8;
+}
+
+@media (max-width: 700px) {
+  .image-admin-list {
+    grid-template-columns: 1fr;
+  }
+
+  .image-admin-preview img {
+    height: 220px;
+  }
+}
+
 /* Minha Área */
 .account-page { min-height: calc(100vh - 78px); padding: 42px 0 76px; background: linear-gradient(180deg, #eef6ff 0, #f7f9fc 300px); }
 .account-container { max-width: 1060px; }
@@ -349,8 +395,25 @@ a { color: inherit; text-decoration: none; }
 .account-section-heading > span { color: #728096; font-size: 13px; font-weight: 800; }
 .account-list { display: grid; gap: 14px; }
 .account-raffle-card { display: grid; grid-template-columns: 180px 1fr; overflow: hidden; border: 1px solid #e0e7ef; border-radius: 16px; background: #fbfdff; }
-.account-card-image { min-height: 180px; display: grid; place-items: center; background: linear-gradient(135deg, #0d63df, #12a0ec); color: #fff; font-weight: 900; }
-.account-card-image img { width: 100%; height: 100%; min-height: 180px; object-fit: cover; }
+.account-card-image {
+  height: 180px;
+  min-height: 180px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0d63df, #12a0ec);
+  color: #fff;
+  font-weight: 900;
+}
+.account-card-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: center;
+}
 .account-card-content { padding: 18px; }
 .account-card-content h3 { margin: 9px 0 4px; font-size: 20px; color: #17263b; }
 .account-card-content > p { margin: 0; color: #6c7888; font-size: 13px; }
@@ -378,7 +441,16 @@ a { color: inherit; text-decoration: none; }
   .account-page { padding: 28px 0 54px; }
   .account-section { padding: 17px; }
   .account-raffle-card { grid-template-columns: 1fr; }
-  .account-card-image, .account-card-image img { min-height: 190px; max-height: 220px; }
+  .account-card-image {
+    height: 190px;
+    min-height: 190px;
+    max-height: 220px;
+  }
+  .account-card-image img {
+    height: 100%;
+    min-height: 0;
+    max-height: none;
+  }
   .raffle-result-admin { align-items: stretch; flex-direction: column; }
   .raffle-result-admin input, .raffle-result-admin .compact-button { width: 100%; }
 }
@@ -498,7 +570,7 @@ a { color: inherit; text-decoration: none; }
   .raffle-card-image {
     width: 100%;
     height: 145px;
-    object-fit: cover;
+    object-fit: contain;
     object-position: center;
     background: #eef3f8;
   }
@@ -595,9 +667,12 @@ a { color: inherit; text-decoration: none; }
 .account-participations .account-raffle-card {
   grid-template-columns: 145px 1fr;
 }
-.account-participations .account-card-image,
-.account-participations .account-card-image img {
+.account-participations .account-card-image {
+  height: 145px;
   min-height: 145px;
+}
+.account-participations .account-card-image img {
+  min-height: 0;
 }
 .account-participations .account-card-content {
   padding: 15px;
@@ -1445,9 +1520,16 @@ a { color: inherit; text-decoration: none; }
     border-radius: 8px;
   }
 
-  .account-page-clean .account-card-image,
-  .account-page-clean .account-card-image img {
+  .account-page-clean .account-card-image {
+    height: 88px;
+    min-height: 88px;
     max-height: 88px;
+  }
+
+  .account-page-clean .account-card-image img {
+    height: 100%;
+    min-height: 0;
+    max-height: none;
   }
 
   .account-page-clean .account-card-content {
