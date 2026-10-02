@@ -492,32 +492,3 @@ export async function DELETE(request: Request) {
   }
 }
 
-  try {
-    const body = await request.json();
-    const id = String(body.id ?? "").trim();
-
-    if (!id) {
-      return NextResponse.json({ error: "Rifa não encontrada." }, { status: 400 });
-    }
-
-    const raffle = await prisma.raffle.findUnique({
-      where: { id },
-      select: { id: true }
-    });
-
-    if (!raffle) {
-      return NextResponse.json({ error: "Rifa não encontrada." }, { status: 404 });
-    }
-
-    await prisma.raffle.delete({ where: { id } });
-
-    revalidatePath("/");
-    revalidatePath("/minha-conta");
-    revalidatePath("/admin");
-
-    return NextResponse.json({ id, message: "Rifa excluída com sucesso." });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: "Não foi possível excluir a rifa." }, { status: 500 });
-  }
-}
