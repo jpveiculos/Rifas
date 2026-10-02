@@ -651,12 +651,12 @@ export default function AdminPage() {
                                 Editar nome
                               </button>
                               <button
-                                className="secondary-button compact-button topic-delete-button"
+                                className="secondary-button compact-button topic-delete-button danger-topic-button"
                                 type="button"
                                 onClick={() => deleteTopic(topic.id, topic.name.replace(/^Rifas em\s+/i, ""))}
                                 disabled={deletingTopicId === topic.id}
                               >
-                                {deletingTopicId === topic.id ? "Excluindo..." : "Excluir tópico"}
+                                {deletingTopicId === topic.id ? "Excluindo..." : "🗑️ Excluir tópico"}
                               </button>
                             </>
                           )}
