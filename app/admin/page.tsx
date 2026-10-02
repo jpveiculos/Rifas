@@ -198,8 +198,22 @@ export default function AdminPage() {
   }
 
   async function deleteTopic(topicId: string, topicName: string) {
+    const targetTopics = topics.filter((topic) => topic.id !== topicId);
+    if (targetTopics.length === 0) {
+      setError("Não existe outro tópico para receber as rifas. Crie ou mantenha um tópico antes de excluir este.");
+      return;
+    }
+
+    if (targetTopics.length > 1) {
+      setError("Há mais de um tópico existente. Para evitar mover a rifa para o lugar errado, mantenha somente o tópico de destino e tente novamente.");
+      return;
+    }
+
+    const targetTopic = targetTopics[0];
+    const targetName = targetTopic.name.replace(/^Rifas em\s+/i, "");
+
     const confirmation = window.confirm(
-      `Excluir o tópico "Rifas em ${topicName}"? As rifas que já usam esse tópico NÃO serão excluídas; apenas deixarão de ficar vinculadas ao tópico.`
+      `Excluir "Rifas em ${topicName}" e mover todas as rifas dele para "Rifas em ${targetName}"? O tópico antigo será removido do sistema e as rifas continuarão normalmente.`
     );
     if (!confirmation) return;
 
@@ -211,7 +225,7 @@ export default function AdminPage() {
       const response = await fetch("/api/rifas", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topicId })
+        body: JSON.stringify({ topicId, targetTopicId: targetTopic.id })
       });
       const data = await response.json();
 
@@ -220,7 +234,7 @@ export default function AdminPage() {
         return;
       }
 
-      setMessage(data.message ?? "Tópico excluído com sucesso.");
+      setMessage(data.message ?? "Tópico excluído e rifas transferidas.");
       if (editingTopicId === topicId) {
         setEditingTopicId("");
         setEditingTopicName("");
