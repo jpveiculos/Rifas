@@ -42,6 +42,22 @@ export async function GET() {
         select: { id: true, name: true, normalized: true }
       });
 
+      const hasLegacyTopic = allTopics.some((topic) =>
+        topic.normalized.startsWith("botupora") ||
+        topic.normalized === "paramirim"
+      );
+      const hasLegacyRaffle = await tx.raffle.findFirst({
+        where: {
+          OR: [
+            { city: { startsWith: "Botuporã", mode: "insensitive" } },
+            { city: { startsWith: "Paramirim", mode: "insensitive" }, topicId: null }
+          ]
+        },
+        select: { id: true }
+      });
+
+      if (!hasLegacyTopic && !hasLegacyRaffle && allTopics.length > 0) return;
+
       const paramirimTopics = allTopics.filter((topic) => {
         const key = topic.normalized.replace(/-ba$/, "");
         return key === "paramirim";
