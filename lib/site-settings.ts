@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
-const DEFAULT_INSTAGRAM = "_rifas.top";
+const DEFAULT_INSTAGRAM = "rifastop.com.br";
 
 export async function ensureSiteInstagramColumn() {
   await prisma.$executeRawUnsafe(
