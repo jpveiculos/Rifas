@@ -4,7 +4,13 @@ const DEFAULT_INSTAGRAM = "rifastop.com.br";
 
 export async function ensureSiteInstagramColumn() {
   await prisma.$executeRawUnsafe(
-    'ALTER TABLE "SiteSettings" ADD COLUMN IF NOT EXISTS "instagramHandle" TEXT NOT NULL DEFAULT \'_rifas.top\''
+    'ALTER TABLE "SiteSettings" ADD COLUMN IF NOT EXISTS "instagramHandle" TEXT NOT NULL DEFAULT \'rifastop.com.br\''
+  );
+  await prisma.$executeRawUnsafe(
+    'ALTER TABLE "SiteSettings" ALTER COLUMN "instagramHandle" SET DEFAULT \'rifastop.com.br\''
+  );
+  await prisma.$executeRawUnsafe(
+    'UPDATE "SiteSettings" SET "instagramHandle" = \'rifastop.com.br\' WHERE id = 1 AND "instagramHandle" = \'_rifas.top\''
   );
 }
 
