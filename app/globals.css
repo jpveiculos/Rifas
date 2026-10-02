@@ -100,8 +100,9 @@ a { color: inherit; text-decoration: none; }
 .raffle-card-image {
   display: block;
   width: 100%;
-  height: 190px;
-  object-fit: contain;
+  height: auto;
+  max-width: 100%;
+  object-fit: initial;
   object-position: center;
   background: #eaf1f8;
 }
@@ -569,8 +570,9 @@ a { color: inherit; text-decoration: none; }
   .raffle-card { border-radius: 12px; box-shadow: 0 5px 16px rgba(22,42,65,.07); }
   .raffle-card-image {
     width: 100%;
-    height: 145px;
-    object-fit: contain;
+    height: auto;
+    max-width: 100%;
+    object-fit: initial;
     object-position: center;
     background: #eef3f8;
   }
