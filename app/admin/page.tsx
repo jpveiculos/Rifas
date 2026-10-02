@@ -71,6 +71,12 @@ export default function AdminPage() {
   const [editingTopicId, setEditingTopicId] = useState("");
   const [editingTopicName, setEditingTopicName] = useState("");
   const [savingTopic, setSavingTopic] = useState(false);
+  const [bonusSearch, setBonusSearch] = useState("");
+  const [bonusUsers, setBonusUsers] = useState<{ id: string; name: string; username: string; whatsapp: string; city: string }[]>([]);
+  const [selectedBonusUser, setSelectedBonusUser] = useState<{ id: string; name: string; username: string; whatsapp: string; city: string } | null>(null);
+  const [bonusRaffleId, setBonusRaffleId] = useState("");
+  const [bonusQuantity, setBonusQuantity] = useState("1");
+  const [savingBonus, setSavingBonus] = useState(false);
   const [contactWhatsapp, setContactWhatsapp] = useState("77998315360");
   const [instagramHandle, setInstagramHandle] = useState("_rifas.top");
   const [savingWhatsapp, setSavingWhatsapp] = useState(false);
@@ -129,6 +135,64 @@ export default function AdminPage() {
       setError("Não foi possível conectar ao servidor.");
     } finally {
       setSavingWhatsapp(false);
+    }
+  }
+
+  async function searchBonusUsers() {
+    const q = bonusSearch.trim();
+    setSelectedBonusUser(null);
+    if (q.length < 2) {
+      setBonusUsers([]);
+      return;
+    }
+    try {
+      const response = await fetch("/api/admin/bonificacoes?q=" + encodeURIComponent(q), { cache: "no-store" });
+      const data = await response.json();
+      if (!response.ok) {
+        setError(data.error ?? "Não foi possível pesquisar usuários.");
+        return;
+      }
+      setBonusUsers(data.users ?? []);
+    } catch {
+      setError("Não foi possível pesquisar usuários.");
+    }
+  }
+
+  async function saveBonus() {
+    if (!selectedBonusUser || !bonusRaffleId) {
+      setError("Selecione o usuário e a rifa.");
+      return;
+    }
+
+    setSavingBonus(true);
+    setError("");
+    setMessage("");
+    try {
+      const response = await fetch("/api/admin/bonificacoes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: selectedBonusUser.id,
+          raffleId: bonusRaffleId,
+          quantity: Number(bonusQuantity)
+        })
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        setError(data.error ?? "Não foi possível creditar os números.");
+        return;
+      }
+
+      setMessage("Bonificação realizada para " + data.user + ". Números: " + data.numbers.map((n: number) => formatNumber(n)).join(", "));
+      setBonusSearch("");
+      setBonusUsers([]);
+      setSelectedBonusUser(null);
+      setBonusQuantity("1");
+      await loadRaffles();
+    } catch {
+      setError("Não foi possível conectar ao servidor.");
+    } finally {
+      setSavingBonus(false);
     }
   }
 
@@ -601,6 +665,70 @@ export default function AdminPage() {
 
         {message && <div className="success-message">{message}</div>}
         {error && <div className="error-message">{error}</div>}
+
+        <section className="form-section bonus-section">
+          <div className="section-heading-row">
+            <div>
+              <h2>Bonificar cliente</h2>
+              <p className="form-help">Pesquise um usuário cadastrado e credite números extras em uma rifa, mesmo que ele não tenha feito uma compra.</p>
+            </div>
+          </div>
+
+          <div className="bonus-grid">
+            <label>Pesquisar usuário
+              <input
+                value={bonusSearch}
+                onChange={(e) => setBonusSearch(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); searchBonusUsers(); } }}
+                placeholder="Nome, usuário ou WhatsApp"
+              />
+            </label>
+            <button className="secondary-button compact-button bonus-search-button" type="button" onClick={searchBonusUsers}>Buscar</button>
+          </div>
+
+          {bonusUsers.length > 0 && (
+            <div className="bonus-user-results">
+              {bonusUsers.map((user) => (
+                <button
+                  className={"bonus-user-result" + (selectedBonusUser?.id === user.id ? " selected" : "")}
+                  type="button"
+                  key={user.id}
+                  onClick={() => setSelectedBonusUser(user)}
+                >
+                  <strong>{user.name}</strong>
+                  <span>@{user.username} · {user.whatsapp}{user.city ? " · " + user.city : ""}</span>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {selectedBonusUser && (
+            <div className="bonus-selected-user">
+              <strong>Usuário selecionado: {selectedBonusUser.name}</strong>
+              <span>@{selectedBonusUser.username} · {selectedBonusUser.whatsapp}</span>
+            </div>
+          )}
+
+          <div className="bonus-grid bonus-grid-fields">
+            <label>Rifa
+              <select value={bonusRaffleId} onChange={(e) => setBonusRaffleId(e.target.value)}>
+                <option value="">Selecione a rifa</option>
+                {raffles.filter((raffle) => raffle.status !== "ENDED").map((raffle) => (
+                  <option key={raffle.id} value={raffle.id}>
+                    {(raffle.topicName || raffle.city || "Sem tópico") + " — " + raffle.productName}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>Quantidade de números
+              <input type="number" min="1" max="1000" value={bonusQuantity} onChange={(e) => setBonusQuantity(e.target.value)} />
+            </label>
+          </div>
+
+          <button className="primary-button" type="button" onClick={saveBonus} disabled={savingBonus || !selectedBonusUser || !bonusRaffleId}>
+            {savingBonus ? "Creditando..." : "Creditar números bônus"}
+          </button>
+        </section>
 
         <section className="form-section">
           <div className="section-heading-row">
