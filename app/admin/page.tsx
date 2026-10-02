@@ -833,10 +833,27 @@ export default function AdminPage() {
 
                       {drawResults[raffle.id] && (
                         <div className="draw-preview draw-preview-winner">
-                          <strong>Resultado publicado</strong>
+                          <strong>🏆 Ganhador localizado</strong>
                           <span>Número sorteado: <b>{formatNumber(drawResults[raffle.id].number)}</b></span>
-                          {drawResults[raffle.id].winner.user && (
-                            <small>Ganhador: <b>{drawResults[raffle.id].winner.user?.name}</b></small>
+                          {drawResults[raffle.id].winner.user ? (
+                            <>
+                              <div className="draw-winner-details">
+                                <b>{drawResults[raffle.id].winner.user.name}</b>
+                                <span>@{drawResults[raffle.id].winner.user.username}</span>
+                                <span>WhatsApp: {drawResults[raffle.id].winner.user.whatsapp}</span>
+                                {drawResults[raffle.id].winner.user.city && <span>Cidade: {drawResults[raffle.id].winner.user.city}</span>}
+                              </div>
+                              <a
+                                className="primary-button compact-button draw-winner-whatsapp"
+                                href={"https://wa.me/" + drawResults[raffle.id].winner.user.whatsapp.replace(/\D/g, "")}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                Entrar em contato pelo WhatsApp
+                              </a>
+                            </>
+                          ) : (
+                            <small>O número foi sorteado, mas não foi possível localizar um usuário vinculado a ele.</small>
                           )}
                         </div>
                       )}
