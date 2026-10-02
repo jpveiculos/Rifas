@@ -1802,3 +1802,50 @@ a { color: inherit; text-decoration: none; }
   border-color: rgba(255,255,255,.9);
   box-shadow: 0 12px 30px rgba(23,68,105,.10);
 }
+
+
+.raffle-sales-progress {
+  display: grid;
+  gap: 7px;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border: 1px solid #cfe1ef;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #eef8ff, #fff9df);
+}
+
+.raffle-sales-progress-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: #24415f;
+  font-size: 12px;
+}
+
+.raffle-sales-progress-head strong {
+  color: #123d68;
+  font-size: 13px;
+}
+
+.raffle-sales-track {
+  width: 100%;
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #dce8f1;
+}
+
+.raffle-sales-fill {
+  height: 100%;
+  min-width: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #0d63df, #13b86b);
+  transition: width .3s ease;
+}
+
+.raffle-sales-percent {
+  color: #167444;
+  font-size: 12px;
+  font-weight: 800;
+}
