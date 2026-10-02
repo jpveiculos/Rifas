@@ -79,12 +79,22 @@ export async function GET() {
       confirmedCounts.map((item) => [item.raffleId, item._count._all])
     );
 
+    const bonusCounts = await prisma.raffleNumber.groupBy({
+      by: ["raffleId"],
+      where: { status: "CONFIRMED", reservationId: { startsWith: "BONUS:" } },
+      _count: { _all: true }
+    });
+    const bonusByRaffle = new Map(
+      bonusCounts.map((item) => [item.raffleId, item._count._all])
+    );
+
     return NextResponse.json({
       topics,
       raffles: raffles.map((raffle) => ({
         ...raffle,
         topicName: raffle.topic?.name ?? raffle.city,
-        confirmedCount: confirmedByRaffle.get(raffle.id) ?? 0
+        confirmedCount: confirmedByRaffle.get(raffle.id) ?? 0,
+        bonusCount: bonusByRaffle.get(raffle.id) ?? 0
       }))
     });
   } catch (error) {
