@@ -631,6 +631,24 @@ export default function AdminPage() {
                       <div className="raffle-admin-id">{raffle.raffleCode ? "ID: " + raffle.raffleCode : "ID ainda não definido"}</div>
                       <h3>{raffle.productName}</h3>
 
+                      {(() => {
+                        const soldPercent = raffle.totalNumbers > 0
+                          ? Math.min(100, (raffle.confirmedCount / raffle.totalNumbers) * 100)
+                          : 0;
+                        return (
+                          <div className="raffle-sales-progress" aria-label={raffle.confirmedCount + " de " + raffle.totalNumbers + " números vendidos"}>
+                            <div className="raffle-sales-progress-head">
+                              <strong>Vendas</strong>
+                              <span>{raffle.confirmedCount.toLocaleString("pt-BR")} / {raffle.totalNumbers.toLocaleString("pt-BR")} números</span>
+                            </div>
+                            <div className="raffle-sales-track">
+                              <div className="raffle-sales-fill" style={{ width: soldPercent + "%" }} />
+                            </div>
+                            <div className="raffle-sales-percent">{soldPercent.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 1 })}% vendido</div>
+                          </div>
+                        );
+                      })()}
+
                       {raffle.resultStatus === "WINNER" && winningNumbers.length > 0 && (
                         <div className="admin-draw-status admin-draw-winner">
                           <strong>Resultado publicado</strong>
