@@ -234,3 +234,6 @@
 
 .topic-delete-button { background: #fff0f0; border-color: #efb4b4; color: #a12626; }
 .topic-delete-button:hover:not(:disabled) { background: #ffe3e3; border-color: #dc7d7d; }
+
+.danger-topic-button { background: #fff0f0 !important; border: 2px solid #e3a0a0 !important; color: #a12626 !important; font-weight: 800; }
+.danger-topic-button:hover:not(:disabled) { background: #ffdede !important; border-color: #c96d6d !important; }
