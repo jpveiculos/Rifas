@@ -78,7 +78,7 @@ export default function AdminPage() {
   const [bonusQuantity, setBonusQuantity] = useState("1");
   const [savingBonus, setSavingBonus] = useState(false);
   const [contactWhatsapp, setContactWhatsapp] = useState("77998315360");
-  const [instagramHandle, setInstagramHandle] = useState("_rifas.top");
+  const [instagramHandle, setInstagramHandle] = useState("rifastop.com.br");
   const [savingWhatsapp, setSavingWhatsapp] = useState(false);
   const [savingInstagram, setSavingInstagram] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -110,7 +110,7 @@ export default function AdminPage() {
       const response = await fetch("/api/config", { cache: "no-store" });
       const data = await response.json();
       if (response.ok && data.contactWhatsapp) setContactWhatsapp(data.contactWhatsapp);
-      if (response.ok && data.instagramHandle) setInstagramHandle(data.instagramHandle);
+      if (response.ok && data.instagramHandle) setInstagramHandle(data.instagramHandle || "rifastop.com.br");
     } catch {}
   }
 
@@ -243,7 +243,7 @@ export default function AdminPage() {
       const response = await fetch("/api/config", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contactWhatsapp, instagramHandle })
+        body: JSON.stringify({ instagramHandle })
       });
       const data = await response.json();
       if (!response.ok) {
@@ -521,7 +521,7 @@ export default function AdminPage() {
                 <input
                   value={instagramHandle}
                   onChange={(e) => setInstagramHandle(e.target.value.replace(/^@+/, "").replace(/\s/g, ""))}
-                  placeholder="_rifas.top"
+                  placeholder="rifastop.com.br"
                   autoCapitalize="none"
                   autoCorrect="off"
                   spellCheck={false}
