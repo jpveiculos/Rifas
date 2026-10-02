@@ -438,6 +438,7 @@ export async function DELETE(request: Request) {
     const body = await request.json();
     const topicId = String(body.topicId ?? "").trim();
     const targetTopicId = String(body.targetTopicId ?? "").trim();
+    const targetTopicNameInput = normalizeTopicName(String(body.targetTopicName ?? ""));
 
     if (topicId) {
       const topic = await prisma.raffleTopic.findUnique({
@@ -449,12 +450,12 @@ export async function DELETE(request: Request) {
         return NextResponse.json({ error: "Tópico não encontrado." }, { status: 404 });
       }
 
-      if (!targetTopicId) {
-        return NextResponse.json(
-          { error: "Informe o tópico que receberá as rifas antes de excluir este tópico." },
-          { status: 400 }
-        );
-      }
+      let targetTopic = targetTopicId
+        ? await prisma.raffleTopic.findUnique({
+            where: { id: targetTopicId },
+            select: { id: true, name: true }
+          })
+        : null;
 
       if (targetTopicId === topicId) {
         return NextResponse.json(
@@ -463,23 +464,50 @@ export async function DELETE(request: Request) {
         );
       }
 
-      const targetTopic = await prisma.raffleTopic.findUnique({
-        where: { id: targetTopicId },
-        select: { id: true, name: true }
-      });
+      if (!targetTopic && targetTopicNameInput) {
+        const normalized = normalizeTopicKey(targetTopicNameInput);
+        targetTopic = await prisma.raffleTopic.findUnique({
+          where: { normalized },
+          select: { id: true, name: true }
+        });
+
+        if (!targetTopic) {
+          targetTopic = await prisma.raffleTopic.create({
+            data: { name: targetTopicNameInput, normalized },
+            select: { id: true, name: true }
+          });
+        }
+      }
 
       if (!targetTopic) {
-        return NextResponse.json({ error: "Tópico de destino não encontrado." }, { status: 404 });
+        return NextResponse.json(
+          { error: "Informe o tópico que receberá as rifas antes de excluir este tópico." },
+          { status: 400 }
+        );
       }
 
       const moved = await prisma.$transaction(async (tx) => {
         const result = await tx.raffle.updateMany({
           where: { topicId },
-          data: { topicId: targetTopicId }
+          data: { topicId: targetTopic!.id }
         });
 
+        // Se Paramirim estava apenas no campo antigo de cidade, recupera também essas rifas
+        // para que o tópico regional continue disponível após a limpeza.
+        let movedOrphaned = 0;
+        if (normalizeTopicKey(targetTopic!.name) === "paramirim") {
+          const orphaned = await tx.raffle.updateMany({
+            where: {
+              topicId: null,
+              city: { not: "" }
+            },
+            data: { topicId: targetTopic!.id }
+          });
+          movedOrphaned = orphaned.count;
+        }
+
         await tx.raffleTopic.delete({ where: { id: topicId } });
-        return result.count;
+        return result.count + movedOrphaned;
       });
 
       revalidatePath("/");
