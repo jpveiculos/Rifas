@@ -68,6 +68,9 @@ export default function AdminPage() {
   const [form, setForm] = useState(initialForm);
   const [raffles, setRaffles] = useState<Raffle[]>([]);
   const [topics, setTopics] = useState<{ id: string; name: string }[]>([]);
+  const [editingTopicId, setEditingTopicId] = useState("");
+  const [editingTopicName, setEditingTopicName] = useState("");
+  const [savingTopic, setSavingTopic] = useState(false);
   const [contactWhatsapp, setContactWhatsapp] = useState("77998315360");
   const [instagramHandle, setInstagramHandle] = useState("_rifas.top");
   const [savingWhatsapp, setSavingWhatsapp] = useState(false);
@@ -126,6 +129,45 @@ export default function AdminPage() {
       setError("Não foi possível conectar ao servidor.");
     } finally {
       setSavingWhatsapp(false);
+    }
+  }
+
+  async function saveTopicName() {
+    const topicName = editingTopicName.trim();
+    if (!editingTopicId || !topicName) {
+      setError("Informe o novo nome do tópico.");
+      return;
+    }
+
+    setSavingTopic(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const response = await fetch("/api/rifas", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          editTopic: true,
+          topicId: editingTopicId,
+          topicName
+        })
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error ?? "Não foi possível editar o tópico.");
+        return;
+      }
+
+      setMessage("Nome do tópico atualizado.");
+      setEditingTopicId("");
+      setEditingTopicName("");
+      await loadRaffles();
+    } catch {
+      setError("Não foi possível conectar ao servidor.");
+    } finally {
+      setSavingTopic(false);
     }
   }
 
@@ -459,6 +501,62 @@ export default function AdminPage() {
                 />
                 <small>Digite somente o nome do local. Ao preencher, o tópico existente fica desativado. O sistema exibirá como "Rifas em Paramirim".</small>
               </label>
+
+              {topics.length > 0 && (
+                <div className="topic-edit-box">
+                  <h3>Editar tópicos regionais</h3>
+                  <p className="form-help">Corrija o nome de um tópico já salvo sem precisar criar outro. A alteração será aplicada às rifas vinculadas a ele.</p>
+                  <div className="topic-edit-list">
+                    {topics.map((topic) => {
+                      const isEditing = editingTopicId === topic.id;
+                      return (
+                        <div className="topic-edit-row" key={topic.id}>
+                          {isEditing ? (
+                            <>
+                              <input
+                                value={editingTopicName}
+                                onChange={(e) => setEditingTopicName(e.target.value)}
+                                placeholder="Nome do tópico"
+                                autoFocus
+                              />
+                              <button className="primary-button compact-button" type="button" onClick={saveTopicName} disabled={savingTopic}>
+                                {savingTopic ? "Salvando..." : "Salvar"}
+                              </button>
+                              <button
+                                className="secondary-button compact-button"
+                                type="button"
+                                onClick={() => {
+                                  setEditingTopicId("");
+                                  setEditingTopicName("");
+                                }}
+                                disabled={savingTopic}
+                              >
+                                Cancelar
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <span className="topic-edit-name">Rifas em {topic.name.replace(/^Rifas em\s+/i, "")}</span>
+                              <button
+                                className="secondary-button compact-button"
+                                type="button"
+                                onClick={() => {
+                                  setEditingTopicId(topic.id);
+                                  setEditingTopicName(topic.name.replace(/^Rifas em\s+/i, ""));
+                                  setMessage("");
+                                  setError("");
+                                }}
+                              >
+                                Editar nome
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
               <label>Nome do produto<input required value={form.productName} onChange={(e) => update("productName", e.target.value)} placeholder="Ex.: Chevrolet Celta 2012" /></label>
                 <label>Descrição<textarea required value={form.description} onChange={(e) => update("description", e.target.value)} placeholder="Descreva o produto e as informações importantes." rows={6} /></label>
             </section>
