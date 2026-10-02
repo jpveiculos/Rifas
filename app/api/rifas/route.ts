@@ -93,7 +93,7 @@ export async function GET() {
       raffles: raffles.map((raffle) => ({
         ...raffle,
         topicName: raffle.topic?.name ?? raffle.city,
-        confirmedCount: confirmedByRaffle.get(raffle.id) ?? 0,
+        confirmedCount: Math.max(0, (confirmedByRaffle.get(raffle.id) ?? 0) - (bonusByRaffle.get(raffle.id) ?? 0)),
         bonusCount: bonusByRaffle.get(raffle.id) ?? 0
       }))
     });
