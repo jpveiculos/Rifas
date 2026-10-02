@@ -158,3 +158,16 @@
 }
 
 .danger-button { background: #c62828; color: #fff; border: 0; }
+
+.raffle-admin-groups { display: grid; gap: 22px; }
+.raffle-admin-group { display: grid; gap: 10px; }
+.raffle-admin-group-title {
+  margin: 0;
+  padding: 11px 14px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #eef7ff, #fff5c9);
+  border: 1px solid #d8e5ef;
+  color: #17324d;
+  font-size: 18px;
+  font-weight: 800;
+}
