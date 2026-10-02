@@ -1634,3 +1634,171 @@ a { color: inherit; text-decoration: none; }
     width: 100%;
   }
 }
+
+
+/* Identidade visual das páginas internas: mais cor e menos áreas brancas */
+.raffle-detail-page {
+  position: relative;
+  min-height: calc(100vh - 78px);
+  overflow: hidden;
+  padding: 44px 0 90px;
+  background:
+    radial-gradient(circle at 8% 8%, rgba(255,255,255,.28) 0 120px, transparent 121px),
+    radial-gradient(circle at 92% 22%, rgba(255,255,255,.18) 0 170px, transparent 171px),
+    linear-gradient(135deg, #ffd21a 0%, #ffb21a 25%, #12a8e8 70%, #1767d9 100%);
+}
+.raffle-detail-page::before {
+  content: "";
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  right: -150px;
+  bottom: -170px;
+  background: rgba(255,255,255,.12);
+}
+.raffle-detail-page::after {
+  content: "";
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  left: -130px;
+  top: 38%;
+  background: rgba(13,27,42,.08);
+}
+.raffle-detail-page > .container {
+  position: relative;
+  z-index: 1;
+}
+.raffle-detail-page .raffle-card {
+  border: 2px solid rgba(255,255,255,.75);
+  box-shadow: 0 20px 46px rgba(9,38,72,.25);
+}
+.raffle-detail-page .raffle-card-content {
+  background: linear-gradient(180deg, rgba(255,255,255,.99), rgba(247,251,255,.98));
+}
+.raffle-detail-page .info-item {
+  background: linear-gradient(135deg, #eef8ff, #fff9df);
+  border-color: #c9dfef;
+}
+.raffle-detail-page .participant-box {
+  background: linear-gradient(145deg, #eef8ff, #fff8df);
+  border-color: #c7deef;
+}
+.raffle-detail-page .share-box {
+  background: linear-gradient(145deg, #eef8ff, #fff5d6);
+  border-color: #c5dfef;
+}
+
+.account-page-clean {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 7% 8%, rgba(255,210,26,.28) 0 130px, transparent 131px),
+    radial-gradient(circle at 94% 18%, rgba(18,168,232,.20) 0 180px, transparent 181px),
+    linear-gradient(145deg, #eaf7ff 0%, #fff8d9 48%, #e9f4ff 100%);
+}
+.account-page-clean::before {
+  content: "";
+  position: absolute;
+  width: 330px;
+  height: 330px;
+  border-radius: 50%;
+  right: -170px;
+  bottom: -150px;
+  background: rgba(255,190,0,.13);
+}
+.account-page-clean > .container {
+  position: relative;
+  z-index: 1;
+}
+.account-page-clean .account-section {
+  background: rgba(255,255,255,.94);
+  border: 2px solid rgba(255,255,255,.8);
+  box-shadow: 0 14px 34px rgba(23,68,105,.12);
+}
+.account-page-clean .account-raffle-card {
+  background: linear-gradient(135deg, #f8fcff, #fffdf3);
+  border-color: #cfe1ef;
+}
+.account-page-clean .account-numbers {
+  background: linear-gradient(135deg, #eaf6ff, #fff8dc);
+}
+.account-page-clean .account-result-card {
+  background: linear-gradient(135deg, #f5fbff, #fffbed);
+  border-color: #cfe1ef;
+}
+
+.terms-page,
+.download-page {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 6% 8%, rgba(255,210,26,.30) 0 130px, transparent 131px),
+    radial-gradient(circle at 95% 20%, rgba(18,168,232,.22) 0 180px, transparent 181px),
+    linear-gradient(145deg, #eaf7ff 0%, #fff8d9 48%, #e9f4ff 100%);
+}
+.terms-page::before,
+.download-page::before {
+  content: "";
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  right: -140px;
+  bottom: -120px;
+  background: rgba(23,103,217,.10);
+}
+.terms-page > .container,
+.download-page > .container {
+  position: relative;
+  z-index: 1;
+}
+.terms-card,
+.download-card {
+  background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(247,251,255,.96));
+  border: 2px solid rgba(255,255,255,.9);
+  box-shadow: 0 14px 34px rgba(23,68,105,.11);
+}
+.terms-card h1,
+.download-card h2 {
+  color: #123d68;
+}
+.download-hero {
+  background: linear-gradient(125deg, #0d1b2a, #1767d9 62%, #11a8e5);
+  box-shadow: 0 14px 32px rgba(9,38,72,.22);
+}
+.download-tip {
+  background: linear-gradient(135deg, #eaf7ff, #fff8dc);
+  border-color: #c9dfef;
+}
+
+.auth-page {
+  background:
+    radial-gradient(circle at 8% 8%, rgba(255,210,26,.32) 0 130px, transparent 131px),
+    radial-gradient(circle at 92% 20%, rgba(18,168,232,.24) 0 170px, transparent 171px),
+    linear-gradient(145deg, #eaf7ff, #fff8d9 52%, #e8f3ff);
+}
+.auth-card {
+  border: 2px solid rgba(255,255,255,.9);
+  background: linear-gradient(180deg, rgba(255,255,255,.99), rgba(247,251,255,.97));
+  box-shadow: 0 18px 44px rgba(23,68,105,.15);
+}
+
+/* Área administrativa */
+.admin-page {
+  min-height: 100vh;
+  padding: 36px 0 90px;
+  background:
+    radial-gradient(circle at 5% 7%, rgba(255,210,26,.24) 0 140px, transparent 141px),
+    radial-gradient(circle at 95% 15%, rgba(18,168,232,.18) 0 180px, transparent 181px),
+    linear-gradient(145deg, #edf8ff, #fff8df 50%, #eaf4ff);
+}
+.admin-page .form-section,
+.admin-page .raffle-admin-card,
+.admin-page .topic-edit-box {
+  background: rgba(255,255,255,.94);
+  border-color: rgba(255,255,255,.9);
+  box-shadow: 0 12px 30px rgba(23,68,105,.10);
+}
