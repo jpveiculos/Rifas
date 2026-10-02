@@ -92,11 +92,13 @@ export async function GET() {
         .filter((topic) => topic.id !== canonical!.id)
         .map((topic) => topic.id);
 
-      const otherTopicIds = allTopics
-        .filter((topic) => topic.id !== canonical!.id && !duplicateParamirimIds.includes(topic.id))
+      const legacyBotuporaIds = allTopics
+        .filter((topic) => topic.id !== canonical!.id && topic.normalized.startsWith("botupora"))
         .map((topic) => topic.id);
 
-      const topicsToRemove = [...duplicateParamirimIds, ...otherTopicIds];
+      // A limpeza legada remove somente variantes antigas de Paramirim e Botuporã.
+      // Tópicos novos e legítimos ficam intactos para uso futuro.
+      const topicsToRemove = [...duplicateParamirimIds, ...legacyBotuporaIds];
 
       if (topicsToRemove.length > 0) {
         await tx.raffle.updateMany({
@@ -577,19 +579,30 @@ export async function DELETE(request: Request) {
       const moved = await prisma.$transaction(async (tx) => {
         const result = await tx.raffle.updateMany({
           where: { topicId },
-          data: { topicId: targetTopic!.id }
+          data: {
+            topicId: targetTopic!.id,
+            city: targetTopic!.name
+          }
         });
 
         // Se Paramirim estava apenas no campo antigo de cidade, recupera também essas rifas
         // para que o tópico regional continue disponível após a limpeza.
         let movedOrphaned = 0;
-        if (normalizeTopicKey(targetTopic!.name) === "paramirim") {
+        const targetTopicKey = normalizeTopicKey(targetTopic!.name).replace(/-ba$/, "");
+        if (targetTopicKey === "paramirim") {
           const orphaned = await tx.raffle.updateMany({
             where: {
               topicId: null,
-              city: { equals: "Paramirim", mode: "insensitive" }
+              OR: [
+                { city: { equals: "Paramirim", mode: "insensitive" } },
+                { city: { equals: "Paramirim-BA", mode: "insensitive" } },
+                { city: { startsWith: "Botuporã", mode: "insensitive" } }
+              ]
             },
-            data: { topicId: targetTopic!.id }
+            data: {
+              topicId: targetTopic!.id,
+              city: targetTopic!.name
+            }
           });
           movedOrphaned = orphaned.count;
         }
@@ -639,4 +652,3 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "Não foi possível excluir o item." }, { status: 500 });
   }
 }
-
