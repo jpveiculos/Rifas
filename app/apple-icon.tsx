@@ -51,7 +51,7 @@ export default function AppleIcon() {
               letterSpacing: -2
             }}
           >
-            .TOP
+            TOP
           </span>
         </div>
       </div>
