@@ -616,8 +616,20 @@ export default function AdminPage() {
           ) : raffles.length === 0 ? (
             <div className="admin-empty"><strong>Nenhuma rifa cadastrada.</strong><span>Quando você criar a primeira, ela aparecerá aqui.</span></div>
           ) : (
-            <div className="raffle-admin-list">
-              {raffles.map((raffle) => {
+            <div className="raffle-admin-groups">
+              {Array.from(
+                raffles.reduce((groups, raffle) => {
+                  const topicName = raffle.topicName?.trim() || raffle.city?.trim() || "Sem tópico";
+                  const current = groups.get(topicName) ?? [];
+                  current.push(raffle);
+                  groups.set(topicName, current);
+                  return groups;
+                }, new Map<string, Raffle[]>())
+              ).map(([topicName, topicRaffles]) => (
+                <section className="raffle-admin-group" key={topicName}>
+                  <h3 className="raffle-admin-group-title">{topicName}</h3>
+                  <div className="raffle-admin-list">
+                    {topicRaffles.map((raffle) => {
                 const winningNumbers = raffle.winningNumbers?.length > 0
                   ? raffle.winningNumbers
                   : raffle.winningNumber !== null
@@ -708,8 +720,11 @@ export default function AdminPage() {
                       )}
                     </div>
                   </article>
-                );
-              })}
+                    );
+                    })}
+                  </div>
+                </section>
+              ))}
             </div>
           )}
         </section>
