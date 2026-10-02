@@ -37,17 +37,23 @@ function parsePrice(value: string) {
 
 export async function GET() {
   try {
-    const legacyRaffle = await prisma.raffle.findFirst({
-      where: {
-        OR: [
-          { city: { equals: "Botuporã", mode: "insensitive" } },
-          { topic: { normalized: "botupora" } }
-        ]
-      },
-      select: { id: true }
-    });
+    const [legacyTopic, legacyRaffle] = await Promise.all([
+      prisma.raffleTopic.findFirst({
+        where: { normalized: { startsWith: "botupora" } },
+        select: { id: true }
+      }),
+      prisma.raffle.findFirst({
+        where: {
+          OR: [
+            { city: { startsWith: "Botuporã", mode: "insensitive" } },
+            { topic: { normalized: { startsWith: "botupora" } } }
+          ]
+        },
+        select: { id: true }
+      })
+    ]);
 
-    if (legacyRaffle) {
+    if (legacyTopic || legacyRaffle) {
       await prisma.$transaction(async (tx) => {
         let paramirim = await tx.raffleTopic.findFirst({
           where: { normalized: "paramirim" },
@@ -61,23 +67,25 @@ export async function GET() {
           });
         }
 
-        const botupora = await tx.raffleTopic.findFirst({
-          where: { normalized: "botupora" },
+        const legacyTopics = await tx.raffleTopic.findMany({
+          where: { normalized: { startsWith: "botupora" } },
           select: { id: true }
         });
+        const legacyTopicIds = legacyTopics.map((topic) => topic.id);
 
-        if (botupora) {
+        if (legacyTopicIds.length > 0) {
           await tx.raffle.updateMany({
-            where: { topicId: botupora.id },
+            where: { topicId: { in: legacyTopicIds } },
             data: { topicId: paramirim.id, city: "Paramirim" }
           });
-          await tx.raffleTopic.delete({ where: { id: botupora.id } });
+          await tx.raffleTopic.deleteMany({
+            where: { id: { in: legacyTopicIds } }
+          });
         }
 
         await tx.raffle.updateMany({
           where: {
-            topicId: null,
-            city: { equals: "Botuporã", mode: "insensitive" }
+            city: { startsWith: "Botuporã", mode: "insensitive" }
           },
           data: { topicId: paramirim.id, city: "Paramirim" }
         });
