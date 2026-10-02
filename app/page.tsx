@@ -7,6 +7,15 @@ import { getSiteInstagramHandle } from "@/lib/site-settings";
 
 export const dynamic = "force-dynamic";
 
+function displayTopicName(topicName: string | null | undefined, city: string) {
+  const normalized = topicName
+    ?.normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
+  return normalized?.startsWith("botupora") ? "Paramirim" : topicName ?? city;
+}
+
 export default async function HomePage() {
   const user = await getCurrentUser();
   const siteSettings = await prisma.siteSettings.findUnique({
@@ -27,11 +36,7 @@ export default async function HomePage() {
       raffleCode: raffle.raffleCode,
       name: raffle.name,
       city: raffle.city,
-      topicName:
-        raffle.topic?.name &&
-        raffle.topic.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() === "botupora"
-          ? "Paramirim"
-          : raffle.topic?.name ?? raffle.city,
+      topicName: displayTopicName(raffle.topic?.name, raffle.city),
       productName: raffle.productName,
       description: raffle.description,
       imageUrls: raffle.imageUrls,
@@ -47,11 +52,7 @@ export default async function HomePage() {
       raffleCode: raffle.raffleCode,
       name: raffle.name,
       city: raffle.city,
-      topicName:
-        raffle.topic?.name &&
-        raffle.topic.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() === "botupora"
-          ? "Paramirim"
-          : raffle.topic?.name ?? raffle.city,
+      topicName: displayTopicName(raffle.topic?.name, raffle.city),
       productName: raffle.productName,
       description: raffle.description,
       imageUrls: raffle.imageUrls,
