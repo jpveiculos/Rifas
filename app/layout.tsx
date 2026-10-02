@@ -3,28 +3,28 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://rifastop.com.br"),
-  title: "Rifas.TOP",
+  title: "RifasTOP",
   description: "Plataforma de Rifas",
-  applicationName: "Rifas.TOP",
+  applicationName: "RifasTOP",
   alternates: {
     canonical: "https://rifastop.com.br"
   },
   openGraph: {
-    title: "Rifas.TOP",
+    title: "RifasTOP",
     description: "Plataforma de Rifas",
     url: "https://rifastop.com.br",
-    siteName: "Rifas.TOP",
+    siteName: "RifasTOP",
     locale: "pt_BR",
     type: "website"
   },
   twitter: {
     card: "summary",
-    title: "Rifas.TOP",
+    title: "RifasTOP",
     description: "Plataforma de Rifas"
   },
   appleWebApp: {
     capable: true,
-    title: "Rifas.TOP",
+    title: "RifasTOP",
     statusBarStyle: "black-translucent"
   }
 };
