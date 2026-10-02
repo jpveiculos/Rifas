@@ -255,6 +255,20 @@ a { color: inherit; text-decoration: none; }
   border: 2px solid #dce7f3;
   background: #f4f7fa;
 }
+@media (max-width: 700px) {
+  .raffle-gallery {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .raffle-gallery img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: auto;
+    object-fit: contain;
+  }
+}
+
 .raffle-description { margin: 0; color: #697689; line-height: 1.55; font-size: 15px; white-space: pre-wrap; overflow: visible; display: block; max-height: none; height: auto; word-break: break-word; overflow-wrap: anywhere; }
 .payment-box { margin-top: 18px; padding: 18px; border: 2px solid #cfe1f1; border-radius: 16px; background: linear-gradient(145deg, #eff8ff, #fff9e8); text-align: center; }
 .payment-qr { display: block; width: min(280px, 100%); height: auto; margin: 16px auto; border-radius: 10px; background: #fff; }
