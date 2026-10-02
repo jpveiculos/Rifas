@@ -72,6 +72,7 @@ export default function AdminPage() {
   const [editingTopicName, setEditingTopicName] = useState("");
   const [savingTopic, setSavingTopic] = useState(false);
   const [deletingTopicId, setDeletingTopicId] = useState("");
+  const [topicDeleteTargets, setTopicDeleteTargets] = useState<Record<string, string>>({});
   const [bonusSearch, setBonusSearch] = useState("");
   const [bonusUsers, setBonusUsers] = useState<{ id: string; name: string; username: string; whatsapp: string; city: string }[]>([]);
   const [selectedBonusUser, setSelectedBonusUser] = useState<{ id: string; name: string; username: string; whatsapp: string; city: string } | null>(null);
@@ -198,20 +199,19 @@ export default function AdminPage() {
   }
 
   async function deleteTopic(topicId: string, topicName: string) {
-    const targetTopics = topics.filter((topic) => topic.id !== topicId);
-    if (targetTopics.length === 0) {
-      setError("Não existe outro tópico para receber as rifas. Crie ou mantenha um tópico antes de excluir este.");
+    const targetTopicId = topicDeleteTargets[topicId] || "";
+    if (!targetTopicId) {
+      setError("Escolha primeiro o tópico que vai receber as rifas deste tópico.");
       return;
     }
 
-    if (targetTopics.length > 1) {
-      setError("Há mais de um tópico existente. Para evitar mover a rifa para o lugar errado, mantenha somente o tópico de destino e tente novamente.");
+    const targetTopic = topics.find((topic) => topic.id === targetTopicId);
+    if (!targetTopic) {
+      setError("Escolha um tópico de destino válido.");
       return;
     }
 
-    const targetTopic = targetTopics[0];
     const targetName = targetTopic.name.replace(/^Rifas em\s+/i, "");
-
     const confirmation = window.confirm(
       `Excluir "Rifas em ${topicName}" e mover todas as rifas dele para "Rifas em ${targetName}"? O tópico antigo será removido do sistema e as rifas continuarão normalmente.`
     );
@@ -225,7 +225,7 @@ export default function AdminPage() {
       const response = await fetch("/api/rifas", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topicId, targetTopicId: targetTopic.id })
+        body: JSON.stringify({ topicId, targetTopicId })
       });
       const data = await response.json();
 
@@ -235,6 +235,11 @@ export default function AdminPage() {
       }
 
       setMessage(data.message ?? "Tópico excluído e rifas transferidas.");
+      setTopicDeleteTargets((current) => {
+        const next = { ...current };
+        delete next[topicId];
+        return next;
+      });
       if (editingTopicId === topicId) {
         setEditingTopicId("");
         setEditingTopicName("");
@@ -246,7 +251,6 @@ export default function AdminPage() {
       setDeletingTopicId("");
     }
   }
-
   async function saveTopicName() {
     const topicName = editingTopicName.trim();
     if (!editingTopicId || !topicName) {
@@ -665,13 +669,33 @@ export default function AdminPage() {
                                 Editar nome
                               </button>
                               <div className="topic-delete-action">
+                                <select
+                                  className="topic-delete-target"
+                                  value={topicDeleteTargets[topic.id] ?? ""}
+                                  onChange={(e) =>
+                                    setTopicDeleteTargets((current) => ({
+                                      ...current,
+                                      [topic.id]: e.target.value
+                                    }))
+                                  }
+                                  disabled={deletingTopicId === topic.id}
+                                >
+                                  <option value="">Mover rifas para...</option>
+                                  {topics
+                                    .filter((target) => target.id !== topic.id)
+                                    .map((target) => (
+                                      <option value={target.id} key={target.id}>
+                                        Rifas em {target.name.replace(/^Rifas em\s+/i, "")}
+                                      </option>
+                                    ))}
+                                </select>
                                 <button
                                   className="danger-button compact-button topic-delete-button danger-topic-button"
                                   type="button"
                                   onClick={() => deleteTopic(topic.id, topic.name.replace(/^Rifas em\s+/i, ""))}
-                                  disabled={deletingTopicId === topic.id}
+                                  disabled={deletingTopicId === topic.id || !topicDeleteTargets[topic.id]}
                                 >
-                                  {deletingTopicId === topic.id ? "Excluindo tópico..." : "🗑️ Excluir este tópico"}
+                                  {deletingTopicId === topic.id ? "Excluindo tópico..." : "🗑️ Excluir e transferir"}
                                 </button>
                               </div>
                             </>
