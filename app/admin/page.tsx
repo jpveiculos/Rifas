@@ -71,6 +71,7 @@ export default function AdminPage() {
   const [editingTopicId, setEditingTopicId] = useState("");
   const [editingTopicName, setEditingTopicName] = useState("");
   const [savingTopic, setSavingTopic] = useState(false);
+  const [deletingTopicId, setDeletingTopicId] = useState("");
   const [bonusSearch, setBonusSearch] = useState("");
   const [bonusUsers, setBonusUsers] = useState<{ id: string; name: string; username: string; whatsapp: string; city: string }[]>([]);
   const [selectedBonusUser, setSelectedBonusUser] = useState<{ id: string; name: string; username: string; whatsapp: string; city: string } | null>(null);
@@ -193,6 +194,42 @@ export default function AdminPage() {
       setError("Não foi possível conectar ao servidor.");
     } finally {
       setSavingBonus(false);
+    }
+  }
+
+  async function deleteTopic(topicId: string, topicName: string) {
+    const confirmation = window.confirm(
+      `Excluir o tópico "Rifas em ${topicName}"? As rifas que já usam esse tópico NÃO serão excluídas; apenas deixarão de ficar vinculadas ao tópico.`
+    );
+    if (!confirmation) return;
+
+    setDeletingTopicId(topicId);
+    setError("");
+    setMessage("");
+
+    try {
+      const response = await fetch("/api/rifas", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topicId })
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error ?? "Não foi possível excluir o tópico.");
+        return;
+      }
+
+      setMessage(data.message ?? "Tópico excluído com sucesso.");
+      if (editingTopicId === topicId) {
+        setEditingTopicId("");
+        setEditingTopicName("");
+      }
+      await loadRaffles();
+    } catch {
+      setError("Não foi possível conectar ao servidor.");
+    } finally {
+      setDeletingTopicId("");
     }
   }
 
@@ -612,6 +649,14 @@ export default function AdminPage() {
                                 }}
                               >
                                 Editar nome
+                              </button>
+                              <button
+                                className="secondary-button compact-button topic-delete-button"
+                                type="button"
+                                onClick={() => deleteTopic(topic.id, topic.name.replace(/^Rifas em\s+/i, ""))}
+                                disabled={deletingTopicId === topic.id}
+                              >
+                                {deletingTopicId === topic.id ? "Excluindo..." : "Excluir tópico"}
                               </button>
                             </>
                           )}
