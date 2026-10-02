@@ -499,7 +499,7 @@ export async function DELETE(request: Request) {
           const orphaned = await tx.raffle.updateMany({
             where: {
               topicId: null,
-              city: { not: "" }
+              city: { equals: "Paramirim", mode: "insensitive" }
             },
             data: { topicId: targetTopic!.id }
           });
