@@ -37,40 +37,52 @@ function parsePrice(value: string) {
 
 export async function GET() {
   try {
-    await prisma.$transaction(async (tx) => {
-      let paramirim = await tx.raffleTopic.findFirst({
-        where: { normalized: "paramirim" },
-        select: { id: true, name: true }
-      });
+    const legacyRaffle = await prisma.raffle.findFirst({
+      where: {
+        OR: [
+          { city: { equals: "Botuporã", mode: "insensitive" } },
+          { topic: { normalized: "botupora" } }
+        ]
+      },
+      select: { id: true }
+    });
 
-      if (!paramirim) {
-        paramirim = await tx.raffleTopic.create({
-          data: { name: "Paramirim", normalized: "paramirim" },
-          select: { id: true, name: true }
+    if (legacyRaffle) {
+      await prisma.$transaction(async (tx) => {
+        let paramirim = await tx.raffleTopic.findFirst({
+          where: { normalized: "paramirim" },
+          select: { id: true }
         });
-      }
 
-      const botupora = await tx.raffleTopic.findFirst({
-        where: { normalized: "botupora" },
-        select: { id: true }
-      });
+        if (!paramirim) {
+          paramirim = await tx.raffleTopic.create({
+            data: { name: "Paramirim", normalized: "paramirim" },
+            select: { id: true }
+          });
+        }
 
-      if (botupora) {
+        const botupora = await tx.raffleTopic.findFirst({
+          where: { normalized: "botupora" },
+          select: { id: true }
+        });
+
+        if (botupora) {
+          await tx.raffle.updateMany({
+            where: { topicId: botupora.id },
+            data: { topicId: paramirim.id, city: "Paramirim" }
+          });
+          await tx.raffleTopic.delete({ where: { id: botupora.id } });
+        }
+
         await tx.raffle.updateMany({
-          where: { topicId: botupora.id },
+          where: {
+            topicId: null,
+            city: { equals: "Botuporã", mode: "insensitive" }
+          },
           data: { topicId: paramirim.id, city: "Paramirim" }
         });
-        await tx.raffleTopic.delete({ where: { id: botupora.id } });
-      }
-
-      await tx.raffle.updateMany({
-        where: {
-          topicId: null,
-          city: { equals: "Botuporã", mode: "insensitive" }
-        },
-        data: { topicId: paramirim.id, city: "Paramirim" }
       });
-    });
+    }
 
     const raffles = await prisma.raffle.findMany({
       orderBy: { createdAt: "desc" },
