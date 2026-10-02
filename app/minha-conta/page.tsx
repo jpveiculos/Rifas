@@ -118,7 +118,7 @@ export default async function AccountPage() {
                         {item.raffle.imageUrls[0] ? (
                           <img src={item.raffle.imageUrls[0]} alt={item.raffle.productName} />
                         ) : (
-                          <span>Rifas.TOP</span>
+                          <span>RifasTOP</span>
                         )}
                       </div>
                       <div className="account-card-content">
