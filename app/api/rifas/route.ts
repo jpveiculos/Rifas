@@ -171,6 +171,52 @@ export async function PATCH(request: Request) {
     const status = String(body.status ?? "");
     const isEdit = Boolean(body.edit);
 
+    if (body.editTopic === true) {
+      const topicId = String(body.topicId ?? "").trim();
+      const topicName = normalizeTopicName(String(body.topicName ?? ""));
+
+      if (!topicId || !topicName) {
+        return NextResponse.json({ error: "Informe o tópico e o novo nome." }, { status: 400 });
+      }
+
+      const normalized = normalizeTopicKey(topicName);
+
+      const topic = await prisma.raffleTopic.findUnique({
+        where: { id: topicId },
+        select: { id: true, name: true }
+      });
+
+      if (!topic) {
+        return NextResponse.json({ error: "Tópico não encontrado." }, { status: 404 });
+      }
+
+      const duplicate = await prisma.raffleTopic.findUnique({
+        where: { normalized },
+        select: { id: true }
+      });
+
+      if (duplicate && duplicate.id !== topicId) {
+        return NextResponse.json({ error: "Já existe um tópico com esse nome." }, { status: 409 });
+      }
+
+      await prisma.$transaction([
+        prisma.raffleTopic.update({
+          where: { id: topicId },
+          data: { name: topicName, normalized }
+        }),
+        prisma.raffle.updateMany({
+          where: { topicId, city: topic.name },
+          data: { city: topicName }
+        })
+      ]);
+
+      revalidatePath("/");
+      revalidatePath("/admin");
+      revalidatePath("/minha-conta");
+
+      return NextResponse.json({ id: topicId, name: topicName, ok: true });
+    }
+
     if (isEdit) {
       const raffleCodeInput = normalizeRaffleCode(String(body.raffleCode ?? ""));
       const productName = String(body.productName ?? "").trim();
