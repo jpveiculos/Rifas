@@ -240,30 +240,6 @@
 
 .topic-delete-action {
   display: flex;
-  justify-content: flex-start;
-  width: 100%;
-  margin-top: 4px;
-  padding-top: 8px;
-  border-top: 1px dashed #e3c3c3;
-}
-.topic-delete-action .topic-delete-button {
-  min-width: 190px;
-  background: #fff0f0 !important;
-  border: 2px solid #dc7d7d !important;
-  color: #a12626 !important;
-}
-.topic-delete-action .topic-delete-button:hover:not(:disabled) {
-  background: #ffdede !important;
-  border-color: #c95f5f !important;
-}
-@media (max-width: 640px) {
-  .topic-delete-action .topic-delete-button {
-    width: 100%;
-  }
-}
-
-.topic-delete-action {
-  display: flex;
   align-items: center;
   gap: 8px;
   width: 100%;
@@ -294,6 +270,17 @@
 .topic-delete-action .topic-delete-button:hover:not(:disabled) {
   background: #ffdede !important;
   border-color: #c95f5f !important;
+}
+@media (max-width: 640px) {
+  .topic-delete-action {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .topic-delete-target,
+  .topic-delete-action .topic-delete-button {
+    width: 100%;
+    min-width: 0;
+  }
 }
 @media (max-width: 640px) {
   .topic-delete-action {
