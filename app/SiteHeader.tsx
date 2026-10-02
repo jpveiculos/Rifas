@@ -9,7 +9,7 @@ export default async function SiteHeader() {
     <header className="site-header">
       <div className="container site-header-inner">
         <Link className="brand" href="/">
-          <span>Rifas<span className="brand-dot">.</span><strong>TOP</strong></span>
+          <span>Rifas<strong>TOP</strong></span>
         </Link>
 
         <div className="header-actions">
