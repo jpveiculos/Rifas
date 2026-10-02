@@ -437,6 +437,7 @@ export async function DELETE(request: Request) {
   try {
     const body = await request.json();
     const topicId = String(body.topicId ?? "").trim();
+    const targetTopicId = String(body.targetTopicId ?? "").trim();
 
     if (topicId) {
       const topic = await prisma.raffleTopic.findUnique({
@@ -448,9 +449,38 @@ export async function DELETE(request: Request) {
         return NextResponse.json({ error: "Tópico não encontrado." }, { status: 404 });
       }
 
-      // Exclui somente o tópico. As rifas vinculadas continuam existindo;
-      // a relação topicId vira nula e o nome/local da rifa é preservado.
-      await prisma.raffleTopic.delete({ where: { id: topicId } });
+      if (!targetTopicId) {
+        return NextResponse.json(
+          { error: "Informe o tópico que receberá as rifas antes de excluir este tópico." },
+          { status: 400 }
+        );
+      }
+
+      if (targetTopicId === topicId) {
+        return NextResponse.json(
+          { error: "O tópico de destino precisa ser diferente do tópico excluído." },
+          { status: 400 }
+        );
+      }
+
+      const targetTopic = await prisma.raffleTopic.findUnique({
+        where: { id: targetTopicId },
+        select: { id: true, name: true }
+      });
+
+      if (!targetTopic) {
+        return NextResponse.json({ error: "Tópico de destino não encontrado." }, { status: 404 });
+      }
+
+      const moved = await prisma.$transaction(async (tx) => {
+        const result = await tx.raffle.updateMany({
+          where: { topicId },
+          data: { topicId: targetTopicId }
+        });
+
+        await tx.raffleTopic.delete({ where: { id: topicId } });
+        return result.count;
+      });
 
       revalidatePath("/");
       revalidatePath("/minha-conta");
@@ -458,9 +488,11 @@ export async function DELETE(request: Request) {
 
       return NextResponse.json({
         id: topicId,
-        message: topic._count.raffles > 0
-          ? "Tópico excluído. As rifas vinculadas foram mantidas."
-          : "Tópico excluído com sucesso."
+        targetTopicId,
+        movedRaffles: moved,
+        message: moved > 0
+          ? `Tópico excluído. ${moved} rifa(s) foram transferidas para "Rifas em ${targetTopic.name.replace(/^Rifas em\\s+/i, "")}".`
+          : "Tópico excluído. Não havia rifas vinculadas a ele."
       });
     }
 
