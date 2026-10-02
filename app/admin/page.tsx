@@ -199,7 +199,9 @@ export default function AdminPage() {
   }
 
   async function deleteTopic(topicId: string, topicName: string) {
-    const targetTopicId = topicDeleteTargets[topicId] || "";
+    const targetTopicId =
+      topicDeleteTargets[topicId] ||
+      (topics.length === 2 ? (topics.find((topic) => topic.id !== topicId)?.id ?? "") : "");
     if (!targetTopicId) {
       setError("Escolha primeiro o tópico que vai receber as rifas deste tópico.");
       return;
@@ -671,7 +673,7 @@ export default function AdminPage() {
                               <div className="topic-delete-action">
                                 <select
                                   className="topic-delete-target"
-                                  value={topicDeleteTargets[topic.id] ?? ""}
+                                  value={topicDeleteTargets[topic.id] ?? (topics.length === 2 ? (topics.find((target) => target.id !== topic.id)?.id ?? "") : "")}
                                   onChange={(e) =>
                                     setTopicDeleteTargets((current) => ({
                                       ...current,
