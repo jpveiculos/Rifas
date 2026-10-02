@@ -37,60 +37,77 @@ function parsePrice(value: string) {
 
 export async function GET() {
   try {
-    const [legacyTopic, legacyRaffle] = await Promise.all([
-      prisma.raffleTopic.findFirst({
-        where: { normalized: { startsWith: "botupora" } },
-        select: { id: true }
-      }),
-      prisma.raffle.findFirst({
+    await prisma.$transaction(async (tx) => {
+      const allTopics = await tx.raffleTopic.findMany({
+        select: { id: true, name: true, normalized: true }
+      });
+
+      const paramirimTopics = allTopics.filter((topic) => {
+        const key = topic.normalized.replace(/-ba$/, "");
+        return key === "paramirim";
+      });
+
+      let canonical = allTopics.find((topic) => topic.normalized === "paramirim-ba");
+
+      if (!canonical) {
+        const existing = paramirimTopics[0];
+
+        if (existing) {
+          canonical = await tx.raffleTopic.update({
+            where: { id: existing.id },
+            data: { name: "Paramirim-BA", normalized: "paramirim-ba" },
+            select: { id: true, name: true, normalized: true }
+          });
+        } else {
+          canonical = await tx.raffleTopic.create({
+            data: { name: "Paramirim-BA", normalized: "paramirim-ba" },
+            select: { id: true, name: true, normalized: true }
+          });
+        }
+      } else if (canonical.name !== "Paramirim-BA") {
+        canonical = await tx.raffleTopic.update({
+          where: { id: canonical.id },
+          data: { name: "Paramirim-BA", normalized: "paramirim-ba" },
+          select: { id: true, name: true, normalized: true }
+        });
+      }
+
+      const duplicateParamirimIds = paramirimTopics
+        .filter((topic) => topic.id !== canonical!.id)
+        .map((topic) => topic.id);
+
+      const otherTopicIds = allTopics
+        .filter((topic) => topic.id !== canonical!.id && !duplicateParamirimIds.includes(topic.id))
+        .map((topic) => topic.id);
+
+      const topicsToRemove = [...duplicateParamirimIds, ...otherTopicIds];
+
+      if (topicsToRemove.length > 0) {
+        await tx.raffle.updateMany({
+          where: { topicId: { in: topicsToRemove } },
+          data: { topicId: canonical.id, city: "Paramirim-BA" }
+        });
+
+        await tx.raffleTopic.deleteMany({
+          where: { id: { in: topicsToRemove } }
+        });
+      }
+
+      await tx.raffle.updateMany({
         where: {
           OR: [
-            { city: { startsWith: "Botuporã", mode: "insensitive" } },
-            { topic: { normalized: { startsWith: "botupora" } } }
+            { topicId: null, city: { startsWith: "Paramirim", mode: "insensitive" } },
+            { topicId: null, city: { startsWith: "Botuporã", mode: "insensitive" } }
           ]
         },
-        select: { id: true }
-      })
-    ]);
-
-    if (legacyTopic || legacyRaffle) {
-      await prisma.$transaction(async (tx) => {
-        let paramirim = await tx.raffleTopic.findFirst({
-          where: { normalized: "paramirim" },
-          select: { id: true }
-        });
-
-        if (!paramirim) {
-          paramirim = await tx.raffleTopic.create({
-            data: { name: "Paramirim", normalized: "paramirim" },
-            select: { id: true }
-          });
-        }
-
-        const legacyTopics = await tx.raffleTopic.findMany({
-          where: { normalized: { startsWith: "botupora" } },
-          select: { id: true }
-        });
-        const legacyTopicIds = legacyTopics.map((topic) => topic.id);
-
-        if (legacyTopicIds.length > 0) {
-          await tx.raffle.updateMany({
-            where: { topicId: { in: legacyTopicIds } },
-            data: { topicId: paramirim.id, city: "Paramirim" }
-          });
-          await tx.raffleTopic.deleteMany({
-            where: { id: { in: legacyTopicIds } }
-          });
-        }
-
-        await tx.raffle.updateMany({
-          where: {
-            city: { startsWith: "Botuporã", mode: "insensitive" }
-          },
-          data: { topicId: paramirim.id, city: "Paramirim" }
-        });
+        data: { topicId: canonical.id, city: "Paramirim-BA" }
       });
-    }
+
+      await tx.raffle.updateMany({
+        where: { topicId: canonical.id },
+        data: { city: "Paramirim-BA" }
+      });
+    });
 
     const raffles = await prisma.raffle.findMany({
       orderBy: { createdAt: "desc" },
