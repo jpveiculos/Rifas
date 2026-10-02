@@ -210,3 +210,24 @@
   .bonus-grid, .bonus-grid-fields { grid-template-columns: 1fr; }
   .bonus-search-button { width: 100%; }
 }
+
+.draw-winner-details {
+  display: grid;
+  gap: 3px;
+  margin: 5px 0 4px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.75);
+  border: 1px solid #bde7ce;
+}
+.draw-winner-details b { font-size: 16px; color: #137747; }
+.draw-winner-details span { font-size: 12px; color: #4f6b5c; }
+.draw-winner-whatsapp {
+  width: fit-content;
+  text-decoration: none;
+  background: #168b4f;
+  color: #fff;
+}
+@media (max-width: 640px) {
+  .draw-winner-whatsapp { width: 100%; }
+}
