@@ -664,36 +664,38 @@ export default function AdminPage() {
                               >
                                 Editar nome
                               </button>
-                              <div className="topic-delete-action">
-                                <select
-                                  className="topic-delete-target"
-                                  value={topicDeleteTargets[topic.id] ?? ""}
-                                  onChange={(e) =>
-                                    setTopicDeleteTargets((current) => ({
-                                      ...current,
-                                      [topic.id]: e.target.value
-                                    }))
-                                  }
-                                  disabled={deletingTopicId === topic.id}
-                                >
-                                  <option value="">Mover rifas para...</option>
-                                  {topics
-                                    .filter((target) => target.id !== topic.id)
-                                    .map((target) => (
-                                      <option value={target.id} key={target.id}>
-                                        Rifas em {target.name.replace(/^Rifas em\s+/i, "")}
-                                      </option>
-                                    ))}
-                                </select>
-                                <button
-                                  className="danger-button compact-button topic-delete-button danger-topic-button"
-                                  type="button"
-                                  onClick={() => deleteTopic(topic.id, topic.name.replace(/^Rifas em\s+/i, ""))}
-                                  disabled={deletingTopicId === topic.id || !topicDeleteTargets[topic.id]}
-                                >
-                                  {deletingTopicId === topic.id ? "Excluindo tópico..." : "🗑️ Excluir e transferir"}
-                                </button>
-                              </div>
+                              {topics.length > 1 && (
+                                <div className="topic-delete-action">
+                                  <select
+                                    className="topic-delete-target"
+                                    value={topicDeleteTargets[topic.id] ?? ""}
+                                    onChange={(e) =>
+                                      setTopicDeleteTargets((current) => ({
+                                        ...current,
+                                        [topic.id]: e.target.value
+                                      }))
+                                    }
+                                    disabled={deletingTopicId === topic.id}
+                                  >
+                                    <option value="">Mover rifas para...</option>
+                                    {topics
+                                      .filter((target) => target.id !== topic.id)
+                                      .map((target) => (
+                                        <option value={target.id} key={target.id}>
+                                          Rifas em {target.name.replace(/^Rifas em\s+/i, "")}
+                                        </option>
+                                      ))}
+                                  </select>
+                                  <button
+                                    className="danger-button compact-button topic-delete-button danger-topic-button"
+                                    type="button"
+                                    onClick={() => deleteTopic(topic.id, topic.name.replace(/^Rifas em\s+/i, ""))}
+                                    disabled={deletingTopicId === topic.id || !topicDeleteTargets[topic.id]}
+                                  >
+                                    {deletingTopicId === topic.id ? "Excluindo tópico..." : "🗑️ Excluir e transferir"}
+                                  </button>
+                                </div>
+                              )}
                             </>
                           )}
                         </div>
@@ -836,7 +838,7 @@ export default function AdminPage() {
                 }, new Map<string, Raffle[]>())
               ).map(([topicName, topicRaffles]) => (
                 <section className="raffle-admin-group" key={topicName}>
-                  <h3 className="raffle-admin-group-title">{topicName}</h3>
+                  <h3 className="raffle-admin-group-title">Rifas em {topicName.replace(/^Rifas em\s+/i, "")}</h3>
                   <div className="raffle-admin-list">
                     {topicRaffles.map((raffle) => {
                 const winningNumbers = raffle.winningNumbers?.length > 0
