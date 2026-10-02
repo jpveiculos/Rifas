@@ -14,6 +14,41 @@ export default async function HomePage() {
     select: { contactWhatsapp: true }
   });
   const instagramHandle = await getSiteInstagramHandle();
+  await prisma.$transaction(async (tx) => {
+    let paramirim = await tx.raffleTopic.findFirst({
+      where: { normalized: "paramirim" },
+      select: { id: true }
+    });
+
+    if (!paramirim) {
+      paramirim = await tx.raffleTopic.create({
+        data: { name: "Paramirim", normalized: "paramirim" },
+        select: { id: true }
+      });
+    }
+
+    const botupora = await tx.raffleTopic.findFirst({
+      where: { normalized: "botupora" },
+      select: { id: true }
+    });
+
+    if (botupora) {
+      await tx.raffle.updateMany({
+        where: { topicId: botupora.id },
+        data: { topicId: paramirim.id, city: "Paramirim" }
+      });
+      await tx.raffleTopic.delete({ where: { id: botupora.id } });
+    }
+
+    await tx.raffle.updateMany({
+      where: {
+        topicId: null,
+        city: { equals: "Botuporã", mode: "insensitive" }
+      },
+      data: { topicId: paramirim.id, city: "Paramirim" }
+    });
+  });
+
   const raffles = await prisma.raffle.findMany({
     where: { status: { in: ["ACTIVE", "ENDED"] } },
     orderBy: { createdAt: "desc" },
@@ -27,9 +62,7 @@ export default async function HomePage() {
       raffleCode: raffle.raffleCode,
       name: raffle.name,
       city: raffle.city,
-      topicName:
-        raffle.topic?.name ??
-        (raffle.city.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() === "botupora" ? "Paramirim" : raffle.city),
+      topicName: raffle.topic?.name ?? raffle.city,
       productName: raffle.productName,
       description: raffle.description,
       imageUrls: raffle.imageUrls,
@@ -45,9 +78,7 @@ export default async function HomePage() {
       raffleCode: raffle.raffleCode,
       name: raffle.name,
       city: raffle.city,
-      topicName:
-        raffle.topic?.name ??
-        (raffle.city.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() === "botupora" ? "Paramirim" : raffle.city),
+      topicName: raffle.topic?.name ?? raffle.city,
       productName: raffle.productName,
       description: raffle.description,
       imageUrls: raffle.imageUrls,
