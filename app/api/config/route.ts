@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { cleanInstagramHandle, ensureSiteInstagramColumn } from "@/lib/site-settings";
+import { cleanInstagramHandle, ensureSiteInstagramColumn, getSiteInstagramHandle } from "@/lib/site-settings";
 
 function cleanWhatsapp(value: unknown) {
   return String(value ?? "").replace(/\D/g, "").slice(0, 15);
@@ -13,42 +13,60 @@ export async function GET() {
     update: {},
     create: { id: 1, contactWhatsapp: "77998315360" }
   });
-  const rows = await prisma.$queryRaw<Array<{ instagramHandle: string }>>`
-    SELECT "instagramHandle" FROM "SiteSettings" WHERE id = 1 LIMIT 1
-  `;
-  const instagramHandle = cleanInstagramHandle(rows[0]?.instagramHandle) || "_rifas.top";
+  const instagramHandle = await getSiteInstagramHandle();
 
-  return NextResponse.json({
-    contactWhatsapp: settings.contactWhatsapp,
-    instagramHandle
-  });
+  return NextResponse.json(
+    {
+      contactWhatsapp: settings.contactWhatsapp,
+      instagramHandle
+    },
+    { headers: { "Cache-Control": "no-store" } }
+  );
 }
 
 export async function PATCH(request: Request) {
   await ensureSiteInstagramColumn();
   const body = await request.json();
-  const contactWhatsapp = cleanWhatsapp(body.contactWhatsapp);
-  const instagramHandle = cleanInstagramHandle(body.instagramHandle);
 
-  if (contactWhatsapp.length < 10) {
-    return NextResponse.json({ error: "Informe um WhatsApp válido com DDD." }, { status: 400 });
+  const hasWhatsapp = body.contactWhatsapp !== undefined;
+  const hasInstagram = body.instagramHandle !== undefined;
+
+  if (!hasWhatsapp && !hasInstagram) {
+    return NextResponse.json({ error: "Nenhuma configuração foi informada." }, { status: 400 });
   }
 
-  if (!instagramHandle) {
-    return NextResponse.json({ error: "Informe o usuário do Instagram." }, { status: 400 });
-  }
-
-  const settings = await prisma.siteSettings.upsert({
+  const current = await prisma.siteSettings.upsert({
     where: { id: 1 },
-    update: { contactWhatsapp },
-    create: { id: 1, contactWhatsapp }
+    update: {},
+    create: { id: 1, contactWhatsapp: "77998315360" }
   });
 
-  await prisma.$executeRaw`
-    UPDATE "SiteSettings"
-    SET "instagramHandle" = ${instagramHandle}
-    WHERE id = 1
-  `;
+  let contactWhatsapp = current.contactWhatsapp;
+  if (hasWhatsapp) {
+    contactWhatsapp = cleanWhatsapp(body.contactWhatsapp);
+    if (contactWhatsapp.length < 10) {
+      return NextResponse.json({ error: "Informe um WhatsApp válido com DDD." }, { status: 400 });
+    }
 
-  return NextResponse.json({ contactWhatsapp: settings.contactWhatsapp, instagramHandle });
+    await prisma.siteSettings.update({
+      where: { id: 1 },
+      data: { contactWhatsapp }
+    });
+  }
+
+  let instagramHandle = await getSiteInstagramHandle();
+  if (hasInstagram) {
+    instagramHandle = cleanInstagramHandle(body.instagramHandle);
+    if (!instagramHandle) {
+      return NextResponse.json({ error: "Informe o usuário do Instagram." }, { status: 400 });
+    }
+
+    await prisma.$executeRaw`
+      UPDATE "SiteSettings"
+      SET "instagramHandle" = ${instagramHandle}
+      WHERE id = 1
+    `;
+  }
+
+  return NextResponse.json({ contactWhatsapp, instagramHandle });
 }
