@@ -114,7 +114,11 @@ export default async function AccountPage() {
   }>();
   for (const item of numbers) {
     const key = item.reservationId ?? "";
-    const current = numbersByReservation.get(key) ?? {
+    const current: {
+      numbers: number[];
+      status: "RESERVED" | "CONFIRMED";
+      reservedAt: Date | null;
+    } = numbersByReservation.get(key) ?? {
       numbers: [],
       status: item.status,
       reservedAt: item.reservedAt
