@@ -22,6 +22,51 @@ export default async function AccountPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
+  const reservationCutoff = new Date(Date.now() - 30 * 60 * 1000);
+
+  const expiredReservations = await prisma.raffleNumber.findMany({
+    where: {
+      reservedByUserId: user.id,
+      status: "RESERVED",
+      reservedAt: { lt: reservationCutoff }
+    },
+    select: { reservationId: true }
+  });
+
+  const expiredReservationIds = expiredReservations
+    .map((item) => item.reservationId)
+    .filter((value): value is string => Boolean(value));
+
+  if (expiredReservationIds.length > 0) {
+    await prisma.$transaction([
+      prisma.raffleNumber.updateMany({
+        where: {
+          reservedByUserId: user.id,
+          status: "RESERVED",
+          reservationId: { in: expiredReservationIds }
+        },
+        data: {
+          status: "AVAILABLE",
+          reservationId: null,
+          reservedAt: null,
+          reservedByUserId: null
+        }
+      }),
+      prisma.raffleParticipation.updateMany({
+        where: {
+          userId: user.id,
+          status: "PENDING",
+          reservationId: { in: expiredReservationIds }
+        },
+        data: {
+          status: "REJECTED",
+          mercadopagoStatus: "expired",
+          mercadopagoStatusDetail: "Reserva expirada após 30 minutos sem pagamento."
+        }
+      })
+    ]);
+  }
+
   const siteSettings = await prisma.siteSettings.findUnique({
     where: { id: 1 },
     select: { contactWhatsapp: true }
@@ -30,7 +75,7 @@ export default async function AccountPage() {
   const participations = await prisma.raffleParticipation.findMany({
     where: {
       userId: user.id,
-      status: "APPROVED",
+      status: { in: ["PENDING", "APPROVED"] },
       raffle: { status: "ACTIVE" }
     },
     orderBy: { createdAt: "desc" },
@@ -50,21 +95,35 @@ export default async function AccountPage() {
   const numbers = await prisma.raffleNumber.findMany({
     where: {
       reservedByUserId: user.id,
-      status: "CONFIRMED",
+      status: { in: ["RESERVED", "CONFIRMED"] },
       raffle: { status: "ACTIVE" }
     },
     select: {
       number: true,
-      reservationId: true
+      reservationId: true,
+      status: true,
+      reservedAt: true
     },
     orderBy: { number: "asc" }
   });
 
-  const numbersByReservation = new Map<string, number[]>();
+  const numbersByReservation = new Map<string, {
+    numbers: number[];
+    status: "RESERVED" | "CONFIRMED";
+    reservedAt: Date | null;
+  }>();
   for (const item of numbers) {
     const key = item.reservationId ?? "";
-    const current = numbersByReservation.get(key) ?? [];
-    current.push(item.number);
+    const current = numbersByReservation.get(key) ?? {
+      numbers: [],
+      status: item.status,
+      reservedAt: item.reservedAt
+    };
+    current.numbers.push(item.number);
+    if (item.status === "RESERVED") current.status = "RESERVED";
+    if (item.reservedAt && (!current.reservedAt || item.reservedAt < current.reservedAt)) {
+      current.reservedAt = item.reservedAt;
+    }
     numbersByReservation.set(key, current);
   }
 
@@ -87,7 +146,7 @@ export default async function AccountPage() {
   });
 
   function participationNumbers(reservationId: string) {
-    return (numbersByReservation.get(reservationId) ?? []).sort((a, b) => a - b);
+    return [...(numbersByReservation.get(reservationId)?.numbers ?? [])].sort((a, b) => a - b);
   }
 
   return (
@@ -111,7 +170,12 @@ export default async function AccountPage() {
             ) : (
               <div className="account-list">
                 {participations.map((item) => {
+                  const reservation = numbersByReservation.get(item.reservationId);
                   const mine = participationNumbers(item.reservationId);
+                  const isPending = item.status === "PENDING";
+                  const reservationExpiresAt = reservation?.reservedAt
+                    ? new Date(reservation.reservedAt.getTime() + 30 * 60 * 1000)
+                    : null;
                   return (
                     <article className="account-raffle-card" key={item.id}>
                       <div className="account-card-image">
@@ -122,20 +186,69 @@ export default async function AccountPage() {
                         )}
                       </div>
                       <div className="account-card-content">
-                        <span className="account-status status-active">Participando</span>
+                        <span className={"account-status " + (isPending ? "status-pending" : "status-active")}>
+                          {isPending ? "Aguardando pagamento" : "Participando"}
+                        </span>
                         <h3>{item.raffle.productName}</h3>
                         <p>
                           {item.raffle.name}
                           {item.raffle.raffleCode ? " · ID " + item.raffle.raffleCode : ""}
                         </p>
                         <div className="account-numbers">
-                          <span>Seus números</span>
+                          <span>{isPending ? "Números reservados" : "Seus números"}</span>
                           <div>
                             {mine.map((number) => (
                               <b key={number}>{formatNumber(number)}</b>
                             ))}
                           </div>
                         </div>
+
+                        {isPending && (
+                          <div className="account-pending-payment">
+                            <strong>Pagamento pendente</strong>
+                            <span>
+                              Esta reserva fica disponível por 30 minutos.
+                              {reservationExpiresAt
+                                ? " Expira às " + reservationExpiresAt.toLocaleTimeString("pt-BR", {
+                                    hour: "2-digit",
+                                    minute: "2-digit"
+                                  }) + "."
+                                : ""}
+                            </span>
+
+                            {item.mercadopagoQrCodeBase64 && (
+                              <img
+                                className="payment-qr"
+                                src={"data:image/png;base64," + item.mercadopagoQrCodeBase64}
+                                alt="QR Code para pagamento Pix"
+                              />
+                            )}
+
+                            {item.mercadopagoQrCode && (
+                              <label className="payment-code-label">
+                                Pix Copia e Cola
+                                <textarea
+                                  className="payment-code"
+                                  value={item.mercadopagoQrCode}
+                                  readOnly
+                                  rows={4}
+                                />
+                              </label>
+                            )}
+
+                            {item.mercadopagoTicketUrl && (
+                              <a
+                                className="secondary-button account-button payment-link"
+                                href={item.mercadopagoTicketUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                Abrir pagamento
+                              </a>
+                            )}
+                          </div>
+                        )}
+
                         <Link className="secondary-button account-button" href={"/rifa/" + item.raffle.id}>
                           Ver rifa
                         </Link>
