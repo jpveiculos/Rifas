@@ -211,51 +211,36 @@ export default async function AccountPage() {
                           <div className="account-pending-payment">
                             <strong>Pagamento pendente</strong>
                             <span>
-                              Esta reserva fica disponível por 30 minutos.
+                              Você tem 30 minutos para pagar esta reserva.
                               {reservationExpiresAt
                                 ? " Expira às " + reservationExpiresAt.toLocaleTimeString("pt-BR", {
                                     hour: "2-digit",
-                                    minute: "2-digit"
+                                    minute: "2-digit",
+                                    timeZone: "America/Sao_Paulo"
                                   }) + "."
                                 : ""}
                             </span>
 
                             {item.mercadopagoQrCodeBase64 && (
-                              <img
-                                className="payment-qr"
-                                src={"data:image/png;base64," + item.mercadopagoQrCodeBase64}
-                                alt="QR Code para pagamento Pix"
-                              />
-                            )}
-
-                            {item.mercadopagoQrCode && (
-                              <label className="payment-code-label">
-                                Pix Copia e Cola
-                                <textarea
-                                  className="payment-code"
-                                  value={item.mercadopagoQrCode}
-                                  readOnly
-                                  rows={4}
+                              <details className="payment-qr-details">
+                                <summary className="secondary-button account-button payment-link">
+                                  Pagar agora
+                                </summary>
+                                <img
+                                  className="payment-qr"
+                                  src={"data:image/png;base64," + item.mercadopagoQrCodeBase64}
+                                  alt="QR Code para pagamento Pix"
                                 />
-                              </label>
-                            )}
-
-                            {item.mercadopagoTicketUrl && (
-                              <a
-                                className="secondary-button account-button payment-link"
-                                href={item.mercadopagoTicketUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                Abrir pagamento
-                              </a>
+                              </details>
                             )}
                           </div>
                         )}
 
-                        <Link className="secondary-button account-button" href={"/rifa/" + item.raffle.id}>
-                          Ver rifa
-                        </Link>
+                        {!isPending && (
+                          <Link className="secondary-button account-button" href={"/rifa/" + item.raffle.id}>
+                            Ver rifa
+                          </Link>
+                        )}
                       </div>
                     </article>
                   );
