@@ -120,7 +120,7 @@ export default async function AccountPage() {
       reservedAt: Date | null;
     } = numbersByReservation.get(key) ?? {
       numbers: [],
-      status: item.status,
+      status: item.status === "RESERVED" ? "RESERVED" : "CONFIRMED",
       reservedAt: item.reservedAt
     };
     current.numbers.push(item.number);
