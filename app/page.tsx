@@ -76,7 +76,7 @@ export default async function HomePage() {
                 <p>As rifas criadas e ativadas no painel administrativo aparecerão aqui.</p>
               </div>
             ) : (
-              <HomeRaffleBrowser activeRaffles={activeRaffles} finishedRaffles={finishedRaffles} />
+              <HomeRaffleBrowser activeRaffles={activeRaffles} finishedRaffles={finishedRaffles} isLoggedIn={Boolean(user)} />
             )}
 
             <section className="social-links-section" aria-label="Redes sociais e contato">
