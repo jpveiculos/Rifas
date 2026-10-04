@@ -236,7 +236,7 @@ export default function TurbinarPage() {
     campaign.variants.forEach((variant) => {
       acc.spend += variant.metrics.spendCents;
       acc.reach += variant.metrics.reach;
-      acc.clicks += variant.metrics.linkClicks;
+      acc.clicks += Number(variant.metrics.trackedClicks ?? 0);
       acc.registrations += variant.metrics.registrations;
       acc.participations += variant.metrics.participations;
     });
@@ -378,14 +378,14 @@ export default function TurbinarPage() {
 
                 <div className="campaign-table-wrap">
                   <table className="campaign-table">
-                    <thead><tr><th>Cidade</th><th>Gasto</th><th>Alcance</th><th>Cliques</th><th>Cadastros</th><th>Participações</th><th>Ação</th></tr></thead>
+                    <thead><tr><th>Cidade</th><th>Gasto</th><th>Alcance</th><th>Cliques rastreados</th><th>Cadastros</th><th>Participações</th><th>Ação</th></tr></thead>
                     <tbody>
                       {campaign.variants.map((variant) => (
                         <tr key={variant.id}>
                           <td><strong>{variant.city}</strong><small>{variant.distanceKm ? variant.distanceKm + " km" : "base"} • {variant.creativeType}</small></td>
                           <td>{money(variant.metrics.spendCents)}</td>
                           <td>{metricNumber(variant.metrics.reach)}</td>
-                          <td>{metricNumber(variant.metrics.linkClicks)}</td>
+                          <td>{metricNumber(Number(variant.metrics.trackedClicks ?? 0))}</td>
                           <td>{metricNumber(variant.metrics.registrations)}</td>
                           <td>{metricNumber(variant.metrics.participations)}</td>
                           <td><button className="boost-secondary" onClick={() => copyText(window.location.origin + "/go/" + variant.trackingCode, variant.trackingCode)}>{copied === variant.trackingCode ? "✓ Copiado" : "🔗 Link"}</button></td>
