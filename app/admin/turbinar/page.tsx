@@ -116,7 +116,6 @@ export default function TurbinarPage() {
   const [raffles, setRaffles] = useState<Raffle[]>([]);
   const [raffleId, setRaffleId] = useState("");
   const [selectedCities, setSelectedCities] = useState<string[]>(CITIES.map((x) => x.city));
-  const [creativeType, setCreativeType] = useState("SITE");
   const [destinationType, setDestinationType] = useState("RAFFLE");
   const [budget, setBudget] = useState("50,00");
   const [campaignName, setCampaignName] = useState("");
@@ -191,7 +190,7 @@ export default function TurbinarPage() {
           name: campaignName,
           budget,
           objective: "Alcançar pessoas que ainda não seguem o Instagram",
-          creativeType,
+          creativeType: "SITE",
           destinationType,
           cities: variantsToCreate
         })
@@ -322,24 +321,19 @@ export default function TurbinarPage() {
         <section className="boost-card">
           <h2>4. Criativo e destino</h2>
           <div className="boost-grid-2">
-            <label>Modelo do criativo
-              <select value={creativeType} onChange={(event) => setCreativeType(event.target.value)}>
-                <option value="SITE">Imagem/tela do site — padrão já testado</option>
-                <option value="PRODUCT">Arte do produto — moto, carro ou iPhone</option>
-                <option value="STORY">Story vertical 9:16</option>
-                <option value="FEED">Feed 4:5 / 1:1</option>
-              </select>
-            </label>
+            <div className="official-creative-source">
+              <strong>🖼️ Imagem oficial da rifa</strong>
+              <span>O motor usa automaticamente a primeira imagem oficial cadastrada e publicada na rifa. Você não precisa escolher outro modelo de imagem.</span>
+              {sourceImageUrl && (
+                <img src={sourceImageUrl} alt={raffle?.productName || "Imagem oficial da rifa"} />
+              )}
+            </div>
             <label>Destino do anúncio
               <select value={destinationType} onChange={(event) => setDestinationType(event.target.value)}>
                 <option value="RAFFLE">Página da rifa</option>
                 <option value="HOME">Página principal do RifasTOP</option>
               </select>
             </label>
-          </div>
-          <div className="creative-note">
-            <strong>📌 Uma imagem entra. Vários criativos saem.</strong>
-            <span>O motor usa automaticamente a primeira imagem cadastrada na rifa como fonte única e monta enquadramentos diferentes para Feed, Story, aproximação e posicionamento do produto. A imagem original do prêmio não é alterada.</span>
           </div>
 
           {sourceImageUrl ? (
