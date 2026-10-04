@@ -373,9 +373,9 @@ export default function TurbinarPage() {
             </div>
           ) : (
             <div className="boost-warning">Esta rifa ainda não tem imagem. Cadastre uma única imagem na rifa para o motor gerar os criativos automaticamente.</div>
-          )
+          )}
 
-                    <div className="creative-note">
+          <div className="creative-note">
             <strong>📌 Padrão de referência</strong>
             <span>Use aqui os criativos que você já testou e teve veiculação. O motor registra o modelo usado para depois comparar desempenho entre campanhas.</span>
           </div>
