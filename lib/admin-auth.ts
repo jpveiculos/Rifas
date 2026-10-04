@@ -37,3 +37,11 @@ export function isAdminPasswordValid(password: string) {
   if (!configured || !password) return false;
   return password === configured;
 }
+
+
+import { cookies } from "next/headers";
+
+export async function isAdminAuthenticated() {
+  const cookieStore = await cookies();
+  return verifyAdminSessionToken(cookieStore.get(ADMIN_COOKIE)?.value);
+}
