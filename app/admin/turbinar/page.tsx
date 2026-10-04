@@ -29,6 +29,7 @@ type Variant = {
     linkClicks: number;
     registrations: number;
     participations: number;
+    trackedClicks?: number;
   };
 };
 type Campaign = {
