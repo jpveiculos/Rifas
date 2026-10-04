@@ -641,11 +641,31 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: "Rifa não encontrada." }, { status: 404 });
     }
 
-    await prisma.raffle.delete({ where: { id } });
+    await prisma.$transaction(async (tx) => {
+      // MarketingClick não possui FK direta para a rifa. Limpe os cliques
+      // dos criativos antes da exclusão para não deixar resíduos de campanhas.
+      const variants = await tx.$queryRawUnsafe<Array<{ trackingCode: string }>>(
+        'SELECT v."trackingCode" FROM "MarketingVariant" v JOIN "MarketingCampaign" c ON c."id" = v."campaignId" WHERE c."raffleId" = $1',
+        id
+      );
+
+      if (variants.length > 0) {
+        await tx.$executeRawUnsafe(
+          'DELETE FROM "MarketingClick" WHERE "trackingCode" = ANY($1::text[])',
+          variants.map((variant) => variant.trackingCode)
+        );
+      }
+
+      // MarketingCampaign -> MarketingVariant -> MarketingMetric usam
+      // ON DELETE CASCADE. Ao excluir a rifa, todo o histórico do motor
+      // vinculado a ela também é removido.
+      await tx.raffle.delete({ where: { id } });
+    });
 
     revalidatePath("/");
     revalidatePath("/minha-conta");
     revalidatePath("/admin");
+    revalidatePath("/admin/turbinar");
 
     return NextResponse.json({ id, message: "Rifa excluída com sucesso." });
   } catch (error) {
