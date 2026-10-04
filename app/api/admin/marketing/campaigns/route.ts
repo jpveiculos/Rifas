@@ -27,11 +27,11 @@ export async function GET() {
     const sql = `
       SELECT c."id", c."name", c."raffleId", c."objective", c."budgetCents",
              c."destinationType", c."status", c."createdAt", c."updatedAt",
-             r."productName", r."priceInCents",
+             r."productName", r."priceInCents", r."imageUrls",
              COALESCE(json_agg(json_build_object(
                'id', v."id", 'city', v."city", 'distanceKm', v."distanceKm",
                'creativeType', v."creativeType", 'caption', v."caption",
-               'trackingCode', v."trackingCode", 'destinationPath', v."destinationPath",
+               'trackingCode', v."trackingCode", 'destinationPath', v."destinationPath", 'sourceImageUrl', COALESCE(r."imageUrls"->>0, ''),
                'metrics', json_build_object(
                  'spendCents', COALESCE(m."spendCents",0),
                  'impressions', COALESCE(m."impressions",0),
@@ -48,7 +48,7 @@ export async function GET() {
       JOIN "Raffle" r ON r."id" = c."raffleId"
       LEFT JOIN "MarketingVariant" v ON v."campaignId" = c."id"
       LEFT JOIN "MarketingMetric" m ON m."variantId" = v."id"
-      GROUP BY c."id", r."productName", r."priceInCents"
+      GROUP BY c."id", r."productName", r."priceInCents", r."imageUrls"
       ORDER BY c."createdAt" DESC
       LIMIT 30
     `;
@@ -86,9 +86,12 @@ export async function POST(request: Request) {
 
     const raffle = await prisma.raffle.findUnique({
       where: { id: raffleId },
-      select: { id: true, productName: true }
+      select: { id: true, productName: true, imageUrls: true }
     });
     if (!raffle) return NextResponse.json({ error: "Rifa não encontrada." }, { status: 404 });
+    if (!Array.isArray(raffle.imageUrls) || !raffle.imageUrls[0]) {
+      return NextResponse.json({ error: "Esta rifa precisa ter uma imagem cadastrada. Use uma única imagem como fonte dos criativos." }, { status: 400 });
+    }
 
     const id = randomUUID();
     const name = campaignName || raffle.productName + " • " + new Date().toLocaleDateString("pt-BR");
