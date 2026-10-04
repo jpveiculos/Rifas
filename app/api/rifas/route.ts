@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { initializeIphoneCampaign } from "@/lib/init-campaigns";
 
 function normalizeRaffleCode(value: string) {
   return value.trim().toUpperCase().replace(/\s+/g, "-");
@@ -36,6 +37,9 @@ function parsePrice(value: string) {
 }
 
 export async function GET() {
+  // Fire-and-forget: never blocks or breaks the response (the function catches its own errors).
+  void initializeIphoneCampaign();
+
   try {
     await prisma.$transaction(async (tx) => {
       const allTopics = await tx.raffleTopic.findMany({
