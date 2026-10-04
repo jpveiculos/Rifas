@@ -9,6 +9,7 @@ type Raffle = {
   city: string;
   priceInCents: number;
   status: string;
+  imageUrls?: string[];
 };
 
 type City = { city: string; distanceKm: number };
@@ -20,6 +21,7 @@ type Variant = {
   caption: string;
   trackingCode: string;
   destinationPath: string;
+  sourceImageUrl?: string;
   metrics: {
     spendCents: number;
     impressions: number;
@@ -96,6 +98,15 @@ function metricNumber(value: number) {
   return Number(value || 0).toLocaleString("pt-BR");
 }
 
+const CREATIVE_VARIANTS = [
+  { key: "feed-center", label: "Feed • produto central", ratio: "4 / 5", position: "center", scale: 1 },
+  { key: "feed-left", label: "Feed • produto à esquerda", ratio: "4 / 5", position: "30% center", scale: 1.06 },
+  { key: "feed-right", label: "Feed • produto à direita", ratio: "4 / 5", position: "70% center", scale: 1.06 },
+  { key: "story-center", label: "Story • vertical", ratio: "9 / 16", position: "center", scale: 1.12 },
+  { key: "story-top", label: "Story • foco superior", ratio: "9 / 16", position: "center 35%", scale: 1.18 },
+  { key: "zoom", label: "Feed • aproximação", ratio: "1 / 1", position: "center", scale: 1.28 }
+] as const;
+
 function cost(cents: number, count: number) {
   if (!count) return "—";
   return money(Math.round(cents / count));
@@ -117,6 +128,7 @@ export default function TurbinarPage() {
   const [copied, setCopied] = useState("");
 
   const raffle = raffles.find((item) => item.id === raffleId);
+  const sourceImageUrl = raffle?.imageUrls?.[0] || "";
 
   const variantsToCreate = useMemo(() => {
     if (!raffle) return [];
@@ -326,6 +338,44 @@ export default function TurbinarPage() {
             </label>
           </div>
           <div className="creative-note">
+            <strong>📌 Uma imagem entra. Vários criativos saem.</strong>
+            <span>O motor usa automaticamente a primeira imagem cadastrada na rifa como fonte única e monta enquadramentos diferentes para Feed, Story, aproximação e posicionamento do produto. A imagem original do prêmio não é alterada.</span>
+          </div>
+
+          {sourceImageUrl ? (
+            <div className="creative-lab">
+              <div className="creative-lab-head">
+                <div>
+                  <strong>🖼️ Laboratório de criativos</strong>
+                  <span>6 composições automáticas a partir da mesma foto</span>
+                </div>
+                <img src={sourceImageUrl} alt={raffle?.productName || "Imagem da rifa"} className="creative-source-thumb" />
+              </div>
+              <div className="creative-grid">
+                {CREATIVE_VARIANTS.map((item) => (
+                  <article className="creative-preview-card" key={item.key}>
+                    <div className="creative-preview" style={{ aspectRatio: item.ratio }}>
+                      <img
+                        src={sourceImageUrl}
+                        alt=""
+                        style={{ objectPosition: item.position, transform: "scale(" + item.scale + ")" }}
+                      />
+                      <div className="creative-overlay">
+                        <b>{raffle?.productName}</b>
+                        <span>{money(raffle?.priceInCents || 0)} por número</span>
+                      </div>
+                    </div>
+                    <strong>{item.label}</strong>
+                    <small>Fonte: 1 imagem • enquadramento automático</small>
+                  </article>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="boost-warning">Esta rifa ainda não tem imagem. Cadastre uma única imagem na rifa para o motor gerar os criativos automaticamente.</div>
+          )
+
+                    <div className="creative-note">
             <strong>📌 Padrão de referência</strong>
             <span>Use aqui os criativos que você já testou e teve veiculação. O motor registra o modelo usado para depois comparar desempenho entre campanhas.</span>
           </div>
