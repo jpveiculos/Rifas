@@ -553,7 +553,7 @@ export default function AdminPage() {
             </button>
           </div>
           <div>
-            <h1>Área administrativa</h1>
+            <h1>Área administrativa</h1><a className="boost-admin-button" href="/admin/turbinar">🚀 Turbinar no Instagram</a>
             <div className="admin-contact-setting">
               <label>WhatsApp de contato
                 <input
