@@ -22,6 +22,9 @@ export default function MetaIntegrationPage() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [resources, setResources] = useState<{adAccounts: any[]; pages: any[]} | null>(null);
+  const [selectedAdAccount, setSelectedAdAccount] = useState("");
+  const [selectedPage, setSelectedPage] = useState("");
 
   async function load() {
     setLoading(true);
@@ -31,6 +34,8 @@ export default function MetaIntegrationPage() {
       if (!response.ok) throw new Error(data.error || "Não foi possível carregar a integração.");
       setConnected(Boolean(data.connected));
       setIntegration(data.integration || null);
+      setSelectedAdAccount(data.integration?.adAccountId || "");
+      setSelectedPage(data.integration?.facebookPageId || "");
       if (data.integration?.error) setError(data.integration.error);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao carregar.");
@@ -55,6 +60,43 @@ export default function MetaIntegrationPage() {
   }
 
   useEffect(() => { load(); }, []);
+
+  async function loadResources() {
+    setError("");
+    try {
+      const response = await fetch("/api/admin/meta/resources", { cache: "no-store" });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Não foi possível carregar as contas Meta.");
+      setResources(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível carregar as contas Meta.");
+    }
+  }
+
+  async function saveResources() {
+    const account = resources?.adAccounts.find((item) => item.id === selectedAdAccount);
+    const page = resources?.pages.find((item) => item.id === selectedPage);
+    const instagram = page?.instagram || null;
+    try {
+      const response = await fetch("/api/admin/meta", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          adAccountId: account?.id,
+          adAccountName: account?.name,
+          facebookPageId: page?.id,
+          facebookPageName: page?.name,
+          instagramAccountId: instagram?.id,
+          instagramUsername: instagram?.username
+        })
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Não foi possível salvar.");
+      await load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível salvar os recursos.");
+    }
+  }
 
   return (
     <main className="meta-page">
@@ -83,6 +125,24 @@ export default function MetaIntegrationPage() {
                 <div><small>Facebook</small><strong>{integration?.facebookPageName || "Ainda não selecionado"}</strong></div>
                 <div><small>Instagram</small><strong>{integration?.instagramUsername ? "@" + integration.instagramUsername : "Ainda não selecionado"}</strong></div>
               </div>
+              <button className="meta-secondary" type="button" onClick={loadResources}>Carregar contas Meta</button>
+              {resources && (
+                <div className="meta-selection">
+                  <label>Conta de anúncios
+                    <select value={selectedAdAccount} onChange={(e) => setSelectedAdAccount(e.target.value)}>
+                      <option value="">Selecione a conta</option>
+                      {resources.adAccounts.map((item) => <option key={item.id} value={item.id}>{item.name} • {item.id}</option>)}
+                    </select>
+                  </label>
+                  <label>Página do Facebook
+                    <select value={selectedPage} onChange={(e) => setSelectedPage(e.target.value)}>
+                      <option value="">Selecione a página</option>
+                      {resources.pages.map((item) => <option key={item.id} value={item.id}>{item.name}{item.instagram ? " • @" + item.instagram.username : ""}</option>)}
+                    </select>
+                  </label>
+                  <button className="meta-primary" type="button" onClick={saveResources} disabled={!selectedAdAccount}>Salvar seleção</button>
+                </div>
+              )}
               <button className="meta-danger" disabled={busy} onClick={disconnect}>Desconectar Meta</button>
             </>
           ) : (
