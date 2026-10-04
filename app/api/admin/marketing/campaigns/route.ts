@@ -24,36 +24,35 @@ function makeTrackingCode() {
 export async function GET() {
   try {
     await ensureMarketingTables();
-    const rows = await prisma.$queryRaw<any[]>({
-      query: `
-        SELECT c."id", c."name", c."raffleId", c."objective", c."budgetCents",
-               c."destinationType", c."status", c."createdAt", c."updatedAt",
-               r."productName", r."priceInCents",
-               COALESCE(json_agg(json_build_object(
-                 'id', v."id", 'city', v."city", 'distanceKm', v."distanceKm",
-                 'creativeType', v."creativeType", 'caption', v."caption",
-                 'trackingCode', v."trackingCode", 'destinationPath', v."destinationPath",
-                 'metrics', json_build_object(
-                   'spendCents', COALESCE(m."spendCents",0),
-                   'impressions', COALESCE(m."impressions",0),
-                   'reach', COALESCE(m."reach",0),
-                   'engagements', COALESCE(m."engagements",0),
-                   'profileVisits', COALESCE(m."profileVisits",0),
-                   'linkClicks', COALESCE(m."linkClicks",0),
-                   'registrations', COALESCE(m."registrations",0),
-                   'participations', COALESCE(m."participations",0)
-                 )
-               ) ORDER BY v."city") FILTER (WHERE v."id" IS NOT NULL), '[]') AS "variants"
-        FROM "MarketingCampaign" c
-        JOIN "Raffle" r ON r."id" = c."raffleId"
-        LEFT JOIN "MarketingVariant" v ON v."campaignId" = c."id"
-        LEFT JOIN "MarketingMetric" m ON m."variantId" = v."id"
-        GROUP BY c."id", r."productName", r."priceInCents"
-        ORDER BY c."createdAt" DESC
-        LIMIT 30
-      `,
-      values: []
-    });
+    const sql = `
+      SELECT c."id", c."name", c."raffleId", c."objective", c."budgetCents",
+             c."destinationType", c."status", c."createdAt", c."updatedAt",
+             r."productName", r."priceInCents",
+             COALESCE(json_agg(json_build_object(
+               'id', v."id", 'city', v."city", 'distanceKm', v."distanceKm",
+               'creativeType', v."creativeType", 'caption', v."caption",
+               'trackingCode', v."trackingCode", 'destinationPath', v."destinationPath",
+               'metrics', json_build_object(
+                 'spendCents', COALESCE(m."spendCents",0),
+                 'impressions', COALESCE(m."impressions",0),
+                 'reach', COALESCE(m."reach",0),
+                 'engagements', COALESCE(m."engagements",0),
+                 'profileVisits', COALESCE(m."profileVisits",0),
+                 'linkClicks', COALESCE(m."linkClicks",0),
+                 'registrations', COALESCE(m."registrations",0),
+                 'participations', COALESCE(m."participations",0),
+                 'trackedClicks', (SELECT COUNT(*) FROM "MarketingClick" mc WHERE mc."trackingCode" = v."trackingCode")
+               )
+             ) ORDER BY v."city") FILTER (WHERE v."id" IS NOT NULL), '[]') AS "variants"
+      FROM "MarketingCampaign" c
+      JOIN "Raffle" r ON r."id" = c."raffleId"
+      LEFT JOIN "MarketingVariant" v ON v."campaignId" = c."id"
+      LEFT JOIN "MarketingMetric" m ON m."variantId" = v."id"
+      GROUP BY c."id", r."productName", r."priceInCents"
+      ORDER BY c."createdAt" DESC
+      LIMIT 30
+    `;
+    const rows = await prisma.$queryRawUnsafe<any[]>(sql);
     return NextResponse.json({ campaigns: rows });
   } catch (error) {
     console.error(error);
@@ -80,7 +79,7 @@ export async function POST(request: Request) {
       : [];
 
     if (!raffleId) return NextResponse.json({ error: "Selecione uma rifa." }, { status: 400 });
-    if (!cities.length) return NextResponse.json({ error: "Selecione pelo menos uma cidade." }, { status: 400 });
+    if (!cities.length) return NextResponse.json({ error: "Selecyone pelo menos uma cidade." }, { status: 400 });
     if (budgetCents === null) return NextResponse.json({ error: "Informe um orçamento válido." }, { status: 400 });
     if (!ALLOWED_CREATIVES.has(creativeType)) return NextResponse.json({ error: "Tipo de criativo inválido." }, { status: 400 });
     if (!ALLOWED_DESTINATIONS.has(destinationType)) return NextResponse.json({ error: "Destino inválido." }, { status: 400 });
@@ -102,7 +101,7 @@ export async function POST(request: Request) {
       );
 
       for (const item of cities) {
-        let trackingCode = makeTrackingCode();
+        const trackingCode = makeTrackingCode();
         const variantId = randomUUID();
         await tx.$executeRawUnsafe(
           'INSERT INTO "MarketingVariant" ("id","campaignId","city","distanceKm","creativeType","caption","trackingCode","destinationPath") VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
