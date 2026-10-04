@@ -64,7 +64,14 @@ const CITIES: City[] = [
   { city: "Lagoa Real", distanceKm: 88 },
   { city: "Novo Horizonte", distanceKm: 93 },
   { city: "Caetité", distanceKm: 95 },
-  { city: "Dom Basílio", distanceKm: 97 }
+  { city: "Dom Basílio", distanceKm: 97 },
+  { city: "Abaíra", distanceKm: 66 },
+  { city: "Piatã", distanceKm: 68 },
+  { city: "Jussiape", distanceKm: 71 },
+  { city: "Riacho de Santana", distanceKm: 78 },
+  { city: "Ibitiara", distanceKm: 88 },
+  { city: "Ibiassucê", distanceKm: 93 },
+  { city: "Boninal", distanceKm: 94 }
 ];
 
 const hooks = [
