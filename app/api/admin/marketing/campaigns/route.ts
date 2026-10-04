@@ -31,7 +31,7 @@ export async function GET() {
              COALESCE(json_agg(json_build_object(
                'id', v."id", 'city', v."city", 'distanceKm', v."distanceKm",
                'creativeType', v."creativeType", 'caption', v."caption",
-               'trackingCode', v."trackingCode", 'destinationPath', v."destinationPath", 'sourceImageUrl', COALESCE(r."imageUrls"->>0, ''),
+               'trackingCode', v."trackingCode", 'destinationPath', v."destinationPath", 'sourceImageUrl', COALESCE(r."imageUrls"[1], ''),
                'metrics', json_build_object(
                  'spendCents', COALESCE(m."spendCents",0),
                  'impressions', COALESCE(m."impressions",0),
