@@ -147,6 +147,7 @@ export async function GET() {
         winningNumbers: true,
         resultStatus: true,
         resultPublishedAt: true,
+        imageUrls: true,
         createdAt: true
       }
     });
