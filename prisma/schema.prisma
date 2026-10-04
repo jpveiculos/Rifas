@@ -35,6 +35,7 @@ enum RaffleResultStatus {
 model SiteSettings {
   id             Int      @id @default(1)
   contactWhatsapp String   @default("77998315360")
+  instagramHandle String   @default("rifastop.com.br")
   updatedAt      DateTime @updatedAt
 }
 
@@ -74,6 +75,7 @@ model Raffle {
   updatedAt             DateTime           @updatedAt
   numbers              RaffleNumber[]
   participations       RaffleParticipation[]
+  marketingCampaigns   MarketingCampaign[]
 
   @@index([topicId])
 }
@@ -147,4 +149,81 @@ model RaffleParticipation {
   @@index([raffleId, status])
   @@index([userId, createdAt])
   @@index([mercadopagoOrderId])
+}
+
+
+model MarketingCampaign {
+  id              String            @id
+  name            String
+  raffleId        String
+  objective       String
+  budgetCents     Int               @default(0)
+  destinationType String            @default("HOME")
+  status          String            @default("READY")
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  raffle          Raffle            @relation(fields: [raffleId], references: [id], onDelete: Cascade)
+  variants        MarketingVariant[]
+
+  @@index([raffleId])
+}
+
+model MarketingVariant {
+  id              String            @id
+  campaignId      String
+  city            String
+  distanceKm      Int               @default(0)
+  creativeType    String            @default("SITE")
+  caption         String            @db.Text
+  trackingCode    String            @unique
+  destinationPath String
+  createdAt       DateTime          @default(now())
+  campaign        MarketingCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  metric          MarketingMetric?
+  clicks          MarketingClick[]
+
+  @@index([campaignId])
+}
+
+model MarketingMetric {
+  id             String          @id
+  variantId      String          @unique
+  spendCents     Int             @default(0)
+  impressions    Int             @default(0)
+  reach          Int             @default(0)
+  engagements    Int             @default(0)
+  profileVisits  Int             @default(0)
+  linkClicks     Int             @default(0)
+  registrations  Int             @default(0)
+  participations Int             @default(0)
+  updatedAt      DateTime        @updatedAt
+  variant        MarketingVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+}
+
+model MarketingClick {
+  id           String           @id
+  trackingCode String
+  createdAt    DateTime         @default(now())
+  referrer     String?
+  userAgent    String?
+  variant      MarketingVariant @relation(fields: [trackingCode], references: [trackingCode], onDelete: Cascade)
+
+  @@index([trackingCode])
+  @@index([createdAt])
+}
+
+model MetaIntegration {
+  id                  Int       @id @default(1)
+  accessTokenEncrypted String?
+  tokenExpiresAt      DateTime?
+  metaUserId          String?
+  metaUserName        String?
+  adAccountId         String?
+  adAccountName       String?
+  facebookPageId      String?
+  facebookPageName    String?
+  instagramAccountId  String?
+  instagramUsername   String?
+  connectedAt         DateTime?
+  updatedAt           DateTime  @updatedAt
 }
