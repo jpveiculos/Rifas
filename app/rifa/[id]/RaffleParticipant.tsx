@@ -15,7 +15,9 @@ type Payment = {
 };
 
 export default function RaffleParticipant({ raffleId, priceInCents }: { raffleId: string; priceInCents: number }) {
-  const [quantity, setQuantity] = useState("1");
+  const QUICK_QUANTITIES = [5, 10, 20, 30, 50, 100];
+  const [quantity, setQuantity] = useState("5");
+  const [showCustomQuantity, setShowCustomQuantity] = useState(false);
   const [numbers, setNumbers] = useState<number[]>([]);
   const [reservationId, setReservationId] = useState("");
   const [payment, setPayment] = useState<Payment | null>(null);
@@ -25,6 +27,12 @@ export default function RaffleParticipant({ raffleId, priceInCents }: { raffleId
   const [requiresLogin, setRequiresLogin] = useState(false);
 
   async function generateNumbers() {
+    const requestedQuantity = Number(quantity);
+    if (!Number.isInteger(requestedQuantity) || requestedQuantity < 5) {
+      setError("Escolha pelo menos 5 números.");
+      return;
+    }
+
     setLoading(true);
     setError("");
     setRequiresLogin(false);
@@ -36,7 +44,7 @@ export default function RaffleParticipant({ raffleId, priceInCents }: { raffleId
       const response = await fetch("/api/rifas/" + raffleId + "/numbers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ quantity: Number(quantity) })
+        body: JSON.stringify({ quantity: requestedQuantity })
       });
       const data = await response.json();
 
@@ -131,14 +139,52 @@ export default function RaffleParticipant({ raffleId, priceInCents }: { raffleId
 
       {!payment && (
         <>
-          <label>
-            Quantidade
-            <select value={quantity} onChange={(event) => setQuantity(event.target.value)} disabled={numbers.length > 0}>
-              {[1, 2, 3, 5, 10, 20, 50, 100].map((value) => (
-                <option key={value} value={value}>{value} {value === 1 ? "número" : "números"}</option>
-              ))}
-            </select>
-          </label>
+          <div className="quantity-selector" aria-label="Escolha a quantidade de números">
+            {QUICK_QUANTITIES.map((value) => (
+              <button
+                key={value}
+                type="button"
+                className={"quantity-option" + (quantity === String(value) ? " selected" : "")}
+                onClick={() => {
+                  setQuantity(String(value));
+                  setShowCustomQuantity(false);
+                  setError("");
+                }}
+                disabled={numbers.length > 0}
+              >
+                <strong>{value}</strong>
+                <span>{value === 1 ? "número" : "números"}</span>
+              </button>
+            ))}
+
+            <button
+              type="button"
+              className={"quantity-option quantity-custom-option" + (showCustomQuantity ? " selected" : "")}
+              onClick={() => {
+                setShowCustomQuantity(true);
+                setError("");
+              }}
+              disabled={numbers.length > 0}
+            >
+              <strong>＋</strong>
+              <span>Adicionar mais</span>
+            </button>
+          </div>
+
+          {showCustomQuantity && numbers.length === 0 && (
+            <label className="custom-quantity-field">
+              Quantos números você deseja?
+              <input
+                type="number"
+                min="5"
+                step="1"
+                inputMode="numeric"
+                value={quantity}
+                onChange={(event) => setQuantity(event.target.value)}
+                placeholder="Ex.: 150"
+              />
+            </label>
+          )}
 
           <div className="participant-total">
             <span>Total</span>
