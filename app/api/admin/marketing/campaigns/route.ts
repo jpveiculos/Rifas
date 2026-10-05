@@ -1,7 +1,122 @@
-import { randomBytes, randomUUID } from "crypto";
+import { createDecipheriv, createHash, randomBytes, randomUUID } from "crypto";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ensureMarketingTables } from "@/lib/marketing-db";
+
+function decryptMetaToken(value: string) {
+  const [ivPart, tagPart, dataPart] = value.split(".");
+  const keyRaw = process.env.META_TOKEN_ENCRYPTION_KEY;
+  if (!ivPart || !tagPart || !dataPart || !keyRaw) throw new Error("Chave de criptografia da Meta não configurada.");
+  const key = createHash("sha256").update(keyRaw).digest();
+  const decipher = createDecipheriv("aes-256-gcm", key, Buffer.from(ivPart, "base64url"));
+  decipher.setAuthTag(Buffer.from(tagPart, "base64url"));
+  return Buffer.concat([decipher.update(Buffer.from(dataPart, "base64url")), decipher.final()]).toString("utf8");
+}
+async function metaPost(path: string, token: string, params: Record<string, string>) {
+  const version = process.env.META_GRAPH_API_VERSION || "v24.0";
+  const url = new URL("https://graph.facebook.com/" + version + path);
+  for (const [key, value] of Object.entries(params)) url.searchParams.set(key, value);
+  url.searchParams.set("access_token", token);
+  const response = await fetch(url, { method: "POST", cache: "no-store" });
+  const data = await response.json();
+  if (!response.ok || data.error) throw new Error(data.error?.message || "A Meta recusou a publicação.");
+  return data;
+}
+async function metaGet(path: string, token: string, params: Record<string, string>) {
+  const version = process.env.META_GRAPH_API_VERSION || "v24.0";
+  const url = new URL("https://graph.facebook.com/" + version + path);
+  for (const [key, value] of Object.entries(params)) url.searchParams.set(key, value);
+  url.searchParams.set("access_token", token);
+  const response = await fetch(url, { cache: "no-store" });
+  const data = await response.json();
+  if (!response.ok || data.error) throw new Error(data.error?.message || "A Meta recusou a consulta.");
+  return data;
+}
+function normalizeMetaCity(value: string) {
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+}
+async function resolveMetaCityKey(city: string, token: string) {
+  const data = await metaGet("/search", token, {
+    type: "adgeolocation", q: city, location_types: JSON.stringify(["city"]), country_code: "BR",
+    fields: "key,name,country_code,region", limit: "20"
+  });
+  const candidates = Array.isArray(data.data) ? data.data : [];
+  const exact = candidates.find((item: any) => normalizeMetaCity(String(item.name || "")) === normalizeMetaCity(city));
+  if (!exact?.key) throw new Error("A Meta não encontrou a cidade \"" + city + "\" para segmentação.");
+  return String(exact.key);
+}
+async function publishToMeta(campaignId: string, name: string, budgetCents: number, variants: any[]) {
+  const rows = await prisma.$queryRawUnsafe<any[]>(
+    'SELECT "accessTokenEncrypted","adAccountId","facebookPageId","instagramAccountId" FROM "MetaIntegration" WHERE "id"=1 LIMIT 1'
+  );
+  const integration = rows[0];
+  if (!integration?.accessTokenEncrypted) throw new Error("Conecte a Meta antes de publicar.");
+  if (!integration.adAccountId) throw new Error("Selecione a conta de anúncios na integração Meta.");
+  if (!integration.facebookPageId) throw new Error("Selecione a página do Facebook na integração Meta.");
+  if (!integration.instagramAccountId) throw new Error("Selecione o Instagram na integração Meta.");
+  const token = decryptMetaToken(integration.accessTokenEncrypted);
+  const accountPath = "/act_" + String(integration.adAccountId).replace(/^act_/, "");
+  const sourceImageUrl = variants[0]?.sourceImageUrl;
+  if (!sourceImageUrl) throw new Error("A rifa não possui imagem oficial para publicar.");
+  const metaCampaign = await metaPost(accountPath + "/campaigns", token, {
+    name, objective: "OUTCOME_AWARENESS", status: "ACTIVE", special_ad_categories: "[]",
+    daily_budget: String(Math.max(300, Math.round(budgetCents)))
+  });
+  const metaCampaignId = String(metaCampaign.id);
+  await prisma.$executeRawUnsafe(
+    'UPDATE "MarketingCampaign" SET "metaCampaignId"=$1,"metaStatus"=\'ACTIVE\',"metaError"=NULL,"metaPublishedAt"=NOW(),"updatedAt"=NOW() WHERE "id"=$2',
+    metaCampaignId, campaignId
+  );
+  const published: any[] = [];
+  try {
+    for (const variant of variants) {
+      const cityKey = await resolveMetaCityKey(variant.city, token);
+      const targeting = {
+        age_min: 18,
+        geo_locations: { cities: [{ key: cityKey }], location_types: ["home"] },
+        publisher_platforms: ["facebook", "instagram"],
+        facebook_positions: ["feed", "facebook_reels", "story"],
+        instagram_positions: ["stream", "reels", "story", "explore"]
+      };
+      const adSet = await metaPost(accountPath + "/adsets", token, {
+        name: name + " • " + variant.city, campaign_id: metaCampaignId,
+        optimization_goal: "REACH", billing_event: "IMPRESSIONS",
+        bid_strategy: "LOWEST_COST_WITHOUT_CAP", targeting: JSON.stringify(targeting), status: "ACTIVE"
+      });
+      const adSetId = String(adSet.id);
+      await prisma.$executeRawUnsafe('UPDATE "MarketingVariant" SET "metaAdSetId"=$1 WHERE "id"=$2', adSetId, variant.id);
+      const objectStorySpec = {
+        page_id: integration.facebookPageId,
+        instagram_user_id: integration.instagramAccountId,
+        link_data: {
+          message: variant.caption,
+          picture: sourceImageUrl,
+          link: "https://rifastop.com.br" + variant.destinationPath,
+          call_to_action: { type: "LEARN_MORE" }
+        }
+      };
+      const creative = await metaPost(accountPath + "/adcreatives", token, {
+        name: name + " • " + variant.city + " • criativo",
+        object_story_spec: JSON.stringify(objectStorySpec)
+      });
+      const ad = await metaPost(accountPath + "/ads", token, {
+        name: name + " • " + variant.city, adset_id: adSetId,
+        creative: JSON.stringify({ creative_id: String(creative.id) }), status: "ACTIVE"
+      });
+      const adId = String(ad.id);
+      await prisma.$executeRawUnsafe('UPDATE "MarketingVariant" SET "metaAdId"=$1 WHERE "id"=$2', adId, variant.id);
+      published.push({ variantId: variant.id, adSetId, adId });
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Falha ao criar os anúncios na Meta.";
+    await prisma.$executeRawUnsafe(
+      'UPDATE "MarketingCampaign" SET "metaStatus"=\'ERROR\',"metaError"=$1,"updatedAt"=NOW() WHERE "id"=$2',
+      message.slice(0, 2000), campaignId
+    );
+    throw new Error("A Meta criou a campanha, mas não conseguiu concluir todos os anúncios: " + message);
+  }
+  return { metaCampaignId, published };
+}
 
 const ALLOWED_CREATIVES = new Set(["SITE", "PRODUCT", "STORY", "FEED"]);
 const ALLOWED_DESTINATIONS = new Set(["HOME", "RAFFLE"]);
@@ -26,12 +141,12 @@ export async function GET() {
     await ensureMarketingTables();
     const sql = `
       SELECT c."id", c."name", c."raffleId", c."objective", c."budgetCents",
-             c."destinationType", c."status", c."createdAt", c."updatedAt",
+             c."destinationType", c."status", c."createdAt", c."updatedAt", c."metaCampaignId", c."metaStatus", c."metaError", c."metaPublishedAt",
              r."productName", r."priceInCents", r."imageUrls",
              COALESCE(json_agg(json_build_object(
                'id', v."id", 'city', v."city", 'distanceKm', v."distanceKm",
                'creativeType', v."creativeType", 'caption', v."caption",
-               'trackingCode', v."trackingCode", 'destinationPath', v."destinationPath", 'sourceImageUrl', COALESCE(r."imageUrls"[1], ''),
+               'trackingCode', v."trackingCode", 'destinationPath', v."destinationPath", 'metaAdSetId', v."metaAdSetId", 'metaAdId', v."metaAdId", 'sourceImageUrl', COALESCE(r."imageUrls"[1], ''),
                'metrics', json_build_object(
                  'spendCents', COALESCE(m."spendCents",0),
                  'impressions', COALESCE(m."impressions",0),
@@ -140,7 +255,23 @@ export async function POST(request: Request) {
       }
     });
 
-    return NextResponse.json({ id, ok: true }, { status: 201 });
+    try {
+      const campaignRows = await prisma.$queryRawUnsafe<any[]>(
+        'SELECT c."name", c."budgetCents" FROM "MarketingCampaign" c WHERE c."id"=$1 LIMIT 1', id
+      );
+      const variantRows = await prisma.$queryRawUnsafe<any[]>(
+        'SELECT v."id",v."city",v."caption",v."destinationPath",COALESCE(r."imageUrls"[1],\'\') AS "sourceImageUrl" FROM "MarketingVariant" v JOIN "MarketingCampaign" c ON c."id"=v."campaignId" JOIN "Raffle" r ON r."id"=c."raffleId" WHERE v."campaignId"=$1 ORDER BY v."city"', id
+      );
+      const meta = await publishToMeta(id, campaignRows[0]?.name || raffle.productName, Number(campaignRows[0]?.budgetCents || budgetCents), variantRows);
+      return NextResponse.json({ id, ok: true, publishedToMeta: true, metaCampaignId: meta.metaCampaignId, publishedVariants: meta.published.length }, { status: 201 });
+    } catch (metaError) {
+      const message = metaError instanceof Error ? metaError.message : "Não foi possível publicar na Meta.";
+      await prisma.$executeRawUnsafe(
+        'UPDATE "MarketingCampaign" SET "metaStatus"=\'ERROR\',"metaError"=$1,"updatedAt"=NOW() WHERE "id"=$2',
+        message.slice(0, 2000), id
+      );
+      return NextResponse.json({ error: message, campaignId: id, publishedToMeta: false }, { status: 502 });
+    }
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Não foi possível salvar a campanha." }, { status: 500 });
