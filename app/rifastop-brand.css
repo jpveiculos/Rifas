@@ -1,0 +1,318 @@
+
+/* Refinamento final da identidade RifasTOP */
+.raffle-detail-topbar {
+  margin-bottom: 14px;
+}
+.raffle-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid rgba(212,175,55,.45);
+  border-radius: 999px;
+  background: rgba(11,11,11,.92);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: lowercase;
+  box-shadow: 0 5px 14px rgba(0,0,0,.14);
+}
+.raffle-back-link span {
+  color: var(--rt-gold-light);
+  font-size: 18px;
+}
+.raffle-detail-page .raffle-card {
+  border-color: var(--rt-border);
+}
+.raffle-detail-page .raffle-card-content {
+  background: #fff;
+}
+.raffle-detail-page h1 {
+  margin: 12px 0 4px;
+  color: var(--rt-text);
+}
+.raffle-detail-page h3 {
+  color: var(--rt-text);
+}
+.raffle-detail-page .share-box {
+  background: #fffdf7;
+}
+.admin-page,
+.admin-page .form-section,
+.admin-page .raffle-admin-card,
+.admin-page .topic-edit-box {
+  color: var(--rt-text);
+}
+.admin-page .primary-button {
+  min-height: 44px;
+}
+.admin-page .danger-button {
+  border-radius: 10px;
+}
+.admin-page input:focus,
+.admin-page textarea:focus,
+.admin-page select:focus {
+  border-color: var(--rt-gold-dark);
+  box-shadow: 0 0 0 3px rgba(212,175,55,.13);
+}
+@media (max-width: 640px) {
+  .site-header-inner {
+    min-height: 64px;
+  }
+  .header-actions {
+    gap: 6px;
+  }
+  .header-login,
+  .header-logout {
+    min-height: 36px;
+    padding: 0 10px;
+    font-size: 11px;
+  }
+  .raffle-detail-page {
+    padding: 22px 0 74px;
+  }
+  .raffle-detail-topbar {
+    margin-bottom: 10px;
+  }
+  .raffle-back-link {
+    min-height: 34px;
+    padding: 0 11px;
+    font-size: 12px;
+  }
+  .raffle-detail-page h1 {
+    font-size: 22px;
+    line-height: 1.1;
+  }
+  .raffle-detail-page .raffle-card-content {
+    padding: 14px;
+  }
+}
+
+/* RifasTOP — identidade visual centralizada
+   Padrão: preto + dourado, tipografia Arial/Helvetica, visual limpo e premium.
+   Este arquivo sobrescreve apenas apresentação; não altera regras de negócio.
+*/
+:root {
+  --rt-black: #0b0b0b;
+  --rt-black-soft: #151515;
+  --rt-gold: #d4af37;
+  --rt-gold-light: #f3d77a;
+  --rt-gold-dark: #a88316;
+  --rt-white: #ffffff;
+  --rt-bg: #f7f7f5;
+  --rt-text: #171717;
+  --rt-muted: #686868;
+  --rt-border: #e5e2d8;
+  --rt-radius: 14px;
+}
+
+body {
+  background: var(--rt-bg);
+  color: var(--rt-text);
+}
+
+.site-header {
+  background: var(--rt-black);
+  box-shadow: 0 4px 18px rgba(0,0,0,.18);
+}
+
+.site-header-inner {
+  min-height: 76px;
+}
+
+.brand {
+  color: var(--rt-white);
+  letter-spacing: -1.4px;
+}
+
+.brand strong {
+  color: var(--rt-gold-light);
+}
+
+.header-link {
+  color: #f5f5f5;
+}
+
+.header-link:hover {
+  color: var(--rt-gold-light);
+}
+
+.header-login {
+  border-color: rgba(212,175,55,.55);
+  background: transparent;
+  color: var(--rt-white);
+}
+
+.header-login:hover {
+  background: var(--rt-gold);
+  color: var(--rt-black);
+}
+
+.raffle-section {
+  background:
+    radial-gradient(circle at 8% 10%, rgba(212,175,55,.10) 0 120px, transparent 121px),
+    linear-gradient(180deg, #111 0%, #171717 42%, #f7f7f5 42%, #f7f7f5 100%);
+}
+
+.home-raffle-heading .section-title,
+.raffle-section .section-title {
+  color: var(--rt-white);
+}
+
+.raffle-card,
+.account-section,
+.auth-card {
+  background: var(--rt-white);
+  border-color: var(--rt-border);
+  border-radius: var(--rt-radius);
+  box-shadow: 0 10px 28px rgba(0,0,0,.07);
+}
+
+.raffle-card:hover {
+  box-shadow: 0 16px 34px rgba(0,0,0,.12);
+}
+
+.raffle-card h3,
+.account-card-content h3 {
+  color: var(--rt-text);
+}
+
+.raffle-card p,
+.account-card-content > p {
+  color: var(--rt-muted);
+}
+
+.badge {
+  background: #f7edc9;
+  color: #765b0c;
+}
+
+.card-price {
+  color: var(--rt-gold-dark);
+}
+
+.primary-button {
+  background: linear-gradient(100deg, var(--rt-gold-light), var(--rt-gold));
+  color: var(--rt-black);
+  box-shadow: 0 6px 16px rgba(168,131,22,.18);
+}
+
+.primary-button:hover {
+  filter: brightness(1.04);
+}
+
+.info-item,
+.participant-box,
+.generated-numbers,
+.share-box,
+.account-numbers,
+.account-pending-payment {
+  border-color: var(--rt-border);
+  background: #fffdf7;
+}
+
+.participant-box select,
+.auth-form input {
+  border-color: #ddd8c8;
+}
+
+.participant-box select:focus,
+.auth-form input:focus {
+  border-color: var(--rt-gold-dark);
+  box-shadow: 0 0 0 3px rgba(212,175,55,.13);
+}
+
+.number-list span,
+.account-numbers b {
+  background: var(--rt-black);
+}
+
+.share-main {
+  background: var(--rt-black);
+}
+
+.share-button:hover,
+.account-button:hover {
+  border-color: var(--rt-gold);
+  color: var(--rt-black);
+}
+
+.account-page {
+  background: linear-gradient(180deg, #111 0, #f7f7f5 300px);
+}
+
+.account-title-card {
+  color: var(--rt-white);
+}
+
+.account-status.status-pending {
+  background: #fff4cf;
+  color: #7a5d0a;
+}
+
+.account-status.status-active {
+  background: #eee;
+  color: #222;
+}
+
+.footer {
+  background: var(--rt-black);
+}
+
+.footer-contact {
+  background: var(--rt-gold);
+  color: var(--rt-black);
+}
+
+.quick-link {
+  border-color: var(--rt-border);
+}
+
+.terms-link,
+.app-link {
+  color: var(--rt-black);
+}
+
+.terms-link:hover,
+.app-link:hover {
+  border-color: var(--rt-gold);
+  background: #fffdf7;
+}
+
+.auth-page {
+  background: linear-gradient(135deg, #111, #f7f7f5);
+}
+
+.auth-brand {
+  color: var(--rt-black);
+}
+
+.auth-footer a {
+  color: var(--rt-gold-dark);
+}
+
+.raffle-gallery img,
+.image-admin-preview {
+  border-color: var(--rt-border);
+}
+
+.section-kicker,
+.hero-kicker {
+  color: var(--rt-gold-dark);
+}
+
+@media (max-width: 640px) {
+  .site-header-inner {
+    min-height: 68px;
+  }
+
+  .raffle-section {
+    background:
+      linear-gradient(180deg, #111 0%, #171717 24%, #f7f7f5 24%, #f7f7f5 100%);
+  }
+
+  .home-raffle-heading .section-title {
+    color: var(--rt-white);
+  }
+}
