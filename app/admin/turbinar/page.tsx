@@ -194,7 +194,7 @@ export default function TurbinarPage() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Não foi possível criar a campanha.");
-      setMessage("Campanha criada. Cada cidade recebeu um link de rastreamento próprio.");
+      setMessage(data.publishedToMeta ? "Campanha criada e publicada na Meta. Cada cidade recebeu um anúncio e um link de rastreamento próprio." : "Campanha criada.");
       await load();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível criar a campanha.");
@@ -340,7 +340,7 @@ export default function TurbinarPage() {
         <section className="boost-card">
           <h2>5. Orçamento</h2>
           <div className="boost-grid-2">
-            <label>Orçamento de teste
+            <label>Orçamento diário na Meta
               <input value={budget} onChange={(event) => setBudget(event.target.value)} inputMode="decimal" placeholder="50,00" />
             </label>
             <div>
@@ -352,9 +352,9 @@ export default function TurbinarPage() {
             </div>
           </div>
           <div className="boost-create-row">
-            <span>{variantsToCreate.length} variações serão preparadas • {selectedCities.length} cidades</span>
+            <span>{variantsToCreate.length} anúncios serão publicados • {selectedCities.length} cidades • orçamento diário: {money(Math.round((Number(budget.replace(",", ".")) || 0) * 100))}</span>
             <button className="boost-primary" disabled={!raffle || !variantsToCreate.length || saving} onClick={createCampaign}>
-              {saving ? "Salvando..." : "🚀 Criar campanha"}
+              {saving ? "Publicando..." : "🚀 Criar e publicar campanha"}
             </button>
           </div>
         </section>
