@@ -410,10 +410,11 @@ export default function AdminPage() {
         return;
       }
 
-      setMessage("Rifa criada como rascunho. Revise e publique quando estiver pronta.");
       setForm(initialForm);
       setImages([]);
-      await loadRaffles();
+      // A nova rifa já segue para o gerador de artes com a imagem, produto e preço
+      // que acabaram de ser cadastrados. O gerador cuida dos formatos de divulgação.
+      window.location.href = "/admin/turbinar?raffleId=" + encodeURIComponent(data.id) + "&fromCreate=1";
     } catch {
       setError("Não foi possível conectar ao servidor.");
     } finally {
