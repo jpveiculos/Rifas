@@ -116,7 +116,6 @@ export default function TurbinarPage() {
   const [selectedCities, setSelectedCities] = useState<string[]>(CITIES.map((x) => x.city));
   const [destinationType, setDestinationType] = useState("RAFFLE");
   const [budget, setBudget] = useState("50,00");
-  const [campaignName, setCampaignName] = useState("");
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -185,7 +184,7 @@ export default function TurbinarPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           raffleId,
-          name: campaignName,
+          name: raffle.productName,
           budget,
           objective: "Alcançar pessoas que ainda não seguem o Instagram",
           creativeType: "SITE",
@@ -196,7 +195,6 @@ export default function TurbinarPage() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Não foi possível criar a campanha.");
       setMessage("Campanha criada. Cada cidade recebeu um link de rastreamento próprio.");
-      setCampaignName("");
       await load();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível criar a campanha.");
@@ -340,14 +338,18 @@ export default function TurbinarPage() {
                 </section>
 
         <section className="boost-card">
-          <h2>5. Orçamento e identificação</h2>
+          <h2>5. Orçamento</h2>
           <div className="boost-grid-2">
             <label>Orçamento de teste
               <input value={budget} onChange={(event) => setBudget(event.target.value)} inputMode="decimal" placeholder="50,00" />
             </label>
-            <label>Nome da campanha
-              <input value={campaignName} onChange={(event) => setCampaignName(event.target.value)} placeholder={raffle ? raffle.productName + " • teste regional" : "Campanha regional"} />
-            </label>
+            <div>
+              <strong>Nome da campanha</strong>
+              <div className="boost-objective">
+                <strong>{raffle ? raffle.productName : "Selecione uma rifa"}</strong>
+                <span>O nome da campanha será automaticamente o nome da rifa escolhida.</span>
+              </div>
+            </div>
           </div>
           <div className="boost-create-row">
             <span>{variantsToCreate.length} variações serão preparadas • {selectedCities.length} cidades</span>
