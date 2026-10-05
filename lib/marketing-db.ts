@@ -16,6 +16,12 @@ export async function ensureMarketingTables() {
   await prisma.$executeRawUnsafe(
     'CREATE TABLE IF NOT EXISTS "MarketingClick" ("id" TEXT PRIMARY KEY, "trackingCode" TEXT NOT NULL, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "referrer" TEXT, "userAgent" TEXT)'
   );
+  await prisma.$executeRawUnsafe('ALTER TABLE "MarketingCampaign" ADD COLUMN IF NOT EXISTS "metaCampaignId" TEXT');
+  await prisma.$executeRawUnsafe('ALTER TABLE "MarketingCampaign" ADD COLUMN IF NOT EXISTS "metaStatus" TEXT');
+  await prisma.$executeRawUnsafe('ALTER TABLE "MarketingCampaign" ADD COLUMN IF NOT EXISTS "metaError" TEXT');
+  await prisma.$executeRawUnsafe('ALTER TABLE "MarketingCampaign" ADD COLUMN IF NOT EXISTS "metaPublishedAt" TIMESTAMPTZ');
+  await prisma.$executeRawUnsafe('ALTER TABLE "MarketingVariant" ADD COLUMN IF NOT EXISTS "metaAdSetId" TEXT');
+  await prisma.$executeRawUnsafe('ALTER TABLE "MarketingVariant" ADD COLUMN IF NOT EXISTS "metaAdId" TEXT');
   await prisma.$executeRawUnsafe('CREATE INDEX IF NOT EXISTS "MarketingCampaign_raffleId_idx" ON "MarketingCampaign"("raffleId")');
   await prisma.$executeRawUnsafe('CREATE INDEX IF NOT EXISTS "MarketingVariant_campaignId_idx" ON "MarketingVariant"("campaignId")');
   await prisma.$executeRawUnsafe('CREATE INDEX IF NOT EXISTS "MarketingClick_trackingCode_idx" ON "MarketingClick"("trackingCode")');
