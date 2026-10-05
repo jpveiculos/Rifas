@@ -122,7 +122,7 @@ export async function POST(request: Request) {
 
     await prisma.$transaction(async (tx) => {
       await tx.$executeRawUnsafe(
-        'INSERT INTO "MarketingCampaign" ("id","name","raffleId","objective","budgetCents","destinationType","status") VALUES ($1,$2,$3,$4,$5,$6,$7)',
+        'INSERT INTO "MarketingCampaign" ("id","name","raffleId","objective","budgetCents","destinationType","status","updatedAt") VALUES ($1,$2,$3,$4,$5,$6,$7,NOW())',
         id, name, raffleId, objective, budgetCents, destinationType, "READY"
       );
 
