@@ -44,7 +44,7 @@ export function validateCredentials(name: string, city: string, username: string
   return null;
 }
 
-async function hashPassword(password: string) {
+export async function hashUserPassword(password: string) {
   const salt = randomBytes(16).toString("hex");
   const derived = (await scrypt(password, salt, 64)) as Buffer;
   return `${salt}:${derived.toString("hex")}`;
@@ -76,7 +76,7 @@ export async function createUser(name: string, city: string, username: string, w
   const existing = await prisma.user.findUnique({ where: { username: cleanUsername } });
   if (existing) throw new Error("Esse usuário já está cadastrado.");
 
-  const passwordHash = await hashPassword(password);
+  const passwordHash = await hashUserPassword(password);
 
   return prisma.user.create({
     data: {
