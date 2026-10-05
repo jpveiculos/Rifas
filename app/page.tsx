@@ -117,16 +117,6 @@ export default async function HomePage() {
             </section>
           </div>
         </section>
-      </main>
-
-      <footer className="footer">
-        <div className="container footer-inner">
-          <span>Coloque um item na Rifa</span>
-          <a className="footer-contact" href={"https://wa.me/" + whatsapp} target="_blank" rel="noreferrer">
-            Entrar em contato
-          </a>
-        </div>
-      </footer>
-    </>
+      </main>    </>
   );
 }
