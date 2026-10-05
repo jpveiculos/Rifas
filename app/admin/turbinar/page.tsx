@@ -265,6 +265,8 @@ async function downloadCreative(
 export default function TurbinarPage() {
   const [raffles, setRaffles] = useState<Raffle[]>([]);
   const [raffleId, setRaffleId] = useState("");
+  const [requestedRaffleId, setRequestedRaffleId] = useState("");
+  const [fromCreate, setFromCreate] = useState(false);
   const [formatId, setFormatId] = useState<typeof FORMATS[number]["id"]>("feed");
   const [selectedCities, setSelectedCities] = useState<string[]>(CITIES.map((item) => item.city));
   const [selectedLayout, setSelectedLayout] = useState(0);
@@ -287,7 +289,19 @@ export default function TurbinarPage() {
       const response = await fetch("/api/rifas", { cache: "no-store" });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Não foi possível carregar as rifas.");
-      setRaffles((data.raffles || []).filter((item: Raffle) => item.status === "ACTIVE"));
+
+      const allRaffles = (data.raffles || []) as Raffle[];
+      // Normalmente o gerador mostra somente rifas ativas. Quando a criação acabou
+      // de acontecer, porém, a rifa ainda está em RASCUNHO e precisa aparecer aqui
+      // para que a arte seja preparada antes da publicação.
+      const visibleRaffles = allRaffles.filter(
+        (item) => item.status === "ACTIVE" || item.id === requestedRaffleId
+      );
+      setRaffles(visibleRaffles);
+
+      if (requestedRaffleId && visibleRaffles.some((item) => item.id === requestedRaffleId)) {
+        setRaffleId(requestedRaffleId);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível carregar as rifas.");
     } finally {
@@ -296,8 +310,16 @@ export default function TurbinarPage() {
   }
 
   useEffect(() => {
-    loadRaffles();
+    const params = new URLSearchParams(window.location.search);
+    const requested = params.get("raffleId") || "";
+    const created = params.get("fromCreate") === "1";
+    setRequestedRaffleId(requested);
+    setFromCreate(created);
   }, []);
+
+  useEffect(() => {
+    loadRaffles();
+  }, [requestedRaffleId]);
 
   function toggleCity(city: string) {
     setSelectedCities((current) =>
@@ -358,6 +380,11 @@ export default function TurbinarPage() {
           <div className="boost-badge">META • FORMATOS NATIVOS</div>
         </header>
 
+        {fromCreate && raffle && (
+          <div className="boost-message success">
+            Rifa criada. A imagem, o produto e o preço já estão carregados abaixo. As artes serão montadas nos formatos corretos para cada destino.
+          </div>
+        )}
         {message && <div className="boost-message success">{message}</div>}
         {error && <div className="boost-message error">{error}</div>}
 
