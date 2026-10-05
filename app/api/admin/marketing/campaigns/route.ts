@@ -89,7 +89,6 @@ export async function POST(request: Request) {
 
     const raffleId = String(body.raffleId ?? "").trim();
     const objective = String(body.objective ?? "Alcançar pessoas que ainda não seguem o Instagram").trim().slice(0, 180);
-    const campaignName = String(body.name ?? "").trim().slice(0, 120);
     const destinationType = String(body.destinationType ?? "RAFFLE").toUpperCase();
     const budgetCents = moneyToCents(body.budget);
     const creativeType = String(body.creativeType ?? "SITE").toUpperCase();
@@ -117,7 +116,7 @@ export async function POST(request: Request) {
     }
 
     const id = randomUUID();
-    const name = campaignName || raffle.productName + " • " + new Date().toLocaleDateString("pt-BR");
+    const name = raffle.productName;
     const destinationPath = destinationType === "HOME" ? "/" : "/rifa/" + raffle.id;
 
     await prisma.$transaction(async (tx) => {
