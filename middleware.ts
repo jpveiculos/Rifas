@@ -24,7 +24,7 @@ export async function middleware(request: NextRequest) {
 
   const adminPage = pathname === "/admin" || pathname.startsWith("/admin/");
   const adminApi =
-    pathname === "/api/rifas" || pathname === "/api/config";
+    pathname === "/api/rifas" || pathname === "/api/config" || pathname.startsWith("/api/admin/usuarios");
   const adminLoginPage = pathname === "/admin/login";
   const adminLoginApi = pathname === "/api/admin/login" || pathname === "/api/admin/logout";
 
