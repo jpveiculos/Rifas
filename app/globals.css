@@ -1960,3 +1960,20 @@ body {
 .admin-page {
   background: #000;
 }
+
+/* Contraste no fundo preto: textos que ficam diretamente sobre o fundo passam a ser brancos. */
+.raffle-section .browser-results-heading h3,
+.raffle-section .browser-results-heading > span,
+.raffle-section .raffle-city-heading h3 {
+  color: #fff;
+}
+.terms-page > .container > .back-link,
+.download-page > .container > .back-link {
+  color: #fff;
+}
+.admin-page .admin-heading h1,
+.admin-page .admin-heading label,
+.admin-page .admin-heading .form-help,
+.admin-page .admin-heading > div > p {
+  color: #fff;
+}
