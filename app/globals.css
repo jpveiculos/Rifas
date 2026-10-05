@@ -2702,7 +2702,7 @@ body {
 
 /* Superfícies claras do site: substitui o branco por um azul bem suave. */
 :root {
-  --site-light-blue: #eef7ff;
+  --site-light-blue: #e8e8ff;
 }
 
 .raffle-card,
