@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import "./rifastop-brand.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://rifastop.com.br"),
