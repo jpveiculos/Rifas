@@ -412,9 +412,8 @@ export default function AdminPage() {
 
       setForm(initialForm);
       setImages([]);
-      // A nova rifa já segue para o gerador de artes com a imagem, produto e preço
-      // que acabaram de ser cadastrados. O gerador cuida dos formatos de divulgação.
-      window.location.href = "/admin/turbinar?raffleId=" + encodeURIComponent(data.id) + "&fromCreate=1";
+      setMessage("Rifa criada com sucesso.");
+      await loadRaffles();
     } catch {
       setError("Não foi possível conectar ao servidor.");
     } finally {
@@ -581,11 +580,6 @@ export default function AdminPage() {
               <span>👤</span>
               <strong>Participantes</strong>
               <small>Gerenciar usuários</small>
-            </a>
-            <a className="admin-nav-item" href="/admin/turbinar">
-              <span>🚀</span>
-              <strong>Turbinar no Instagram</strong>
-              <small>Gerar artes de divulgação</small>
             </a>
           </nav>
 
