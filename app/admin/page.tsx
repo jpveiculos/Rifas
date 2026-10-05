@@ -804,6 +804,7 @@ export default function AdminPage() {
         <section className="form-section bonus-section" id="bonificar">
           <div className="section-heading-row">
             <div>
+              <span className="admin-section-number">03</span>
               <h2>Bonificar cliente</h2>
               <p className="form-help">Pesquise um usuário cadastrado e credite números extras em uma rifa, mesmo que ele não tenha feito uma compra.</p>
             </div>
