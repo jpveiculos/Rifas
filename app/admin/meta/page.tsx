@@ -59,7 +59,12 @@ export default function MetaIntegrationPage() {
     }
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const connectionError = params.get("error");
+    if (connectionError) setError(connectionError);
+    load();
+  }, []);
 
   async function loadResources() {
     setError("");
@@ -114,6 +119,10 @@ export default function MetaIntegrationPage() {
         </div>
 
         {error && <div className="meta-alert">{error}</div>}
+
+        {new URLSearchParams(typeof window !== "undefined" ? window.location.search : "").get("connected") === "1" && !error && (
+          <div className="meta-alert">✓ Meta conectada com sucesso. A autorização foi gravada no RifasTOP.</div>
+        )}
 
         <section className="meta-card">
           {loading ? <p>Verificando conexão...</p> : connected ? (
