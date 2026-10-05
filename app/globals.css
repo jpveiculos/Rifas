@@ -2702,7 +2702,7 @@ body {
 
 /* Superfícies claras do site: substitui o branco por um azul bem suave. */
 :root {
-  --site-light-blue: #e8e8ff;
+  --site-light-blue: #d9efff;
 }
 
 .raffle-card,
@@ -2734,7 +2734,7 @@ body {
 }
 
 .raffle-card-image {
-  background: #e5f2ff;
+  background: #cfe9ff;
 }
 
 .participant-box select,
@@ -2760,6 +2760,6 @@ body {
 }
 
 .access-modal-close {
-  background: #dceeff;
+  background: #c5e5ff;
 }
 
