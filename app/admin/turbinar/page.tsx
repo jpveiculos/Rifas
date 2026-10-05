@@ -133,9 +133,9 @@ async function createCreativeBlob(
   }
 
   function roundedRect(x: number, y: number, w: number, h: number, radius: number) {
-    ctx.beginPath();
-    ctx.roundRect(x, y, w, h, radius);
-    ctx.fill();
+    ctx!.beginPath();
+    ctx!.roundRect(x, y, w, h, radius);
+    ctx!.fill();
   }
 
   function fitText(text: string, max: number) {
