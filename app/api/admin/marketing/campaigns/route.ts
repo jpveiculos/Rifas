@@ -81,7 +81,7 @@ export async function POST(request: Request) {
         for (const city of IPHONE_CITIES) {
           const variantId = randomUUID();
           await tx.$executeRawUnsafe('INSERT INTO "MarketingVariant" ("id","campaignId","city","distanceKm","creativeType","caption","trackingCode","destinationPath") VALUES ($1,$2,$3,$4,$5,$6,$7,$8)', variantId, campaignId, city, 0, "FEED", iphoneRaffle.productName + " - " + city, makeTrackingCode(), iphoneDestinationPath);
-          await tx.$executeRawUnsafe('INSERT INTO "MarketingMetric" ("id","variantId","spendCents","impressions","reach","engagements","profileVisits","linkClicks","registrations","participations") VALUES ($1,$2,0,0,0,0,0,0,0,0)', randomUUID(), variantId);
+          await tx.$executeRawUnsafe('INSERT INTO "MarketingMetric" ("id","variantId","spendCents","impressions","reach","engagements","profileVisits","linkClicks","registrations","participations","updatedAt") VALUES ($1,$2,0,0,0,0,0,0,0,0,NOW())', randomUUID(), variantId);
         }
       });
       return NextResponse.json({ raffleId: iphoneRaffle.id, campaignId, status: "READY", sourceImageUrl, productName: iphoneRaffle.productName, priceInCents: iphoneRaffle.priceInCents, citiesCount: IPHONE_CITIES.length }, { status: 201 });
@@ -135,7 +135,7 @@ export async function POST(request: Request) {
           creativeType, item.caption, trackingCode, destinationPath
         );
         await tx.$executeRawUnsafe(
-          'INSERT INTO "MarketingMetric" ("id","variantId") VALUES ($1,$2)',
+          'INSERT INTO "MarketingMetric" ("id","variantId","updatedAt") VALUES ($1,$2,NOW())',
           randomUUID(), variantId
         );
       }
