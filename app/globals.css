@@ -2011,3 +2011,27 @@ body {
 .raffle-section::after {
   display: none;
 }
+
+/* Fundo preto em todas as páginas: remove gradientes, formas e telas decorativas externas. */
+html,
+body {
+  background: #000;
+}
+.raffle-section,
+.raffle-detail-page,
+.account-page,
+.account-page-clean,
+.terms-page,
+.download-page,
+.auth-page,
+.admin-page {
+  background: #000;
+}
+.raffle-section::before,
+.raffle-section::after,
+.raffle-detail-page::before,
+.raffle-detail-page::after,
+.admin-page::before,
+.admin-page::after {
+  display: none;
+}
