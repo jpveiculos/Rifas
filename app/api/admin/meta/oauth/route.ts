@@ -18,7 +18,7 @@ export async function GET() {
 
   const state = randomBytes(24).toString("hex");
   const redirectUri = baseUrl() + "/api/admin/meta/callback";
-  const permissions = ["ads_management","ads_read","business_management","pages_show_list","pages_read_engagement","instagram_basic"];
+  const permissions = ["ads_management","ads_read","business_management","pages_show_list","pages_read_engagement"];
 
   const url = new URL("https://www.facebook.com/dialog/oauth");
   url.searchParams.set("client_id", appId);
