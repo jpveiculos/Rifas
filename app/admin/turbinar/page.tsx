@@ -114,7 +114,7 @@ async function createCreativeBlob(
   const canvas = document.createElement("canvas");
   canvas.width = format.width;
   canvas.height = format.height;
-  const ctx = canvas.getContext("2d");
+  const ctx = canvas.getContext("2d")!;
   if (!ctx) throw new Error("Seu navegador não conseguiu preparar a arte.");
 
   const GOLD = "#D4AF37";
