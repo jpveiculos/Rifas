@@ -2002,3 +2002,12 @@ body {
 .footer {
   background: #000;
 }
+
+/* Fundo totalmente limpo: remove a arte/gradiente que ficava por trás dos cards. */
+.raffle-section {
+  background: #000;
+}
+.raffle-section::before,
+.raffle-section::after {
+  display: none;
+}
