@@ -45,45 +45,52 @@ export default function TermosDeUsoPage() {
           <p>Uma rifa poderá ser cancelada, suspensa, pausada ou removida quando necessário, inclusive por decisão do responsável pela rifa, por questões operacionais, técnicas, legais ou de segurança.</p>
           <p>Quando uma rifa for cancelada após a realização de pagamentos, o tratamento dos valores pagos e eventual restituição deverá observar as condições informadas para aquela rifa e a legislação aplicável.</p>
 
-          <h2>7. Sorteios e resultados</h2>
-          <p>Os sorteios serão realizados conforme as regras apresentadas na respectiva rifa. Quando houver sorteio previsto, somente participarão dele os números que estiverem aptos conforme as regras da rifa e com o pagamento devidamente confirmado, quando aplicável.</p>
-          <p>O resultado será disponibilizado no RifasTOP após a realização e publicação do sorteio.</p>
+                    <h2>7. Sorteio pela Loteria Federal e apuração do ganhador</h2>
+          <p>Quando a respectiva rifa utilizar a Loteria Federal como referência para o sorteio, a apuração será realizada com base no resultado oficial do concurso, observando obrigatoriamente a seguinte ordem de prioridade: <strong>1º prêmio → 2º prêmio → 3º prêmio → 4º prêmio → 5º prêmio</strong>.</p>
+          <p>Para cada um dos cinco prêmios principais, serão considerados os <strong>quatro últimos algarismos</strong> do número sorteado, formando o número correspondente da rifa.</p>
+          <p>A apuração começará sempre pelo <strong>1º prêmio</strong>. Caso o número correspondente esteja vendido e válido, esse participante será declarado ganhador e a apuração será <strong>encerrada imediatamente</strong>. Os prêmios seguintes não serão considerados para definir outro ganhador.</p>
+          <p>Se o número correspondente ao 1º prêmio não estiver vendido e válido, a apuração passará ao <strong>2º prêmio</strong> e, se necessário, sucessivamente ao 3º, 4º e 5º prêmio, sempre respeitando essa ordem de prioridade.</p>
+          <p><strong>Exemplo:</strong> se o 1º prêmio resultar em 5827 e esse número não estiver vendido, a apuração seguirá para o 2º prêmio. Se o 2º também não estiver vendido e o 3º resultar em 7654, sendo 7654 um número vendido e válido, o participante desse número será o único ganhador e a apuração será encerrada nesse momento.</p>
+          <p>Caso dois ou mais prêmios resultem no mesmo número de quatro algarismos, prevalecerá o prêmio que estiver <strong>mais acima na ordem de prioridade</strong>. Assim, se o 3º e o 4º prêmio resultarem no número 1234, prevalecerá o 3º prêmio.</p>
+          <p>Caso nenhum dos cinco prêmios principais resulte em um número vendido e válido, <strong>não haverá ganhador naquele concurso</strong>. O prêmio permanecerá em aberto e a apuração passará automaticamente para o <strong>próximo concurso da Loteria Federal</strong>, aplicando-se novamente a mesma ordem de prioridade, sucessivamente, até que seja identificado um número vendido e válido.</p>
+          <p>Enquanto não houver ganhador e a rifa permanecer aberta, <strong>a rifa continuará disponível para venda dos números ainda disponíveis</strong>. A existência de um concurso sem ganhador não encerra nem cancela automaticamente a rifa.</p>
+          <p>Uma vez identificado o primeiro número vendido e válido na ordem de apuração, haverá <strong>um único ganhador</strong> e a apuração será encerrada.</p>
 
-          <h2>8. Entrega do prêmio</h2>
+          <h2>19. Entrega do prêmio</h2>
           <p>A entrega do prêmio será realizada conforme as condições estabelecidas na respectiva rifa. O ganhador poderá ser solicitado a fornecer informações necessárias para confirmação de sua identidade e para realização da entrega.</p>
 
-          <h2>9. Responsabilidade de quem cria uma rifa</h2>
+          <h2>19. Responsabilidade de quem cria uma rifa</h2>
           <p>O responsável pela criação de uma rifa declara que possui legitimidade para anunciar o produto ou prêmio informado e assume responsabilidade pelas informações fornecidas.</p>
           <ul><li>Fornecer informações verdadeiras sobre o produto ou prêmio.</li><li>Possuir autorização ou direito para oferecer o produto anunciado.</li><li>Cumprir as obrigações legais aplicáveis à realização da rifa.</li><li>Realizar a entrega do prêmio conforme as condições anunciadas.</li></ul>
           <p>O cadastramento de uma rifa na plataforma não significa, por si só, que o RifasTOP tenha validado a propriedade, procedência ou regularidade jurídica do produto anunciado.</p>
 
-          <h2>10. Responsabilidade do RifasTOP</h2>
+          <h2>19. Responsabilidade do RifasTOP</h2>
           <p>O RifasTOP disponibiliza a infraestrutura tecnológica da plataforma, mas não assume automaticamente a condição de proprietário dos produtos anunciados pelos usuários nem substitui as obrigações do responsável por cada rifa.</p>
           <p>A plataforma poderá suspender temporariamente determinadas funcionalidades quando necessário para manutenção, atualização, segurança ou correção de problemas técnicos.</p>
 
-          <h2>11. Condutas proibidas</h2>
+          <h2>19. Condutas proibidas</h2>
           <p>É proibido utilizar o RifasTOP para praticar fraude ou tentativa de fraude, utilizar informações falsas, manipular resultados ou sistemas, explorar falhas técnicas, tentar acessar contas de terceiros, realizar atividades ilícitas, anunciar produtos cuja comercialização ou divulgação seja proibida ou praticar qualquer conduta que viole a legislação brasileira.</p>
 
-          <h2>12. Privacidade e proteção de dados</h2>
+          <h2>19. Privacidade e proteção de dados</h2>
           <p>O RifasTOP poderá coletar e utilizar dados pessoais necessários para criação e manutenção da conta, autenticação, participação em rifas, processamento de pagamentos, comunicação com o usuário, prevenção de fraudes, segurança da plataforma e cumprimento de obrigações legais.</p>
           <p>O tratamento de dados pessoais deverá observar a <strong>Lei nº 13.709/2018 — Lei Geral de Proteção de Dados Pessoais (LGPD)</strong> e demais normas aplicáveis.</p>
 
-          <h2>13. Comunicações</h2>
+          <h2>19. Comunicações</h2>
           <p>O usuário poderá receber comunicações relacionadas à sua conta, às suas participações, aos pagamentos, às rifas das quais participa e a informações importantes sobre o funcionamento da plataforma.</p>
 
-          <h2>14. Propriedade intelectual</h2>
+          <h2>19. Propriedade intelectual</h2>
           <p>O conteúdo, identidade visual, marca, logotipo, layout, textos, códigos, elementos gráficos e demais componentes próprios do RifasTOP são protegidos pela legislação aplicável. É proibida a reprodução, cópia, modificação, distribuição ou utilização comercial não autorizada desses elementos.</p>
 
-          <h2>15. Disponibilidade da plataforma</h2>
+          <h2>19. Disponibilidade da plataforma</h2>
           <p>O RifasTOP busca manter a plataforma disponível e funcionando adequadamente, mas não garante funcionamento ininterrupto. Podem ocorrer indisponibilidades decorrentes de manutenção, falhas de servidores, serviços de terceiros, problemas de conexão, ataques cibernéticos ou outros acontecimentos fora do controle razoável da plataforma.</p>
 
-          <h2>16. Alterações destes Termos</h2>
+          <h2>19. Alterações destes Termos</h2>
           <p>O RifasTOP poderá atualizar estes Termos de Uso sempre que necessário para adequação da plataforma, alterações de funcionalidades ou atendimento à legislação aplicável. A versão atualizada ficará disponível no site.</p>
 
-          <h2>17. Legislação aplicável</h2>
+          <h2>19. Legislação aplicável</h2>
           <p>Este Termo de Uso será interpretado de acordo com as leis da República Federativa do Brasil. As atividades de sorteio, promoção comercial ou outras modalidades reguladas pela legislação brasileira deverão observar as normas e autorizações aplicáveis a cada caso.</p>
 
-          <h2>18. Contato</h2>
+          <h2>19. Contato</h2>
           <p>Para dúvidas, solicitações ou informações relacionadas ao uso do RifasTOP, o usuário poderá utilizar os canais de contato disponibilizados na plataforma.</p>
 
           <div className="terms-footer-brand"><strong>RifasTOP</strong><span>Plataforma de Rifas</span></div>
