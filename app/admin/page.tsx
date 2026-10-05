@@ -541,20 +541,62 @@ export default function AdminPage() {
     <main className="admin-page">
       <div className="container admin-container">
         <div className="admin-heading">
-          <div className="admin-header-actions">
-            <button
-              className="secondary-button compact-button"
-              type="button"
-              onClick={async () => {
-                await fetch("/api/admin/logout", { method: "POST" });
-                window.location.href = "/admin/login";
-              }}
-            >
-              Sair
-            </button>
+          <div className="admin-title-row">
+            <div>
+              <span className="admin-kicker">RIFASTOP • ADMINISTRAÇÃO</span>
+              <h1>Área administrativa</h1>
+              <p>Gerencie suas rifas, participantes e ferramentas em um só lugar.</p>
+            </div>
+            <div className="admin-header-actions">
+              <button
+                className="secondary-button compact-button admin-logout-button"
+                type="button"
+                onClick={async () => {
+                  await fetch("/api/admin/logout", { method: "POST" });
+                  window.location.href = "/admin/login";
+                }}
+              >
+                Sair
+              </button>
+            </div>
           </div>
-          <div>
-            <h1>Área administrativa</h1><div className="admin-header-links"><a className="boost-admin-button" href="/admin/turbinar">🚀 Turbinar no Instagram</a><a className="boost-admin-button" href="/admin/usuarios">👤 Gerenciar participantes</a></div>
+
+          <nav className="admin-main-nav" aria-label="Menu administrativo">
+            <a className="admin-nav-item admin-nav-primary" href="#criar-rifa">
+              <span>＋</span>
+              <strong>Criar nova rifa</strong>
+              <small>Cadastrar produto, números e preço</small>
+            </a>
+            <a className="admin-nav-item" href="#minhas-rifas">
+              <span>▣</span>
+              <strong>Minhas rifas</strong>
+              <small>Editar, publicar, pausar e excluir</small>
+            </a>
+            <a className="admin-nav-item" href="#bonificar">
+              <span>★</span>
+              <strong>Bonificar cliente</strong>
+              <small>Creditar números extras</small>
+            </a>
+            <a className="admin-nav-item" href="/admin/usuarios">
+              <span>👤</span>
+              <strong>Participantes</strong>
+              <small>Gerenciar usuários</small>
+            </a>
+            <a className="admin-nav-item" href="/admin/turbinar">
+              <span>🚀</span>
+              <strong>Turbinar no Instagram</strong>
+              <small>Gerar artes de divulgação</small>
+            </a>
+          </nav>
+
+          <section className="admin-settings-card">
+            <div className="admin-settings-heading">
+              <div>
+                <strong>Configurações de contato</strong>
+                <span>Esses dados aparecem nas áreas de contato da plataforma.</span>
+              </div>
+            </div>
+            <div className="admin-settings-grid">
             <div className="admin-contact-setting">
               <label>WhatsApp de contato
                 <input
@@ -568,7 +610,7 @@ export default function AdminPage() {
                 {savingWhatsapp ? "Salvando..." : "Salvar WhatsApp"}
               </button>
             </div>
-            <div className="admin-contact-setting">
+              <div className="admin-contact-setting">
               <label>Instagram
                 <input
                   value={instagramHandle}
@@ -582,12 +624,21 @@ export default function AdminPage() {
               <button className="primary-button compact-button" type="button" onClick={saveInstagram} disabled={savingInstagram}>
                 {savingInstagram ? "Salvando..." : "Salvar Instagram"}
               </button>
+              </div>
             </div>
-          </div>
+          </section>
         </div>
 
-        <section className="form-section">
-          <h2>Criar nova rifa</h2>
+        <section className="form-section" id="criar-rifa">
+          <div className="admin-section-title">
+            <div>
+              <span className="admin-section-number">01</span>
+              <div>
+                <h2>Criar nova rifa</h2>
+                <p>Preencha os dados abaixo. Depois de criada, a rifa seguirá para a preparação das artes.</p>
+              </div>
+            </div>
+          </div>
           <form className="admin-form" onSubmit={submit}>
             <section className="form-section form-section-nested">
               <label>ID da rifa<input value={form.raffleCode} onChange={(e) => update("raffleCode", e.target.value)} placeholder="Ex.: RIFA-001 ou deixe vazio" /><small>Se deixar vazio, o sistema gera um ID automaticamente.</small></label>
@@ -750,7 +801,7 @@ export default function AdminPage() {
         {message && <div className="success-message">{message}</div>}
         {error && <div className="error-message">{error}</div>}
 
-        <section className="form-section bonus-section">
+        <section className="form-section bonus-section" id="bonificar">
           <div className="section-heading-row">
             <div>
               <h2>Bonificar cliente</h2>
@@ -814,9 +865,10 @@ export default function AdminPage() {
           </button>
         </section>
 
-        <section className="form-section">
+        <section className="form-section" id="minhas-rifas">
           <div className="section-heading-row">
             <div>
+              <span className="admin-section-number">02</span>
               <h2>Minhas rifas</h2>
               <p className="form-help">O sorteio usa somente números com pagamento confirmado.</p>
             </div>
