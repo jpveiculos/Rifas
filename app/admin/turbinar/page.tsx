@@ -84,7 +84,7 @@ async function createCreativeBlob(
     const scale = Math.max(w / image.naturalWidth, h / image.naturalHeight);
     const width = image.naturalWidth * scale;
     const height = image.naturalHeight * scale;
-    ctx.drawImage(image, x + (w - width) / 2, y + (h - height) / 2, width, height);
+    ctx!.drawImage(image, x + (w - width) / 2, y + (h - height) / 2, width, height);
   }
 
   function roundedRect(x: number, y: number, w: number, h: number, radius: number) {
