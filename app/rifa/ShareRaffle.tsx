@@ -10,13 +10,14 @@ export default function ShareRaffle({ raffleName }: Props) {
   const [copied, setCopied] = useState(false);
 
   async function share() {
-    const url = window.location.href;
-    const text = "Confira esta rifa: " + raffleName;
+    // O compartilhamento da plataforma deve sempre levar para a página inicial.
+    const url = window.location.origin + "/";
+    const text = "Confira as rifas disponíveis no RifasTOP.";
 
     if (navigator.share) {
       try {
         await navigator.share({
-          title: raffleName,
+          title: "RifasTOP",
           text,
           url
         });
@@ -31,7 +32,7 @@ export default function ShareRaffle({ raffleName }: Props) {
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2200);
     } catch {
-      window.prompt("Copie o link da rifa:", url);
+      window.prompt("Copie o link do RifasTOP:", url);
     }
   }
 
