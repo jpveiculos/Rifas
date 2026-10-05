@@ -13,40 +13,6 @@ type Raffle = {
 };
 
 type City = { city: string; distanceKm: number };
-type Variant = {
-  id: string;
-  city: string;
-  distanceKm: number;
-  creativeType: string;
-  caption: string;
-  trackingCode: string;
-  destinationPath: string;
-  sourceImageUrl?: string;
-  metrics: {
-    spendCents: number;
-    impressions: number;
-    reach: number;
-    engagements: number;
-    profileVisits: number;
-    linkClicks: number;
-    registrations: number;
-    participations: number;
-    trackedClicks?: number;
-  };
-};
-type Campaign = {
-  id: string;
-  name: string;
-  raffleId: string;
-  objective: string;
-  budgetCents: number;
-  destinationType: string;
-  status: string;
-  createdAt: string;
-  productName: string;
-  priceInCents: number;
-  variants: Variant[];
-};
 
 const CITIES: City[] = [
   { city: "Paramirim", distanceKm: 0 },
@@ -74,44 +40,18 @@ const CITIES: City[] = [
   { city: "Boninal", distanceKm: 94 }
 ];
 
-const hooks = [
-  "VOCÊ É DE {CITY}?",
-  "{CITY}, OLHA ESSA NOVIDADE!",
-  "ALÔ, {CITY}! CONFIRA ISSO!"
+const LAYOUTS = [
+  { id: 0, name: "Impacto", description: "Foto grande + chamada forte" },
+  { id: 1, name: "Dividida", description: "Foto + informação em blocos" },
+  { id: 2, name: "Pôster", description: "Composição editorial" }
 ];
 
-const bodies = [
-  "Confira os detalhes no RifasTOP.",
-  "Veja o prêmio e as condições no site.",
-  "Acesse o RifasTOP e confira a campanha."
-];
-
-const CREATIVE_LAYOUTS = [
-  { id: 0, name: "Impacto", label: "Impacto" },
-  { id: 1, name: "Dividida", label: "Dividida" },
-  { id: 2, name: "Pôster", label: "Pôster" }
-];
-
-function buildCaption(raffle: Raffle, city: string, variant: number) {
-  const hook = hooks[variant % hooks.length].replace("{CITY}", city.toUpperCase());
-  const body = bodies[variant % bodies.length];
-  return hook + "\n\n" + body + "\n\n🏆 " + raffle.productName +
-    "\n💰 " + money(raffle.priceInCents) + " por número\n\n" +
-    "👉 Acesse o RifasTOP e confira a campanha.\n📍 " + city + " e região\n\n" +
-    "#RifasTOP #" + city.replace(/\s+/g, "") + " #Bahia";
-}
-
-function metricNumber(value: number) {
-  return Number(value || 0).toLocaleString("pt-BR");
-}
-
-function cost(cents: number, count: number) {
-  if (!count) return "—";
-  return money(Math.round(cents / count));
+function money(cents: number) {
+  return (cents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
 function slug(value: string) {
-  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase();
+  return value.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase();
 }
 
 async function createCreativeBlob(
@@ -123,8 +63,8 @@ async function createCreativeBlob(
 ) {
   const image = new Image();
   image.crossOrigin = "anonymous";
-  const source = "/api/admin/marketing/creative-image?raffleId=" + encodeURIComponent(raffleId);
-  image.src = source + "&v=" + Date.now();
+  image.src = "/api/admin/marketing/creative-image?raffleId=" + encodeURIComponent(raffleId) + "&v=" + Date.now();
+
   await new Promise<void>((resolve, reject) => {
     image.onload = () => resolve();
     image.onerror = () => reject(new Error("Não foi possível carregar a imagem oficial da rifa."));
@@ -147,44 +87,33 @@ async function createCreativeBlob(
     ctx.drawImage(image, x + (w - width) / 2, y + (h - height) / 2, width, height);
   }
 
-  function fitText(text: string, maxChars: number) {
-    return text.length > maxChars ? text.slice(0, maxChars - 1) + "…" : text;
-  }
-
-  function roundedRect(x: number, y: number, w: number, h: number, r: number) {
+  function roundedRect(x: number, y: number, w: number, h: number, radius: number) {
     ctx.beginPath();
-    ctx.roundRect(x, y, w, h, r);
+    ctx.roundRect(x, y, w, h, radius);
     ctx.fill();
   }
 
-  function logo(x: number, y: number, align: CanvasTextAlign = "left") {
-    ctx.textAlign = align;
-    ctx.fillStyle = WHITE;
-    ctx.font = "900 25px Arial";
-    ctx.fillText("RifasTOP", x, y);
-    ctx.fillStyle = GOLD;
-    ctx.font = "700 13px Arial";
-    ctx.fillText("CONFIRA NO SITE", x, y + 22);
-    ctx.textAlign = "left";
+  function fitText(text: string, max: number) {
+    return text.length > max ? text.slice(0, max - 1) + "…" : text;
   }
 
-  const price = money(priceInCents);
   const cityName = city.toUpperCase();
   const product = fitText(productName, 38);
+  const price = money(priceInCents);
 
-  // Three genuinely different compositions are generated for every city.
   if (layoutIndex === 0) {
-    // IMPACTO: photo-first, strong bottom headline.
+    // 1 — IMPACTO
     cover(0, 0, 1200, 800);
-    const gradient = ctx.createLinearGradient(0, 280, 0, 800);
+
+    const gradient = ctx.createLinearGradient(0, 270, 0, 800);
     gradient.addColorStop(0, "rgba(0,0,0,0)");
-    gradient.addColorStop(0.48, "rgba(0,0,0,0.55)");
+    gradient.addColorStop(0.45, "rgba(0,0,0,0.45)");
     gradient.addColorStop(1, "rgba(0,0,0,0.96)");
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, 1200, 800);
 
     ctx.fillStyle = GOLD;
-    roundedRect(55, 48, 310, 58, 29);
+    roundedRect(55, 48, 330, 58, 29);
     ctx.fillStyle = BLACK;
     ctx.font = "900 25px Arial";
     ctx.fillText("RIFASTOP • " + cityName, 78, 85);
@@ -192,23 +121,26 @@ async function createCreativeBlob(
     ctx.fillStyle = WHITE;
     ctx.font = "900 66px Arial";
     ctx.fillText("VOCÊ É DE", 55, 590);
+
     ctx.fillStyle = GOLD;
     ctx.fillText(cityName, 55, 660);
 
     ctx.fillStyle = WHITE;
     ctx.font = "700 30px Arial";
     ctx.fillText(product, 58, 714);
+
     ctx.font = "900 29px Arial";
     ctx.fillText(price + " por número", 58, 758);
-    logo(1135, 64, "right");
+
+    ctx.textAlign = "right";
+    ctx.font = "900 25px Arial";
+    ctx.fillText("RifasTOP", 1140, 65);
+    ctx.textAlign = "left";
   } else if (layoutIndex === 1) {
-    // DIVIDIDA: photo and information occupy independent visual blocks.
+    // 2 — DIVIDIDA
     ctx.fillStyle = BLACK;
     ctx.fillRect(0, 0, 1200, 800);
     cover(0, 0, 700, 800);
-
-    ctx.fillStyle = "rgba(0,0,0,0.18)";
-    ctx.fillRect(0, 0, 700, 800);
 
     ctx.fillStyle = GOLD;
     ctx.fillRect(700, 0, 10, 800);
@@ -219,16 +151,20 @@ async function createCreativeBlob(
 
     ctx.fillStyle = GOLD;
     ctx.font = "900 67px Arial";
-    const cityLines = cityName.length > 11 ? [cityName.slice(0, Math.ceil(cityName.length / 2)), cityName.slice(Math.ceil(cityName.length / 2))] : [cityName];
-    cityLines.forEach((line, i) => ctx.fillText(line, 755, 190 + i * 76));
+    const lines = cityName.length > 11
+      ? [cityName.slice(0, Math.ceil(cityName.length / 2)), cityName.slice(Math.ceil(cityName.length / 2))]
+      : [cityName];
+    lines.forEach((line, index) => ctx.fillText(line, 755, 190 + index * 76));
 
-    const cityOffset = cityLines.length * 76;
+    const offset = lines.length * 76;
+
     ctx.fillStyle = WHITE;
     ctx.font = "700 31px Arial";
-    ctx.fillText("CONFIRA ESSA", 755, 245 + cityOffset);
+    ctx.fillText("CONFIRA ESSA", 755, 245 + offset);
+
     ctx.font = "900 30px Arial";
     const productLines = product.length > 22 ? [product.slice(0, 22), product.slice(22)] : [product];
-    productLines.forEach((line, i) => ctx.fillText(line, 755, 292 + cityOffset + i * 38));
+    productLines.forEach((line, index) => ctx.fillText(line, 755, 292 + offset + index * 38));
 
     ctx.fillStyle = GOLD;
     roundedRect(755, 590, 365, 76, 18);
@@ -242,14 +178,9 @@ async function createCreativeBlob(
     ctx.font = "500 19px Arial";
     ctx.fillText("e confira os detalhes", 755, 742);
   } else {
-    // PÔSTER: bold editorial layout with image framed by typography.
+    // 3 — PÔSTER
     ctx.fillStyle = BLACK;
     ctx.fillRect(0, 0, 1200, 800);
-    cover(50, 70, 1100, 470);
-
-    ctx.strokeStyle = GOLD;
-    ctx.lineWidth = 5;
-    ctx.strokeRect(50, 70, 1100, 470);
 
     ctx.fillStyle = WHITE;
     ctx.font = "900 29px Arial";
@@ -261,23 +192,25 @@ async function createCreativeBlob(
     ctx.fillText("DIVULGAÇÃO • " + cityName, 1142, 43);
     ctx.textAlign = "left";
 
+    cover(50, 70, 1100, 470);
+    ctx.strokeStyle = GOLD;
+    ctx.lineWidth = 5;
+    ctx.strokeRect(50, 70, 1100, 470);
+
     ctx.fillStyle = GOLD;
     ctx.font = "900 58px Arial";
     ctx.fillText(cityName, 55, 625);
 
     ctx.fillStyle = WHITE;
     ctx.font = "700 28px Arial";
-    ctx.fillText(fitText(product, 43), 58, 674);
+    ctx.fillText(product, 58, 674);
 
-    ctx.fillStyle = WHITE;
     ctx.font = "900 27px Arial";
     ctx.fillText(price + " por número", 58, 725);
 
     ctx.fillStyle = GOLD;
     ctx.font = "900 23px Arial";
     ctx.fillText("CONFIRA NO RIFASTOP", 58, 765);
-
-    logo(1138, 620, "right");
   }
 
   return new Promise<Blob>((resolve, reject) => {
@@ -300,7 +233,7 @@ async function downloadCreative(
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = "RifasTOP-" + slug(city) + "-" + CREATIVE_LAYOUTS[layoutIndex].name.toLowerCase() + ".png";
+  link.download = "RifasTOP-" + slug(city) + "-" + slug(LAYOUTS[layoutIndex].name) + ".png";
   document.body.appendChild(link);
   link.click();
   link.remove();
@@ -310,164 +243,81 @@ async function downloadCreative(
 export default function TurbinarPage() {
   const [raffles, setRaffles] = useState<Raffle[]>([]);
   const [raffleId, setRaffleId] = useState("");
-  const [selectedCities, setSelectedCities] = useState<string[]>(CITIES.map((x) => x.city));
-  const [destinationType, setDestinationType] = useState("RAFFLE");
-  const [budget, setBudget] = useState("11,00");
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [selectedCities, setSelectedCities] = useState<string[]>(CITIES.map((item) => item.city));
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [downloading, setDownloading] = useState("");
+  const [generating, setGenerating] = useState(false);
+  const [downloadingKey, setDownloadingKey] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [copied, setCopied] = useState("");
 
   const raffle = raffles.find((item) => item.id === raffleId);
   const sourceImageUrl = raffle?.imageUrls?.[0] || "";
 
-  const variantsToCreate = useMemo(() => {
-    if (!raffle) return [];
-    return selectedCities.map((city, index) => {
-      const found = CITIES.find((item) => item.city === city);
-      return {
-        city,
-        distanceKm: found?.distanceKm ?? 0,
-        caption: buildCaption(raffle, city, index)
-      };
-    });
-  }, [raffle, selectedCities]);
+  const totalArts = useMemo(() => selectedCities.length * LAYOUTS.length, [selectedCities.length]);
 
-  async function load() {
+  async function loadRaffles() {
     setLoading(true);
+    setError("");
     try {
-      const [raffleResponse, campaignResponse] = await Promise.all([
-        fetch("/api/rifas", { cache: "no-store" }),
-        fetch("/api/admin/marketing/campaigns", { cache: "no-store" })
-      ]);
-      const raffleData = await raffleResponse.json();
-      const campaignData = await campaignResponse.json();
-      if (!raffleResponse.ok) throw new Error(raffleData.error || "Não foi possível carregar as rifas.");
-      if (!campaignResponse.ok) throw new Error(campaignData.error || "Não foi possível carregar as campanhas.");
-      setRaffles((raffleData.raffles || []).filter((item: Raffle) => item.status === "ACTIVE"));
-      setCampaigns(campaignData.campaigns || []);
+      const response = await fetch("/api/rifas", { cache: "no-store" });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Não foi possível carregar as rifas.");
+      setRaffles((data.raffles || []).filter((item: Raffle) => item.status === "ACTIVE"));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Não foi possível carregar o motor.");
+      setError(err instanceof Error ? err.message : "Não foi possível carregar as rifas.");
     } finally {
       setLoading(false);
     }
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    loadRaffles();
+  }, []);
 
   function toggleCity(city: string) {
-    setSelectedCities((current) => current.includes(city) ? current.filter((item) => item !== city) : [...current, city]);
+    setSelectedCities((current) =>
+      current.includes(city) ? current.filter((item) => item !== city) : [...current, city]
+    );
   }
 
-  async function copyText(value: string, key: string) {
-    await navigator.clipboard.writeText(value);
-    setCopied(key);
-    window.setTimeout(() => setCopied(""), 1400);
-  }
-
-  async function createCampaign() {
-    if (!raffle || !variantsToCreate.length) {
-      setError("Selecione uma rifa e pelo menos uma cidade.");
-      return;
+  async function downloadOne(city: string, layoutId: number) {
+    if (!raffle) return;
+    const key = city + "-" + layoutId;
+    setDownloadingKey(key);
+    setError("");
+    try {
+      await downloadCreative(raffle.id, raffle.productName, city, raffle.priceInCents, layoutId);
+      setMessage("Arte " + LAYOUTS[layoutId].name + " de " + city + " baixada.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível gerar a arte.");
+    } finally {
+      setDownloadingKey("");
     }
-    setSaving(true);
+  }
+
+  async function downloadAll() {
+    if (!raffle || !selectedCities.length) return;
+
+    setGenerating(true);
     setError("");
     setMessage("");
-    try {
-      const response = await fetch("/api/admin/marketing/campaigns", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          raffleId,
-          budget,
-          objective: "Preparar materiais regionais para divulgação manual na Meta",
-          creativeType: "SITE",
-          destinationType,
-          cities: variantsToCreate
-        })
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Não foi possível preparar os materiais.");
-      setMessage(data.citiesCount + " artes regionais foram preparadas. Agora você pode baixar cada peça e publicar manualmente na Meta, escolhendo a cidade e o orçamento.");
-      await load();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Não foi possível preparar os materiais.");
-    } finally {
-      setSaving(false);
-    }
-  }
 
-  async function saveMetrics(campaignId: string, variant: Variant) {
-    setError("");
     try {
-      const response = await fetch("/api/admin/marketing/campaigns/" + campaignId, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          variantId: variant.id,
-          spendCents: variant.metrics.spendCents,
-          impressions: variant.metrics.impressions,
-          reach: variant.metrics.reach,
-          engagements: variant.metrics.engagements,
-          profileVisits: variant.metrics.profileVisits,
-          linkClicks: variant.metrics.linkClicks,
-          registrations: variant.metrics.registrations,
-          participations: variant.metrics.participations
-        })
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Não foi possível salvar.");
-      setMessage("Métricas salvas.");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Não foi possível salvar as métricas.");
-    }
-  }
-
-  function updateMetric(campaignId: string, variantId: string, field: keyof Variant["metrics"], value: string) {
-    const numeric = Math.max(0, Math.floor(Number(value.replace(",", ".")) || 0));
-    setCampaigns((current) => current.map((campaign) => campaign.id !== campaignId ? campaign : {
-      ...campaign,
-      variants: campaign.variants.map((variant) => variant.id !== variantId ? variant : {
-        ...variant,
-        metrics: { ...variant.metrics, [field]: numeric }
-      })
-    }));
-  }
-
-  async function downloadAll(campaign: Campaign) {
-    setDownloading(campaign.id);
-    setError("");
-    try {
-      const total = campaign.variants.length * CREATIVE_LAYOUTS.length;
       let count = 0;
-      for (const variant of campaign.variants) {
-        for (const layout of CREATIVE_LAYOUTS) {
-          await downloadCreative(campaign.raffleId, campaign.productName, variant.city, campaign.priceInCents, layout.id);
+      for (const city of selectedCities) {
+        for (const layout of LAYOUTS) {
+          await downloadCreative(raffle.id, raffle.productName, city, raffle.priceInCents, layout.id);
           count += 1;
           await new Promise((resolve) => window.setTimeout(resolve, 350));
         }
       }
-      setMessage("As " + count + " artes (" + CREATIVE_LAYOUTS.length + " modelos por cidade) foram enviadas para os downloads do navegador.");
+      setMessage(count + " artes prontas foram baixadas: 3 modelos diferentes para cada cidade selecionada.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível gerar todas as artes.");
     } finally {
-      setDownloading("");
+      setGenerating(false);
     }
   }
-
-  const totals = campaigns.reduce((acc, campaign) => {
-    campaign.variants.forEach((variant) => {
-      acc.spend += variant.metrics.spendCents;
-      acc.reach += variant.metrics.reach;
-      acc.clicks += Number(variant.metrics.trackedClicks ?? 0);
-      acc.registrations += variant.metrics.registrations;
-      acc.participations += variant.metrics.participations;
-    });
-    return acc;
-  }, { spend: 0, reach: 0, clicks: 0, registrations: 0, participations: 0 });
 
   return (
     <main className="boost-page">
@@ -475,9 +325,12 @@ export default function TurbinarPage() {
         <header className="boost-header">
           <div>
             <a href="/admin" className="boost-back">← Voltar para administração</a>
-            <span className="boost-kicker">RIFASTOP • MOTOR DE MATERIAIS REGIONAIS</span>
-            <h1>🚀 Turbinar no Instagram</h1>
-            <p>O motor cria somente as artes. Você baixa as peças prontas e faz toda a divulgação manualmente na Meta, escolhendo cidade, público e orçamento.</p>
+            <span className="boost-kicker">RIFASTOP • GERADOR DE ARTES</span>
+            <h1>🎨 Gerar artes para divulgação</h1>
+            <p>
+              Aqui o sistema só cria e baixa as imagens. Não existe publicação automática,
+              conexão com a Meta, segmentação de público ou orçamento.
+            </p>
           </div>
           <div className="boost-badge">CRIAR → BAIXAR → META</div>
         </header>
@@ -485,197 +338,177 @@ export default function TurbinarPage() {
         {message && <div className="boost-message success">{message}</div>}
         {error && <div className="boost-message error">{error}</div>}
 
-        <section className="boost-summary">
-          <div><strong>{campaigns.length}</strong><span>campanhas preparadas</span></div>
-          <div><strong>{money(totals.spend)}</strong><span>gasto registrado</span></div>
-          <div><strong>{metricNumber(totals.reach)}</strong><span>alcance registrado</span></div>
-          <div><strong>{metricNumber(totals.clicks)}</strong><span>cliques rastreados</span></div>
-          <div><strong>{metricNumber(totals.registrations)}</strong><span>cadastros</span></div>
-          <div><strong>{metricNumber(totals.participations)}</strong><span>participações</span></div>
-        </section>
-
         <section className="boost-card">
           <h2>1. Escolha a rifa</h2>
-          <p>O motor usa automaticamente a primeira imagem oficial cadastrada na rifa.</p>
-          {loading ? <p>Carregando rifas...</p> : (
+          <p>A imagem oficial da rifa é usada como matéria-prima. As três artes finais têm composições diferentes.</p>
+
+          {loading ? (
+            <p>Carregando rifas...</p>
+          ) : (
             <select value={raffleId} onChange={(event) => setRaffleId(event.target.value)}>
               <option value="">Selecione uma rifa ativa</option>
-              {raffles.map((item) => <option key={item.id} value={item.id}>{item.productName} • {money(item.priceInCents)}</option>)}
+              {raffles.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.productName} • {money(item.priceInCents)}
+                </option>
+              ))}
             </select>
           )}
-          {!loading && !raffles.length && <div className="boost-warning">Nenhuma rifa ativa encontrada.</div>}
+
+          {!loading && !raffles.length && (
+            <div className="boost-warning">Nenhuma rifa ativa encontrada.</div>
+          )}
+
           {sourceImageUrl && (
             <div className="official-creative-source">
-              <strong>🖼️ Imagem oficial</strong>
-              <span>Essa é a fonte usada para gerar as artes de cada cidade.</span>
+              <strong>Imagem oficial da rifa</strong>
+              <span>Esta imagem é a fonte. Ela não é simplesmente republicada com uma faixa de texto.</span>
               <img src={sourceImageUrl} alt={raffle?.productName || "Imagem oficial"} />
             </div>
           )}
         </section>
 
         <section className="boost-card">
-          <h2>2. Cidades</h2>
-          <p>Cada cidade recebe 3 composições visuais diferentes. O sistema não publica, não conecta e não envia campanhas para a Meta.</p>
           <div className="boost-section-head">
-            <strong>{selectedCities.length} de {CITIES.length} cidades selecionadas</strong>
-            <button className="boost-link" onClick={() => setSelectedCities(selectedCities.length === CITIES.length ? [] : CITIES.map((x) => x.city))}>
+            <div>
+              <h2>2. Escolha as cidades</h2>
+              <p>{selectedCities.length} cidades selecionadas • {totalArts} artes serão geradas</p>
+            </div>
+            <button
+              className="boost-link"
+              onClick={() => setSelectedCities(
+                selectedCities.length === CITIES.length ? [] : CITIES.map((item) => item.city)
+              )}
+            >
               {selectedCities.length === CITIES.length ? "Limpar todas" : "Selecionar todas"}
             </button>
           </div>
+
           <div className="city-grid">
             {CITIES.map((item) => (
-              <label className={"city-chip " + (selectedCities.includes(item.city) ? "selected" : "")} key={item.city}>
-                <input type="checkbox" checked={selectedCities.includes(item.city)} onChange={() => toggleCity(item.city)} />
-                <span><b>{item.city}</b><small>{item.distanceKm === 0 ? "base" : item.distanceKm + " km"}</small></span>
+              <label
+                className={"city-chip " + (selectedCities.includes(item.city) ? "selected" : "")}
+                key={item.city}
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedCities.includes(item.city)}
+                  onChange={() => toggleCity(item.city)}
+                />
+                <span>
+                  <b>{item.city}</b>
+                  <small>{item.distanceKm === 0 ? "base" : item.distanceKm + " km"}</small>
+                </span>
               </label>
             ))}
           </div>
-        </section>
 
-        <section className="boost-card">
-          <h2>3. Destino e orçamento de referência</h2>
-          <div className="boost-grid-2">
-            <label>Destino que será colocado no texto/link
-              <select value={destinationType} onChange={(event) => setDestinationType(event.target.value)}>
-                <option value="RAFFLE">Página da rifa</option>
-                <option value="HOME">Página principal do RifasTOP</option>
-              </select>
-            </label>
-            <label>Orçamento diário de referência
-              <input value={budget} onChange={(event) => setBudget(event.target.value)} inputMode="decimal" placeholder="11,00" />
-              <small className="field-note">Informativo. Este valor não é enviado à Meta; você define o orçamento na publicação manual.</small>
-            </label>
-          </div>
           <div className="boost-create-row">
-            <span>{variantsToCreate.length * CREATIVE_LAYOUTS.length} artes serão preparadas: 3 modelos diferentes para cada cidade.</span>
-            <button className="boost-primary" disabled={!raffle || !variantsToCreate.length || saving} onClick={createCampaign}>
-              {saving ? "Preparando..." : "🚀 Preparar materiais"}
+            <span>{totalArts} arquivos PNG em 1200 × 800 px.</span>
+            <button
+              className="boost-primary"
+              disabled={!raffle || !selectedCities.length || generating}
+              onClick={downloadAll}
+            >
+              {generating ? "Gerando e baixando..." : "⬇️ Gerar e baixar todas"}
             </button>
           </div>
         </section>
 
-        <section className="boost-card boost-next">
-          <h2>🧭 Depois que o motor preparar</h2>
-          <div className="boost-roadmap">
-            <span>01 • Baixar a arte</span><span>02 • Criar anúncio na Meta</span><span>03 • Selecionar somente a cidade</span><span>04 • Definir orçamento</span><span>05 • Publicar</span>
+        <section className="boost-card">
+          <h2>3. Três modelos para cada cidade</h2>
+          <p>
+            O mesmo produto ganha três composições visuais diferentes. Assim você pode testar
+            criativos diferentes na Meta sem precisar editar cada imagem manualmente.
+          </p>
+
+          <div className="creative-lab">
+            <div className="creative-lab-head">
+              <div>
+                <strong>Modelos automáticos</strong>
+                <span>Todos em 1200 × 800 • somente arquivos de imagem</span>
+              </div>
+            </div>
+
+            <div className="creative-grid">
+              {LAYOUTS.map((layout) => (
+                <div className="creative-preview-card" key={layout.id}>
+                  <div className={"creative-preview creative-layout-" + layout.id} style={{ aspectRatio: "3 / 2" }}>
+                    {sourceImageUrl && <img src={sourceImageUrl} alt={layout.name} />}
+                    <div className="creative-overlay">
+                      <b>{layout.name}</b>
+                      <span>{layout.description}</span>
+                    </div>
+                  </div>
+                  <strong>{layout.name}</strong>
+                  <small>{layout.description}</small>
+                </div>
+              ))}
+            </div>
           </div>
-          <p>Você continua controlando a segmentação geográfica e o orçamento diretamente na Central de Anúncios. O RifasTOP não mantém conexão nem envia campanhas automaticamente para a Meta.</p>
         </section>
 
-        <section className="boost-card">
-          <div className="boost-section-head">
-            <div><h2>🎨 Artes prontas</h2><p>Cada cidade recebe 3 layouts realmente diferentes, todos em 1200 × 800 px, usando a imagem oficial da rifa. Você baixa e publica manualmente onde quiser.</p></div>
-          </div>
-          {!campaigns.length && <div className="boost-empty">Nenhum material preparado ainda.</div>}
-          <div className="campaign-list">
-            {campaigns.map((campaign) => (
-              <article className="campaign-card" key={campaign.id}>
-                <div className="campaign-head">
-                  <div>
-                    <span className="campaign-status">MATERIAIS PRONTOS</span>
-                    <h3>{campaign.name}</h3>
-                    <p>{campaign.productName} • {campaign.variants.length} cidades</p>
+        {raffle && selectedCities.length > 0 && (
+          <section className="boost-card">
+            <h2>4. Baixar individualmente</h2>
+            <p>Se quiser escolher exatamente quais peças baixar, use os botões abaixo.</p>
+
+            <div className="campaign-list">
+              {selectedCities.map((city) => (
+                <article className="campaign-card" key={city}>
+                  <div className="campaign-head">
+                    <div>
+                      <span className="campaign-status">CIDADE</span>
+                      <h3>{city}</h3>
+                      <p>{raffle.productName} • 3 artes</p>
+                    </div>
                   </div>
-                  <button className="boost-primary" disabled={downloading === campaign.id} onClick={() => downloadAll(campaign)}>
-                    {downloading === campaign.id ? "Gerando..." : "⬇️ Baixar todas as artes"}
-                  </button>
-                </div>
 
-                <div className="creative-grid">
-                  {campaign.variants.flatMap((variant) =>
-                    CREATIVE_LAYOUTS.map((layout) => (
-                      <div className="creative-preview-card" key={variant.id + "-" + layout.id}>
-                        <div className="creative-preview creative-preview-real" style={{ aspectRatio: "3 / 2" }}>
-                          {variant.sourceImageUrl ? <img src={variant.sourceImageUrl} alt={variant.city + " - " + layout.name} /> : null}
-                          <div className={"creative-overlay creative-layout-" + layout.id}>
-                            <b>{layout.label}</b>
-                            <span>{variant.city.toUpperCase()}</span>
-                            <small>{campaign.productName}</small>
+                  <div className="creative-grid">
+                    {LAYOUTS.map((layout) => {
+                      const key = city + "-" + layout.id;
+                      return (
+                        <div className="creative-preview-card" key={key}>
+                          <div className={"creative-preview creative-layout-" + layout.id} style={{ aspectRatio: "3 / 2" }}>
+                            {sourceImageUrl && <img src={sourceImageUrl} alt={city + " - " + layout.name} />}
+                            <div className="creative-overlay">
+                              <b>{layout.name}</b>
+                              <span>{city.toUpperCase()}</span>
+                              <small>{raffle.productName}</small>
+                            </div>
                           </div>
+                          <strong>{layout.name}</strong>
+                          <small>1200 × 800 • PNG</small>
+                          <button
+                            className="boost-secondary"
+                            disabled={downloadingKey === key}
+                            onClick={() => downloadOne(city, layout.id)}
+                          >
+                            {downloadingKey === key ? "Gerando..." : "⬇️ Baixar arte"}
+                          </button>
                         </div>
-                        <strong>{variant.city} • {layout.label}</strong>
-                        <small>1200 × 800 • arte independente • sem Meta</small>
-                        <button
-                          className="boost-secondary"
-                          disabled={downloading === variant.id + "-" + layout.id}
-                          onClick={async () => {
-                            const key = variant.id + "-" + layout.id;
-                            setDownloading(key);
-                            try {
-                              await downloadCreative(campaign.raffleId, campaign.productName, variant.city, campaign.priceInCents, layout.id);
-                              setMessage("Arte " + layout.label + " de " + variant.city + " baixada.");
-                            } catch (err) {
-                              setError(err instanceof Error ? err.message : "Não foi possível baixar a arte.");
-                            } finally {
-                              setDownloading("");
-                            }
-                          }}
-                        >
-                          {downloading === variant.id + "-" + layout.id ? "Gerando..." : "⬇️ Baixar arte"}
-                        </button>
-                      </div>
-                    ))
-                  )}              </div>
+                      );
+                    })}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
 
-                <div className="campaign-table-wrap">
-                  <table className="campaign-table">
-                    <thead><tr><th>Cidade</th><th>Gasto</th><th>Alcance</th><th>Cliques rastreados</th><th>Cadastros</th><th>Participações</th><th>Ação</th></tr></thead>
-                    <tbody>
-                      {campaign.variants.map((variant) => (
-                        <tr key={variant.id}>
-                          <td><strong>{variant.city}</strong><small>{variant.distanceKm ? variant.distanceKm + " km" : "base"}</small></td>
-                          <td>{money(variant.metrics.spendCents)}</td>
-                          <td>{metricNumber(variant.metrics.reach)}</td>
-                          <td>{metricNumber(Number(variant.metrics.trackedClicks ?? 0))}</td>
-                          <td>{metricNumber(variant.metrics.registrations)}</td>
-                          <td>{metricNumber(variant.metrics.participations)}</td>
-                          <td><button className="boost-secondary" onClick={() => copyText(window.location.origin + "/go/" + variant.trackingCode, variant.trackingCode)}>{copied === variant.trackingCode ? "✓ Copiado" : "🔗 Link"}</button></td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="variant-editor-list">
-                  {campaign.variants.map((variant) => (
-                    <details key={variant.id}>
-                      <summary>Editar métricas — {variant.city}</summary>
-                      <div className="metrics-grid">
-                        {([
-                          ["spendCents", "Gasto (R$)", true],
-                          ["impressions", "Impressões", false],
-                          ["reach", "Alcance", false],
-                          ["engagements", "Engajamentos", false],
-                          ["profileVisits", "Visitas ao perfil", false],
-                          ["linkClicks", "Cliques no link", false],
-                          ["registrations", "Cadastros", false],
-                          ["participations", "Participações", false]
-                        ] as const).map(([field, label, currency]) => (
-                          <label key={field}>{label}
-                            <input
-                              value={currency ? (variant.metrics.spendCents / 100).toFixed(2).replace(".", ",") : String(variant.metrics[field])}
-                              onChange={(event) => updateMetric(campaign.id, variant.id, field, currency ? String(Math.round((Number(event.target.value.replace(",", ".")) || 0) * 100)) : event.target.value)}
-                              inputMode="decimal"
-                            />
-                          </label>
-                        ))}
-                      </div>
-                      <div className="metric-actions">
-                        <span>CPC: {cost(variant.metrics.spendCents, variant.metrics.linkClicks)} • Custo/cadastro: {cost(variant.metrics.spendCents, variant.metrics.registrations)} • Custo/participação: {cost(variant.metrics.spendCents, variant.metrics.participations)}</span>
-                        <button className="boost-primary" onClick={() => saveMetrics(campaign.id, variant)}>Salvar métricas</button>
-                      </div>
-                      <div className="tracking-box">
-                        <strong>Link rastreável desta cidade</strong>
-                        <code>{typeof window !== "undefined" ? window.location.origin : "https://rifastop.com.br"}/go/{variant.trackingCode}</code>
-                        <button className="boost-secondary" onClick={() => copyText((typeof window !== "undefined" ? window.location.origin : "https://rifastop.com.br") + "/go/" + variant.trackingCode, variant.trackingCode + "-detail")}>{copied === variant.trackingCode + "-detail" ? "✓ Copiado" : "Copiar link"}</button>
-                      </div>
-                      <pre className="caption-preview">{variant.caption}</pre>
-                    </details>
-                  ))}
-                </div>
-              </article>
-            ))}
+        <section className="boost-card boost-next">
+          <h2>Como fica o fluxo</h2>
+          <div className="boost-roadmap">
+            <span>01 • Escolher a rifa</span>
+            <span>02 • Escolher cidades</span>
+            <span>03 • Gerar artes</span>
+            <span>04 • Baixar PNG</span>
+            <span>05 • Publicar manualmente na Meta</span>
           </div>
+          <p>
+            O RifasTOP não envia nada para a Meta. Você continua escolhendo manualmente
+            a cidade, público, posicionamento, orçamento e campanha dentro da plataforma de anúncios.
+          </p>
         </section>
       </div>
     </main>
