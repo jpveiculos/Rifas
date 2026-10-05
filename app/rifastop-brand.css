@@ -1,3 +1,94 @@
+
+/* Refinamento final da identidade RifasTOP */
+.raffle-detail-topbar {
+  margin-bottom: 14px;
+}
+.raffle-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid rgba(212,175,55,.45);
+  border-radius: 999px;
+  background: rgba(11,11,11,.92);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: lowercase;
+  box-shadow: 0 5px 14px rgba(0,0,0,.14);
+}
+.raffle-back-link span {
+  color: var(--rt-gold-light);
+  font-size: 18px;
+}
+.raffle-detail-page .raffle-card {
+  border-color: var(--rt-border);
+}
+.raffle-detail-page .raffle-card-content {
+  background: #fff;
+}
+.raffle-detail-page h1 {
+  margin: 12px 0 4px;
+  color: var(--rt-text);
+}
+.raffle-detail-page h3 {
+  color: var(--rt-text);
+}
+.raffle-detail-page .share-box {
+  background: #fffdf7;
+}
+.admin-page,
+.admin-page .form-section,
+.admin-page .raffle-admin-card,
+.admin-page .topic-edit-box {
+  color: var(--rt-text);
+}
+.admin-page .primary-button {
+  min-height: 44px;
+}
+.admin-page .danger-button {
+  border-radius: 10px;
+}
+.admin-page input:focus,
+.admin-page textarea:focus,
+.admin-page select:focus {
+  border-color: var(--rt-gold-dark);
+  box-shadow: 0 0 0 3px rgba(212,175,55,.13);
+}
+@media (max-width: 640px) {
+  .site-header-inner {
+    min-height: 64px;
+  }
+  .header-actions {
+    gap: 6px;
+  }
+  .header-login,
+  .header-logout {
+    min-height: 36px;
+    padding: 0 10px;
+    font-size: 11px;
+  }
+  .raffle-detail-page {
+    padding: 22px 0 74px;
+  }
+  .raffle-detail-topbar {
+    margin-bottom: 10px;
+  }
+  .raffle-back-link {
+    min-height: 34px;
+    padding: 0 11px;
+    font-size: 12px;
+  }
+  .raffle-detail-page h1 {
+    font-size: 22px;
+    line-height: 1.1;
+  }
+  .raffle-detail-page .raffle-card-content {
+    padding: 14px;
+  }
+}
+
 /* RifasTOP — identidade visual centralizada
    Padrão: preto + dourado, tipografia Arial/Helvetica, visual limpo e premium.
    Este arquivo sobrescreve apenas apresentação; não altera regras de negócio.
