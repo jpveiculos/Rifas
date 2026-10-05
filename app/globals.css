@@ -2698,3 +2698,68 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Superfícies claras do site: substitui o branco por um azul bem suave. */
+:root {
+  --site-light-blue: #eef7ff;
+}
+
+.raffle-card,
+.empty-state,
+.participant-box,
+.quantity-option,
+.generated-numbers,
+.share-box,
+.share-button,
+.info-item,
+.account-section,
+.account-raffle-card,
+.account-button,
+.account-result-card,
+.auth-card,
+.terms-card,
+.download-card,
+.download-tip,
+.access-modal,
+.admin-page .form-section,
+.admin-page .form-section-nested,
+.raffle-admin-card,
+.admin-empty,
+.bonus-user-result,
+.admin-page .draw-result-box,
+.admin-page .draw-preview,
+.image-admin-preview {
+  background: var(--site-light-blue) !important;
+}
+
+.raffle-card-image {
+  background: #e5f2ff;
+}
+
+.participant-box select,
+.quantity-custom-field input,
+.auth-form input,
+.admin-form input,
+.admin-form select,
+.admin-form textarea,
+.bonus-grid input,
+.bonus-grid select,
+.admin-contact-setting input,
+.raffle-result-admin input {
+  background: var(--site-light-blue);
+}
+
+.photo-upload-button {
+  background: var(--site-light-blue);
+}
+
+.raffle-gallery img,
+.payment-code {
+  background: var(--site-light-blue);
+}
+
+.access-modal-close {
+  background: #dceeff;
+}
+
