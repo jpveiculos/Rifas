@@ -98,7 +98,7 @@ function buildCaption(raffle: Raffle, city: string, variant: number) {
   return hook + "\n\n" + body + "\n\n🏆 " + raffle.productName +
     "\n💰 " + money(raffle.priceInCents) + " por número\n\n" +
     "👉 Acesse o RifasTOP e confira a campanha.\n📍 " + city + " e região\n\n" +
-    "#RifasTOP #" + city.replace(/\\s+/g, "") + " #Bahia";
+    "#RifasTOP #" + city.replace(/\s+/g, "") + " #Bahia";
 }
 
 function metricNumber(value: number) {
@@ -110,15 +110,80 @@ function cost(cents: number, count: number) {
   return money(Math.round(cents / count));
 }
 
+function slug(value: string) {
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase();
+}
+
+async function createCreativeBlob(raffleId: string, productName: string, city: string) {
+  const image = new Image();
+  image.crossOrigin = "anonymous";
+  const source = "/api/admin/marketing/creative-image?raffleId=" + encodeURIComponent(raffleId);
+  image.src = source + "&v=" + Date.now();
+  await new Promise<void>((resolve, reject) => {
+    image.onload = () => resolve();
+    image.onerror = () => reject(new Error("Não foi possível carregar a imagem oficial da rifa."));
+  });
+
+  const canvas = document.createElement("canvas");
+  canvas.width = 1200;
+  canvas.height = 800;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Seu navegador não conseguiu preparar a arte.");
+
+  const scale = Math.max(1200 / image.naturalWidth, 800 / image.naturalHeight);
+  const width = image.naturalWidth * scale;
+  const height = image.naturalHeight * scale;
+  ctx.drawImage(image, (1200 - width) / 2, (800 - height) / 2, width, height);
+
+  const gradient = ctx.createLinearGradient(0, 380, 0, 800);
+  gradient.addColorStop(0, "rgba(0,0,0,0)");
+  gradient.addColorStop(0.55, "rgba(0,0,0,0.68)");
+  gradient.addColorStop(1, "rgba(0,0,0,0.92)");
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, 1200, 800);
+
+  ctx.fillStyle = "#ffffff";
+  ctx.textBaseline = "top";
+  ctx.font = "900 58px Arial";
+  ctx.fillText("VOCÊ É DE " + city.toUpperCase() + "?", 55, 555);
+
+  ctx.font = "700 31px Arial";
+  const product = productName.length > 42 ? productName.slice(0, 42) + "…" : productName;
+  ctx.fillText(product, 58, 630);
+
+  ctx.font = "700 25px Arial";
+  ctx.fillText("Confira no RifasTOP", 58, 686);
+
+  ctx.font = "900 25px Arial";
+  ctx.fillText("RifasTOP", 1010, 735);
+
+  return new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("Não foi possível gerar a arte.")), "image/png", 0.95);
+  });
+}
+
+async function downloadCreative(raffleId: string, productName: string, city: string) {
+  const blob = await createCreativeBlob(raffleId, productName, city);
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "RifasTOP-" + slug(city) + ".png";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
 export default function TurbinarPage() {
   const [raffles, setRaffles] = useState<Raffle[]>([]);
   const [raffleId, setRaffleId] = useState("");
   const [selectedCities, setSelectedCities] = useState<string[]>(CITIES.map((x) => x.city));
   const [destinationType, setDestinationType] = useState("RAFFLE");
-  const [budget, setBudget] = useState("50,00");
+  const [budget, setBudget] = useState("11,00");
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [downloading, setDownloading] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [copied, setCopied] = useState("");
@@ -184,20 +249,19 @@ export default function TurbinarPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           raffleId,
-          name: raffle.productName,
           budget,
-          objective: "Alcançar pessoas que ainda não seguem o Instagram",
+          objective: "Preparar materiais regionais para divulgação manual na Meta",
           creativeType: "SITE",
           destinationType,
           cities: variantsToCreate
         })
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Não foi possível criar a campanha.");
-      setMessage(data.publishedToMeta ? "Campanha criada e publicada na Meta. Cada cidade recebeu um anúncio e um link de rastreamento próprio." : "Campanha criada.");
+      if (!response.ok) throw new Error(data.error || "Não foi possível preparar os materiais.");
+      setMessage(data.citiesCount + " artes regionais foram preparadas. Agora você pode baixar cada peça e publicar manualmente na Meta, escolhendo a cidade e o orçamento.");
       await load();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Não foi possível criar a campanha.");
+      setError(err instanceof Error ? err.message : "Não foi possível preparar os materiais.");
     } finally {
       setSaving(false);
     }
@@ -240,6 +304,22 @@ export default function TurbinarPage() {
     }));
   }
 
+  async function downloadAll(campaign: Campaign) {
+    setDownloading(campaign.id);
+    setError("");
+    try {
+      for (const variant of campaign.variants) {
+        await downloadCreative(campaign.raffleId, campaign.productName, variant.city);
+        await new Promise((resolve) => window.setTimeout(resolve, 250));
+      }
+      setMessage("As " + campaign.variants.length + " artes foram enviadas para os downloads do navegador.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível gerar todas as artes.");
+    } finally {
+      setDownloading("");
+    }
+  }
+
   const totals = campaigns.reduce((acc, campaign) => {
     campaign.variants.forEach((variant) => {
       acc.spend += variant.metrics.spendCents;
@@ -257,18 +337,18 @@ export default function TurbinarPage() {
         <header className="boost-header">
           <div>
             <a href="/admin" className="boost-back">← Voltar para administração</a>
-            <span className="boost-kicker">RIFASTOP • MOTOR DE CAMPANHAS</span>
+            <span className="boost-kicker">RIFASTOP • MOTOR DE MATERIAIS REGIONAIS</span>
             <h1>🚀 Turbinar no Instagram</h1>
-            <p>Prepare campanhas regionais, gere uma variação por cidade e acompanhe o que acontece depois do anúncio.</p>
+            <p>O motor prepara uma arte e uma chamada para cada cidade. A publicação, a localização e o orçamento ficam sob seu controle na Central de Anúncios da Meta.</p>
           </div>
-          <div className="boost-badge">TESTE → MEDIR → COMPARAR → ESCALAR</div>
+          <div className="boost-badge">CRIAR → BAIXAR → PUBLICAR</div>
         </header>
 
         {message && <div className="boost-message success">{message}</div>}
         {error && <div className="boost-message error">{error}</div>}
 
         <section className="boost-summary">
-          <div><strong>{campaigns.length}</strong><span>campanhas salvas</span></div>
+          <div><strong>{campaigns.length}</strong><span>campanhas preparadas</span></div>
           <div><strong>{money(totals.spend)}</strong><span>gasto registrado</span></div>
           <div><strong>{metricNumber(totals.reach)}</strong><span>alcance registrado</span></div>
           <div><strong>{metricNumber(totals.clicks)}</strong><span>cliques rastreados</span></div>
@@ -277,9 +357,8 @@ export default function TurbinarPage() {
         </section>
 
         <section className="boost-card">
-          <div className="boost-section-head">
-            <div><h2>1. Escolha a rifa</h2><p>O criativo e os links ficarão vinculados à campanha escolhida.</p></div>
-          </div>
+          <h2>1. Escolha a rifa</h2>
+          <p>O motor usa automaticamente a primeira imagem oficial cadastrada na rifa.</p>
           {loading ? <p>Carregando rifas...</p> : (
             <select value={raffleId} onChange={(event) => setRaffleId(event.target.value)}>
               <option value="">Selecione uma rifa ativa</option>
@@ -287,19 +366,20 @@ export default function TurbinarPage() {
             </select>
           )}
           {!loading && !raffles.length && <div className="boost-warning">Nenhuma rifa ativa encontrada.</div>}
+          {sourceImageUrl && (
+            <div className="official-creative-source">
+              <strong>🖼️ Imagem oficial</strong>
+              <span>Essa é a fonte usada para gerar as artes de cada cidade.</span>
+              <img src={sourceImageUrl} alt={raffle?.productName || "Imagem oficial"} />
+            </div>
+          )}
         </section>
 
         <section className="boost-card">
-          <h2>2. Objetivo</h2>
-          <div className="boost-objective">
-            <strong>🎯 Alcançar pessoas que ainda não seguem o Instagram</strong>
-            <span>O motor organiza a campanha e mede o resultado. A entrega e a aprovação do anúncio continuam sendo feitas pela Meta.</span>
-          </div>
-        </section>
-
-        <section className="boost-card">
+          <h2>2. Cidades</h2>
+          <p>O motor cria uma variação independente para cada cidade selecionada. Não publica nada na Meta.</p>
           <div className="boost-section-head">
-            <div><h2>3. Região</h2><p>Uma variação e um link de rastreamento serão criados para cada cidade.</p></div>
+            <strong>{selectedCities.length} de {CITIES.length} cidades selecionadas</strong>
             <button className="boost-link" onClick={() => setSelectedCities(selectedCities.length === CITIES.length ? [] : CITIES.map((x) => x.city))}>
               {selectedCities.length === CITIES.length ? "Limpar todas" : "Selecionar todas"}
             </button>
@@ -315,76 +395,88 @@ export default function TurbinarPage() {
         </section>
 
         <section className="boost-card">
-          <h2>4. Imagem oficial e destino</h2>
+          <h2>3. Destino e orçamento de referência</h2>
           <div className="boost-grid-2">
-            <div className="official-creative-source">
-              <strong>🖼️ Imagem oficial da rifa</strong>
-              <span>O motor usa automaticamente a primeira imagem oficial cadastrada e publicada na rifa. Você não precisa escolher outro modelo de imagem.</span>
-              {sourceImageUrl && (
-                <img src={sourceImageUrl} alt={raffle?.productName || "Imagem oficial da rifa"} />
-              )}
-            </div>
-            <label>Destino do anúncio
+            <label>Destino que será colocado no texto/link
               <select value={destinationType} onChange={(event) => setDestinationType(event.target.value)}>
                 <option value="RAFFLE">Página da rifa</option>
                 <option value="HOME">Página principal do RifasTOP</option>
               </select>
             </label>
-          </div>
-
-          {!sourceImageUrl && (
-            <div className="boost-warning">Esta rifa ainda não possui uma imagem oficial cadastrada. Cadastre a imagem na própria rifa para utilizá-la na divulgação.</div>
-          )}
-                </section>
-
-        <section className="boost-card">
-          <h2>5. Orçamento</h2>
-          <div className="boost-grid-2">
-            <label>Orçamento diário na Meta
-              <input value={budget} onChange={(event) => setBudget(event.target.value)} inputMode="decimal" placeholder="50,00" />
+            <label>Orçamento diário de referência
+              <input value={budget} onChange={(event) => setBudget(event.target.value)} inputMode="decimal" placeholder="11,00" />
+              <small className="field-note">Informativo. Este valor não é enviado à Meta; você define o orçamento na publicação manual.</small>
             </label>
-            <div>
-              <strong>Nome da campanha</strong>
-              <div className="boost-objective">
-                <strong>{raffle ? raffle.productName : "Selecione uma rifa"}</strong>
-                <span>O nome da campanha será automaticamente o nome da rifa escolhida.</span>
-              </div>
-            </div>
           </div>
           <div className="boost-create-row">
-            <span>{variantsToCreate.length} anúncios serão publicados • {selectedCities.length} cidades • orçamento diário: {money(Math.round((Number(budget.replace(",", ".")) || 0) * 100))}</span>
+            <span>{variantsToCreate.length} artes e {variantsToCreate.length} chamadas regionais serão preparadas.</span>
             <button className="boost-primary" disabled={!raffle || !variantsToCreate.length || saving} onClick={createCampaign}>
-              {saving ? "Publicando..." : "🚀 Criar e publicar campanha"}
+              {saving ? "Preparando..." : "🚀 Preparar materiais"}
             </button>
           </div>
         </section>
 
         <section className="boost-card boost-next">
-          <h2>🧠 Como o motor vai aprender</h2>
+          <h2>🧭 Depois que o motor preparar</h2>
           <div className="boost-roadmap">
-            <span>01 • Conteúdo</span><span>02 • Publicação</span><span>03 • Alcance</span><span>04 • Métricas</span><span>05 • Resultado</span>
+            <span>01 • Baixar a arte</span><span>02 • Criar anúncio na Meta</span><span>03 • Selecionar somente a cidade</span><span>04 • Definir orçamento</span><span>05 • Publicar</span>
           </div>
-          <p>O motor não tenta burlar a análise da Meta. Ele guarda o padrão de criativo que você usa, separa as regiões e mede os resultados para descobrir onde o investimento está funcionando melhor.</p>
+          <p>Você continua controlando a segmentação geográfica e o orçamento diretamente na Central de Anúncios. O RifasTOP não mantém conexão nem envia campanhas automaticamente para a Meta.</p>
         </section>
 
         <section className="boost-card">
           <div className="boost-section-head">
-            <div><h2>📊 Campanhas e resultados</h2><p>Depois que a campanha rodar, lance aqui os números do Instagram/Meta. Os links por cidade são medidos automaticamente pelo RifasTOP.</p></div>
-            <button className="boost-secondary" onClick={load}>↻ Atualizar</button>
+            <div><h2>🎨 Materiais preparados</h2><p>Cada cidade tem sua própria chamada e sua própria arte. As imagens são geradas em 1200 × 800 px a partir da imagem oficial da rifa.</p></div>
           </div>
-
-          {!campaigns.length && <div className="boost-empty">Nenhuma campanha criada ainda. Monte a primeira acima.</div>}
-
+          {!campaigns.length && <div className="boost-empty">Nenhum material preparado ainda.</div>}
           <div className="campaign-list">
             {campaigns.map((campaign) => (
               <article className="campaign-card" key={campaign.id}>
                 <div className="campaign-head">
                   <div>
-                    <span className="campaign-status">{campaign.status === "READY" ? "PRONTA" : campaign.status}</span>
+                    <span className="campaign-status">MATERIAIS PRONTOS</span>
                     <h3>{campaign.name}</h3>
-                    <p>{campaign.productName} • orçamento {money(campaign.budgetCents)} • {campaign.variants.length} cidades</p>
+                    <p>{campaign.productName} • {campaign.variants.length} cidades</p>
                   </div>
-                  <a href="https://www.facebook.com/business/tools/ads-manager" target="_blank" rel="noreferrer" className="meta-link">Abrir Ads Manager ↗</a>
+                  <button className="boost-primary" disabled={downloading === campaign.id} onClick={() => downloadAll(campaign)}>
+                    {downloading === campaign.id ? "Gerando..." : "⬇️ Baixar todas as artes"}
+                  </button>
+                </div>
+
+                <div className="creative-grid">
+                  {campaign.variants.map((variant) => (
+                    <div className="creative-preview-card" key={variant.id}>
+                      <div className="creative-preview" style={{ aspectRatio: "3 / 2" }}>
+                        {variant.sourceImageUrl ? <img src={variant.sourceImageUrl} alt={variant.city} /> : null}
+                        <div className="creative-overlay">
+                          <b>VOCÊ É DE {variant.city.toUpperCase()}?</b>
+                          <span>{campaign.productName}</span>
+                        </div>
+                      </div>
+                      <strong>{variant.city}</strong>
+                      <small>Arte 1200 × 800 • público separado na Meta</small>
+                      <button
+                        className="boost-secondary"
+                        disabled={downloading === variant.id}
+                        onClick={async () => {
+                          setDownloading(variant.id);
+                          try {
+                            await downloadCreative(campaign.raffleId, campaign.productName, variant.city);
+                            setMessage("Arte de " + variant.city + " baixada.");
+                          } catch (err) {
+                            setError(err instanceof Error ? err.message : "Não foi possível baixar a arte.");
+                          } finally {
+                            setDownloading("");
+                          }
+                        }}
+                      >
+                        {downloading === variant.id ? "Gerando..." : "⬇️ Baixar arte"}
+                      </button>
+                      <button className="boost-secondary" onClick={() => copyText(variant.caption, variant.id)}>
+                        {copied === variant.id ? "✓ Texto copiado" : "📋 Copiar texto"}
+                      </button>
+                    </div>
+                  ))}
                 </div>
 
                 <div className="campaign-table-wrap">
@@ -393,7 +485,7 @@ export default function TurbinarPage() {
                     <tbody>
                       {campaign.variants.map((variant) => (
                         <tr key={variant.id}>
-                          <td><strong>{variant.city}</strong><small>{variant.distanceKm ? variant.distanceKm + " km" : "base"} • {variant.creativeType}</small></td>
+                          <td><strong>{variant.city}</strong><small>{variant.distanceKm ? variant.distanceKm + " km" : "base"}</small></td>
                           <td>{money(variant.metrics.spendCents)}</td>
                           <td>{metricNumber(variant.metrics.reach)}</td>
                           <td>{metricNumber(Number(variant.metrics.trackedClicks ?? 0))}</td>
