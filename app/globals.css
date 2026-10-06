@@ -3603,3 +3603,54 @@ main.section::after {
   color: #000 !important;
   font-weight: 700;
 }
+
+
+/* ===== PADRAO PERMANENTE DOS ATALHOS DA HOME =====
+   Os quatro atalhos existem somente na home. As outras paginas nao
+   exibem essa barra. Novas paginas nao herdam os atalhos, apenas o tema.
+*/
+.home-bottom-links {
+  display: block !important;
+}
+
+.home-bottom-link.instagram-link {
+  background: #0d75e8 !important;
+  color: #fff !important;
+  border: 1px solid #0868c9 !important;
+}
+
+.home-bottom-link.whatsapp-link {
+  background: #8fd3ff !important;
+  color: #10233b !important;
+  border: 1px solid #63bff5 !important;
+}
+
+.home-bottom-link.terms-link {
+  background: #1767d9 !important;
+  color: #fff !important;
+  border: 1px solid #0f56bd !important;
+}
+
+.home-bottom-link.app-link {
+  background: #ffd28a !important;
+  color: #10233b !important;
+  border: 1px solid #f2b95f !important;
+}
+
+/* Nunca mostrar a barra de atalhos em paginas internas/admin. */
+body:not(:has(.home-bottom-links)) .home-quick-links,
+body:not(:has(.home-bottom-links)) .social-links-section {
+  display: none !important;
+}
+
+@media (max-width: 640px) {
+  .home-bottom-link.instagram-link,
+  .home-bottom-link.terms-link {
+    color: #fff !important;
+  }
+
+  .home-bottom-link.whatsapp-link,
+  .home-bottom-link.app-link {
+    color: #10233b !important;
+  }
+}
