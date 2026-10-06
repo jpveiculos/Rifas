@@ -7,15 +7,6 @@ import { getSiteInstagramHandle } from "@/lib/site-settings";
 
 export const dynamic = "force-dynamic";
 
-function displayTopicName(topicName: string | null | undefined, city: string) {
-  const normalized = topicName
-    ?.normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
-
-  return normalized?.startsWith("botupora") || normalized === "paramirim" ? "Paramirim-BA" : topicName ?? city;
-}
-
 export default async function HomePage() {
   const user = await getCurrentUser();
   const siteSettings = await prisma.siteSettings.findUnique({
@@ -26,7 +17,6 @@ export default async function HomePage() {
   const raffles = await prisma.raffle.findMany({
     where: { status: { in: ["ACTIVE", "ENDED"] } },
     orderBy: { createdAt: "desc" },
-    include: { topic: { select: { name: true } } }
   });
 
   const activeRaffles = raffles
@@ -34,8 +24,6 @@ export default async function HomePage() {
     .map((raffle) => ({
       id: raffle.id,
       raffleCode: raffle.raffleCode,
-      city: raffle.city,
-      topicName: displayTopicName(raffle.topic?.name, raffle.city),
       productName: raffle.productName,
       description: raffle.description,
       imageUrls: raffle.imageUrls,
@@ -49,7 +37,6 @@ export default async function HomePage() {
     .map((raffle) => ({
       id: raffle.id,
       raffleCode: raffle.raffleCode,
-      name: raffle.name,
       city: raffle.city,
       topicName: displayTopicName(raffle.topic?.name, raffle.city),
       productName: raffle.productName,
