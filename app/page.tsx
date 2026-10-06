@@ -37,8 +37,6 @@ export default async function HomePage() {
     .map((raffle) => ({
       id: raffle.id,
       raffleCode: raffle.raffleCode,
-      city: raffle.city,
-      topicName: displayTopicName(raffle.topic?.name, raffle.city),
       productName: raffle.productName,
       description: raffle.description,
       imageUrls: raffle.imageUrls,
