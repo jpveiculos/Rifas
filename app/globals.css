@@ -741,6 +741,95 @@ a { color: inherit; text-decoration: none; }
 .account-participations .account-list {
   gap: 12px;
 }
+
+/* Minha Conta — menus agrupados por produto */
+.account-product-list {
+  display: grid;
+  gap: 10px;
+}
+.account-product-group {
+  overflow: hidden;
+  border: 1px solid #dce6f1;
+  border-radius: 14px;
+  background: #fbfdff;
+}
+.account-product-summary {
+  display: grid;
+  grid-template-columns: 86px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  cursor: pointer;
+  list-style: none;
+}
+.account-product-summary::-webkit-details-marker { display: none; }
+.account-product-summary::marker { display: none; }
+.account-product-image {
+  width: 86px;
+  height: 86px;
+  min-width: 86px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: #eef5fb;
+}
+.account-product-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+.account-product-image span {
+  color: #0d63df;
+  font-size: 12px;
+  font-weight: 900;
+}
+.account-product-info {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+.account-product-info strong {
+  color: #17263b;
+  font-size: 17px;
+  line-height: 1.15;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.account-product-info span,
+.account-product-info small {
+  color: #6c7888;
+  font-size: 11px;
+  line-height: 1.25;
+}
+.account-product-info small {
+  color: #9a6800;
+  font-weight: 800;
+}
+.account-product-open {
+  min-width: 58px;
+  padding: 7px 9px;
+  border-radius: 9px;
+  background: #eef6ff;
+  color: #0d63df;
+  font-size: 10px;
+  font-weight: 900;
+  text-align: center;
+}
+.account-product-purchases {
+  display: grid;
+  gap: 8px;
+  padding: 0 10px 10px;
+  border-top: 1px solid #e5edf5;
+}
+.account-product-purchases .account-raffle-card {
+  margin-top: 10px;
+}
 .account-participations .account-raffle-card {
   grid-template-columns: 145px 1fr;
 }
