@@ -7,7 +7,7 @@ import SiteHeader from "@/app/SiteHeader";
 export const dynamic = "force-dynamic";
 
 function formatNumber(value: number | string) {
-  return String(value).padStart(5, "0");
+  return String(value).padStart(4, "0");
 }
 
 function formatDate(value: Date | string) {
