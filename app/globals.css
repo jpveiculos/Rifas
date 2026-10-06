@@ -3513,3 +3513,50 @@ main.section::after {
     padding-bottom: 6px !important;
   }
 }
+
+
+/* ===== BOTAO COMPARTILHAR: alto contraste na pagina da rifa ===== */
+.raffle-detail-page .share-box {
+  background: #cfe8fb !important;
+  border: 2px solid rgba(66,185,255,.5) !important;
+  color: #10233b !important;
+}
+
+.raffle-detail-page .share-box strong {
+  color: #10233b !important;
+  font-weight: 900;
+}
+
+.raffle-detail-page .share-actions {
+  margin-top: 12px;
+}
+
+.raffle-detail-page .share-button.share-main {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  width: 100%;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(100deg, #ffd400, #ffb000) !important;
+  color: #10233b !important;
+  font-size: 16px;
+  font-weight: 900;
+  text-shadow: none;
+  box-shadow: 0 6px 14px rgba(255,184,0,.25);
+  cursor: pointer;
+}
+
+.raffle-detail-page .share-button.share-main:hover {
+  filter: brightness(1.04);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 640px) {
+  .raffle-detail-page .share-button.share-main {
+    min-height: 44px;
+    font-size: 15px;
+  }
+}
