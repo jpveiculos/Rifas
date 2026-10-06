@@ -3654,3 +3654,172 @@ body:not(:has(.home-bottom-links)) .social-links-section {
     color: #10233b !important;
   }
 }
+
+
+/* ===== ADMIN PARTICIPANTES: mesmo padrao visual do site ===== */
+.admin-users-page {
+  background: #000 !important;
+  color: #fff !important;
+}
+
+.admin-users-page > div {
+  max-width: 1180px !important;
+}
+
+.admin-users-page a {
+  color: #fff !important;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.admin-users-page a:hover {
+  color: #ffd21a !important;
+}
+
+.admin-users-page h1,
+.admin-users-page h2,
+.admin-users-page h3 {
+  color: #fff !important;
+}
+
+.admin-users-page > div > div:first-child p {
+  color: rgba(255,255,255,.86) !important;
+}
+
+.admin-users-page > div > div:nth-of-type(2) {
+  margin: 20px 0 !important;
+}
+
+.admin-users-page input {
+  background: #fff !important;
+  color: #10233b !important;
+  border: 1px solid #b8d0e5 !important;
+  border-radius: 10px;
+}
+
+.admin-users-page input::placeholder {
+  color: #718397 !important;
+}
+
+.admin-users-page button {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 700;
+  border-radius: 10px;
+}
+
+.admin-users-page > div > div:last-child {
+  align-items: start !important;
+}
+
+.admin-users-page > div > div:last-child > section {
+  background: #cfe8fb !important;
+  color: #10233b !important;
+  border: 1px solid rgba(66,185,255,.48);
+  border-radius: 18px !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.28);
+  align-self: start !important;
+}
+
+.admin-users-page > div > div:last-child > section h2 {
+  color: #10233b !important;
+}
+
+.admin-users-page > div > div:last-child > section:first-child {
+  background: #0e2b44 !important;
+  color: #fff !important;
+  border-color: rgba(66,185,255,.78);
+}
+
+.admin-users-page > div > div:last-child > section:first-child h2 {
+  color: #fff !important;
+}
+
+.admin-users-page > div > div:last-child > section:first-child button {
+  background: #143955 !important;
+  color: #fff !important;
+  border: 1px solid rgba(66,185,255,.5) !important;
+}
+
+.admin-users-page > div > div:last-child > section:first-child button:hover,
+.admin-users-page > div > div:last-child > section:first-child button[style*="eef5ff"] {
+  background: #1b5278 !important;
+}
+
+.admin-users-page > div > div:last-child > section:first-child button strong,
+.admin-users-page > div > div:last-child > section:first-child button span,
+.admin-users-page > div > div:last-child > section:first-child button small {
+  color: #fff !important;
+}
+
+.admin-users-page > div > div:last-child > section:first-child button strong {
+  color: #8fd3ff !important;
+}
+
+.admin-users-page > div > div:last-child > section:first-child button small {
+  color: rgba(255,255,255,.82) !important;
+}
+
+.admin-users-page > div > div:last-child > section:nth-child(2) h2 {
+  color: #10233b !important;
+}
+
+.admin-users-page > div > div:last-child > section:nth-child(2) label {
+  color: #10233b !important;
+  font-weight: 800;
+}
+
+.admin-users-page > div > div:last-child > section:nth-child(2) p {
+  color: #10233b !important;
+}
+
+.admin-users-page > div > div:last-child > section:nth-child(2) > div {
+  background: #e8f4fd !important;
+  border-color: rgba(66,185,255,.38) !important;
+}
+
+.admin-users-page > div > div:last-child > section:nth-child(2) > div h3,
+.admin-users-page > div > div:last-child > section:nth-child(2) > div strong,
+.admin-users-page > div > div:last-child > section:nth-child(2) > div div,
+.admin-users-page > div > div:last-child > section:nth-child(2) > div small {
+  color: #10233b !important;
+}
+
+.admin-users-page > div > div:last-child > section:nth-child(2) > div > div > div {
+  color: #10233b !important;
+}
+
+.admin-users-page > div > div:nth-of-type(2) button {
+  background: #cfe8fb !important;
+  color: #10233b !important;
+  border: 1px solid rgba(66,185,255,.45) !important;
+}
+
+.admin-users-page > div > div:nth-of-type(2) button:hover {
+  filter: brightness(1.03);
+}
+
+.admin-users-page > div > div:last-child > section:nth-child(2) button {
+  background: #ffd21a !important;
+  color: #10233b !important;
+  border-color: #e8b800 !important;
+}
+
+.admin-users-page > div > div:last-child > section:nth-child(2) button[style*="b00020"] {
+  background: #d9364f !important;
+  color: #fff !important;
+  border-color: #c32d43 !important;
+}
+
+@media (max-width: 760px) {
+  .admin-users-page {
+    padding: 20px 12px !important;
+  }
+
+  .admin-users-page > div > div:last-child {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-users-page > div > div:nth-of-type(2) {
+    gap: 6px !important;
+  }
+}
