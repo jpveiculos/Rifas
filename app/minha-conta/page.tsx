@@ -141,12 +141,19 @@ export default async function AccountPage() {
   }
 
   const groupedParticipations = [...productGroups.entries()]
-    .map(([key, items]) => ({ key, productName: items[0]?.raffle.productName || items[0]?.raffle.name || "Rifa", items }))
+    .map(([key, items]) => ({
+      key,
+      productName: items[0]?.raffle.productName || items[0]?.raffle.name || "Rifa",
+      items: items.filter((item) => item.status !== "PENDING")
+    }))
+    .filter((group) => group.items.length > 0)
     .sort((a, b) => {
       const dateA = a.items[0]?.createdAt?.getTime?.() ?? 0;
       const dateB = b.items[0]?.createdAt?.getTime?.() ?? 0;
       return dateB - dateA;
     });
+
+  const pendingParticipations = participations.filter((item) => item.status === "PENDING");
 
   const recentResults = await prisma.raffle.findMany({
     where: {
@@ -176,6 +183,80 @@ export default async function AccountPage() {
 
       <main className="account-page account-page-clean">
         <div className="container account-container">
+          {pendingParticipations.length > 0 && (
+            <section className="account-pending-section">
+              <details className="account-pending-menu" open>
+                <summary className="account-pending-summary">
+                  <div>
+                    <span className="section-kicker">ATENÇÃO</span>
+                    <strong>Pagamentos pendentes</strong>
+                    <span>{pendingParticipations.length} {pendingParticipations.length === 1 ? "compra aguardando pagamento" : "compras aguardando pagamento"}</span>
+                  </div>
+                  <span className="account-pending-open">Ver agora</span>
+                </summary>
+
+                <div className="account-pending-list">
+                  {pendingParticipations.map((item) => {
+                    const reservation = numbersByReservation.get(item.reservationId);
+                    const mine = participationNumbers(item.reservationId);
+                    const reservationExpiresAt = reservation?.reservedAt
+                      ? new Date(reservation.reservedAt.getTime() + 30 * 60 * 1000)
+                      : null;
+
+                    return (
+                      <article className="account-pending-card" key={item.id}>
+                        <div className="account-pending-card-image">
+                          {item.raffle.imageUrls[0] ? (
+                            <img src={item.raffle.imageUrls[0]} alt={item.raffle.productName} />
+                          ) : (
+                            <span>RifasTOP</span>
+                          )}
+                        </div>
+                        <div className="account-pending-card-content">
+                          <div className="account-status-row">
+                            <span className="account-status status-pending">Aguardando pagamento</span>
+                          </div>
+                          <h3>{item.raffle.productName}</h3>
+                          <p>
+                            {item.raffle.name}
+                            {item.raffle.raffleCode ? " · ID " + item.raffle.raffleCode : ""}
+                          </p>
+                          <div className="account-numbers">
+                            <span>Números reservados</span>
+                            <div>{mine.map((number) => <b key={number}>{formatNumber(number)}</b>)}</div>
+                          </div>
+                          <div className="account-pending-payment">
+                            <strong>Pagamento pendente</strong>
+                            <span>
+                              Você tem 30 minutos para pagar esta reserva.
+                              {reservationExpiresAt
+                                ? " Expira às " + reservationExpiresAt.toLocaleTimeString("pt-BR", {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    timeZone: "America/Sao_Paulo"
+                                  }) + "."
+                                : ""}
+                            </span>
+                            {item.mercadopagoQrCodeBase64 && (
+                              <details className="payment-qr-details">
+                                <summary className="secondary-button account-button payment-link">Pagar agora</summary>
+                                <img
+                                  className="payment-qr"
+                                  src={"data:image/png;base64," + item.mercadopagoQrCodeBase64}
+                                  alt="QR Code para pagamento Pix"
+                                />
+                              </details>
+                            )}
+                          </div>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              </details>
+            </section>
+          )}
+
           <section className="account-section account-participations">
             <div className="account-section-heading">
               <div className="account-title-card">
