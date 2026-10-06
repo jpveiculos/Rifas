@@ -6,6 +6,14 @@ type User = {
   id: string; name: string; city: string; username: string; whatsapp: string;
   createdAt: string; _count: { participations: number; numbers: number };
 };
+type Participation = {
+  id: string; quantity: number; amountInCents: number; status: string; createdAt: string; approvedAt: string | null;
+  raffle: { id: string; raffleCode: string | null; name: string; productName: string; priceInCents: number; status: string };
+};
+type UserNumber = {
+  id: string; number: number; status: string; reservationId: string | null; confirmedAt: string | null;
+  raffle: { id: string; raffleCode: string | null; name: string; productName: string; priceInCents: number };
+};
 
 export default function AdminUsersPage() {
   const [q, setQ] = useState("");
@@ -14,6 +22,8 @@ export default function AdminUsersPage() {
   const [form, setForm] = useState({ name:"", city:"", username:"", whatsapp:"", password:"" });
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [participations, setParticipations] = useState<Participation[]>([]);
+  const [userNumbers, setUserNumbers] = useState<UserNumber[]>([]);
   const [saving, setSaving] = useState(false);
 
   async function load() {
@@ -25,10 +35,19 @@ export default function AdminUsersPage() {
 
   useEffect(() => { load(); }, []);
 
-  function selectUser(user: User) {
+  async function selectUser(user: User) {
     setSelected(user);
     setForm({ name:user.name, city:user.city, username:user.username, whatsapp:user.whatsapp, password:"" });
     setMessage(""); setError("");
+    try {
+      const r = await fetch("/api/admin/usuarios?userId=" + encodeURIComponent(user.id), { cache:"no-store" });
+      const data = await r.json();
+      if (!r.ok) { setError(data.error || "Não foi possível carregar o histórico."); return; }
+      setParticipations(data.participations || []);
+      setUserNumbers(data.numbers || []);
+    } catch {
+      setError("Não foi possível carregar as rifas deste participante.");
+    }
   }
 
   async function save() {
@@ -63,6 +82,8 @@ export default function AdminUsersPage() {
       if (!r.ok) { setError(data.error || "Não foi possível excluir."); return; }
       setMessage("Cadastro excluído.");
       setSelected(null);
+      setParticipations([]);
+      setUserNumbers([]);
       await load();
     } catch { setError("Não foi possível conectar ao servidor."); }
     finally { setSaving(false); }
@@ -114,6 +135,42 @@ export default function AdminUsersPage() {
                 Nova senha (deixe em branco para manter)
                 <input type="password" value={form.password} onChange={e=>setForm(v=>({...v,password:e.target.value}))} style={{display:"block",width:"100%",padding:10,marginTop:4}} />
               </label>
+              <div style={{margin:"18px 0",padding:"14px",background:"#eef5ff",border:"1px solid #cbdff8",borderRadius:10}}>
+                <h3 style={{margin:"0 0 10px"}}>Rifas deste participante</h3>
+                {participations.length===0 ? (
+                  <p style={{margin:0}}>Nenhuma compra/participação registrada.</p>
+                ) : (
+                  <div style={{display:"grid",gap:10}}>
+                    {participations.map(p=>(
+                      <div key={p.id} style={{padding:12,background:"#fff",border:"1px solid #d8e3ef",borderRadius:8}}>
+                        <strong>{p.raffle.productName || p.raffle.name}</strong>
+                        <div>Rifa: {p.raffle.name}{p.raffle.raffleCode ? ` · ID ${p.raffle.raffleCode}` : ""}</div>
+                        <div>{p.quantity} número(s) · R$ {(p.amountInCents/100).toFixed(2).replace(".",",")} · {p.status}</div>
+                        <small>Participação em {new Date(p.createdAt).toLocaleString("pt-BR")}</small>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <h3 style={{margin:"16px 0 10px"}}>Números vinculados</h3>
+                {userNumbers.length===0 ? (
+                  <p style={{margin:0}}>Nenhum número vinculado.</p>
+                ) : (
+                  <div style={{display:"grid",gap:8}}>
+                    {Object.entries(userNumbers.reduce<Record<string, { raffle: UserNumber["raffle"]; numbers: number[] }>>((acc,n)=>{
+                      const key=n.raffle.id;
+                      if(!acc[key]) acc[key]={raffle:n.raffle,numbers:[]};
+                      acc[key].numbers.push(n.number);
+                      return acc;
+                    },{})).map(([key,group])=>(
+                      <div key={key} style={{padding:10,background:"#fff",border:"1px solid #d8e3ef",borderRadius:8}}>
+                        <strong>{group.raffle.productName || group.raffle.name}</strong>
+                        <div>Rifa: {group.raffle.name}{group.raffle.raffleCode ? ` · ID ${group.raffle.raffleCode}` : ""}</div>
+                        <div>Números: {group.numbers.join(", ")}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
               <p><strong>Histórico:</strong> {selected._count.participations} participação(ões) · {selected._count.numbers} número(s) vinculado(s).</p>
               <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
                 <button onClick={save} disabled={saving} style={{padding:"11px 18px"}}>{saving?"Salvando...":"Salvar alterações"}</button>
