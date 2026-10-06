@@ -3823,3 +3823,99 @@ body:not(:has(.home-bottom-links)) .social-links-section {
     gap: 6px !important;
   }
 }
+
+
+/* ===== PARTICIPANTES ADMIN: acabamento final do padrao RifasTOP ===== */
+.admin-users-page {
+  background: #000 !important;
+  color: #fff !important;
+  padding-top: 48px !important;
+}
+
+.admin-users-page .admin-users-panel {
+  background: #0e2b44 !important;
+  color: #fff !important;
+  border: 1px solid rgba(66,185,255,.65) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.35);
+}
+
+.admin-users-page .admin-users-panel h2 {
+  color: #fff !important;
+}
+
+.admin-users-page .admin-users-list > button {
+  background: #143955 !important;
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,.18) !important;
+}
+
+.admin-users-page .admin-users-list > button[style*="eef5ff"] {
+  background: #24567c !important;
+  border-color: #5ebcff !important;
+}
+
+.admin-users-page .admin-users-list > button strong {
+  color: #8fd3ff !important;
+}
+
+.admin-users-page .admin-users-list > button span,
+.admin-users-page .admin-users-list > button small {
+  color: rgba(255,255,255,.9) !important;
+}
+
+.admin-users-page .admin-users-editor label {
+  color: #fff !important;
+  font-weight: 800;
+}
+
+.admin-users-page .admin-users-editor input {
+  background: #fff !important;
+  color: #10233b !important;
+  border: 1px solid #b8d0e5 !important;
+}
+
+.admin-users-page .admin-users-history {
+  background: #cfe8fb !important;
+  border: 1px solid #63bff5 !important;
+  color: #10233b !important;
+}
+
+.admin-users-page .admin-users-history h3,
+.admin-users-page .admin-users-history p,
+.admin-users-page .admin-users-history strong,
+.admin-users-page .admin-users-history div,
+.admin-users-page .admin-users-history small {
+  color: #10233b !important;
+}
+
+.admin-users-page .admin-users-history-card {
+  background: #eaf5fd !important;
+  border: 1px solid #b8d0e5 !important;
+  color: #10233b !important;
+}
+
+.admin-users-page .admin-users-history-card strong {
+  color: #10233b !important;
+}
+
+.admin-users-page .admin-users-history-card div,
+.admin-users-page .admin-users-history-card small {
+  color: #294a64 !important;
+}
+
+.admin-users-page .admin-users-editor > button:not([style*="b00020"]) {
+  background: #ffd21a !important;
+  color: #10233b !important;
+  border: 1px solid #e8b800 !important;
+}
+
+.admin-users-page .admin-users-editor > button[style*="b00020"] {
+  background: #d9364f !important;
+  color: #fff !important;
+}
+
+@media (max-width: 760px) {
+  .admin-users-page {
+    padding-top: 56px !important;
+  }
+}
