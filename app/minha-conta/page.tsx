@@ -131,6 +131,23 @@ export default async function AccountPage() {
     numbersByReservation.set(key, current);
   }
 
+  const productGroups = new Map<string, typeof participations>();
+  for (const participation of participations) {
+    const productName = (participation.raffle.productName || participation.raffle.name || "Rifa").trim();
+    const key = productName.toLocaleLowerCase("pt-BR");
+    const group = productGroups.get(key) ?? [];
+    group.push(participation);
+    productGroups.set(key, group);
+  }
+
+  const groupedParticipations = [...productGroups.entries()]
+    .map(([key, items]) => ({ key, productName: items[0]?.raffle.productName || items[0]?.raffle.name || "Rifa", items }))
+    .sort((a, b) => {
+      const dateA = a.items[0]?.createdAt?.getTime?.() ?? 0;
+      const dateB = b.items[0]?.createdAt?.getTime?.() ?? 0;
+      return dateB - dateA;
+    });
+
   const recentResults = await prisma.raffle.findMany({
     where: {
       status: "ENDED",
@@ -172,87 +189,121 @@ export default async function AccountPage() {
                 <span>Escolha uma rifa para participar e seus números aparecerão aqui.</span>
               </div>
             ) : (
-              <div className="account-list">
-                {participations.map((item) => {
-                  const reservation = numbersByReservation.get(item.reservationId);
-                  const mine = participationNumbers(item.reservationId);
-                  const isPending = item.status === "PENDING";
-                  const isBonus = item.mercadopagoStatus === "bonus";
-                  const reservationExpiresAt = reservation?.reservedAt
-                    ? new Date(reservation.reservedAt.getTime() + 30 * 60 * 1000)
-                    : null;
+              <div className="account-product-list">
+                {groupedParticipations.map((group) => {
+                  const first = group.items[0];
+                  const imageUrl = first?.raffle.imageUrls[0];
+                  const totalNumbers = group.items.reduce((total, item) => total + participationNumbers(item.reservationId).length, 0);
+                  const pendingCount = group.items.filter((item) => item.status === "PENDING").length;
+
                   return (
-                    <article className="account-raffle-card" key={item.id}>
-                      <div className="account-card-image">
-                        {item.raffle.imageUrls[0] ? (
-                          <img src={item.raffle.imageUrls[0]} alt={item.raffle.productName} />
-                        ) : (
-                          <span>RifasTOP</span>
-                        )}
-                      </div>
-                      <div className="account-card-content">
-<div className="account-status-row">
-                          <span className={"account-status " + (isPending ? "status-pending" : "status-active")}>
-                            {isPending ? "Aguardando pagamento" : isBonus ? "Bônus da plataforma" : "Participando"}
+                    <details className="account-product-group" key={group.key}>
+                      <summary className="account-product-summary">
+                        <div className="account-product-image">
+                          {imageUrl ? (
+                            <img src={imageUrl} alt={group.productName} />
+                          ) : (
+                            <span>RifasTOP</span>
+                          )}
+                        </div>
+                        <div className="account-product-info">
+                          <strong>{group.productName}</strong>
+                          <span>
+                            {group.items.length} {group.items.length === 1 ? "compra" : "compras"} · {totalNumbers} {totalNumbers === 1 ? "número" : "números"}
                           </span>
-                          {isBonus && <span className="account-bonus-badge">🎁 Números bônus</span>}
+                          {pendingCount > 0 && (
+                            <small>{pendingCount} {pendingCount === 1 ? "pagamento pendente" : "pagamentos pendentes"}</small>
+                          )}
                         </div>
-                        <h3>{item.raffle.productName}</h3>
-                        <p>
-                          {item.raffle.name}
-                          {item.raffle.raffleCode ? " · ID " + item.raffle.raffleCode : ""}
-                        </p>
-                        {isBonus && (
-                          <div className="account-bonus-message">
-                            🎁 <strong>Você recebeu estes números como bônus da plataforma.</strong>
-                            <span>Não houve cobrança por esta participação.</span>
-                          </div>
-                        )}
-                        <div className="account-numbers">
-                          <span>{isPending ? "Números reservados" : "Seus números"}</span>
-                          <div>
-                            {mine.map((number) => (
-                              <b key={number}>{formatNumber(number)}</b>
-                            ))}
-                          </div>
-                        </div>
+                        <span className="account-product-open">Abrir</span>
+                      </summary>
 
-                        {isPending && (
-                          <div className="account-pending-payment">
-                            <strong>Pagamento pendente</strong>
-                            <span>
-                              Você tem 30 minutos para pagar esta reserva.
-                              {reservationExpiresAt
-                                ? " Expira às " + reservationExpiresAt.toLocaleTimeString("pt-BR", {
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                    timeZone: "America/Sao_Paulo"
-                                  }) + "."
-                                : ""}
-                            </span>
+                      <div className="account-product-purchases">
+                        {group.items.map((item) => {
+                          const reservation = numbersByReservation.get(item.reservationId);
+                          const mine = participationNumbers(item.reservationId);
+                          const isPending = item.status === "PENDING";
+                          const isBonus = item.mercadopagoStatus === "bonus";
+                          const reservationExpiresAt = reservation?.reservedAt
+                            ? new Date(reservation.reservedAt.getTime() + 30 * 60 * 1000)
+                            : null;
 
-                            {item.mercadopagoQrCodeBase64 && (
-                              <details className="payment-qr-details">
-                                <summary className="secondary-button account-button payment-link">
-                                  Pagar agora
-                                </summary>
-                                <img
-                                  className="payment-qr"
-                                  src={"data:image/png;base64," + item.mercadopagoQrCodeBase64}
-                                  alt="QR Code para pagamento Pix"
-                                />
-                              </details>
-                            )}
-                          </div>
-                        )}
+                          return (
+                            <article className="account-raffle-card" key={item.id}>
+                              <div className="account-card-image">
+                                {item.raffle.imageUrls[0] ? (
+                                  <img src={item.raffle.imageUrls[0]} alt={item.raffle.productName} />
+                                ) : (
+                                  <span>RifasTOP</span>
+                                )}
+                              </div>
+                              <div className="account-card-content">
+                                <div className="account-status-row">
+                                  <span className={"account-status " + (isPending ? "status-pending" : "status-active")}>
+                                    {isPending ? "Aguardando pagamento" : isBonus ? "Bônus da plataforma" : "Participando"}
+                                  </span>
+                                  {isBonus && <span className="account-bonus-badge">🎁 Números bônus</span>}
+                                </div>
+                                <h3>{item.raffle.productName}</h3>
+                                <p>
+                                  {item.raffle.name}
+                                  {item.raffle.raffleCode ? " · ID " + item.raffle.raffleCode : ""}
+                                </p>
+                                {isBonus && (
+                                  <div className="account-bonus-message">
+                                    🎁 <strong>Você recebeu estes números como bônus da plataforma.</strong>
+                                    <span>Não houve cobrança por esta participação.</span>
+                                  </div>
+                                )}
+                                <div className="account-numbers">
+                                  <span>{isPending ? "Números reservados" : "Seus números"}</span>
+                                  <div>
+                                    {mine.map((number) => (
+                                      <b key={number}>{formatNumber(number)}</b>
+                                    ))}
+                                  </div>
+                                </div>
 
-                        {!isPending && (
-                          <Link className="secondary-button account-button" href={"/rifa/" + item.raffle.id}>
-                            Ver rifa
-                          </Link>
-                        )}
+                                {isPending && (
+                                  <div className="account-pending-payment">
+                                    <strong>Pagamento pendente</strong>
+                                    <span>
+                                      Você tem 30 minutos para pagar esta reserva.
+                                      {reservationExpiresAt
+                                        ? " Expira às " + reservationExpiresAt.toLocaleTimeString("pt-BR", {
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                            timeZone: "America/Sao_Paulo"
+                                          }) + "."
+                                        : ""}
+                                    </span>
+
+                                    {item.mercadopagoQrCodeBase64 && (
+                                      <details className="payment-qr-details">
+                                        <summary className="secondary-button account-button payment-link">
+                                          Pagar agora
+                                        </summary>
+                                        <img
+                                          className="payment-qr"
+                                          src={"data:image/png;base64," + item.mercadopagoQrCodeBase64}
+                                          alt="QR Code para pagamento Pix"
+                                        />
+                                      </details>
+                                    )}
+                                  </div>
+                                )}
+
+                                {!isPending && (
+                                  <Link className="secondary-button account-button" href={"/rifa/" + item.raffle.id}>
+                                    Ver rifa
+                                  </Link>
+                                )}
+                              </div>
+                            </article>
+                          );
+                        })}
                       </div>
-                    </article>
+                    </details>
                   );
                 })}
               </div>
