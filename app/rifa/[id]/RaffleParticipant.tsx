@@ -135,7 +135,7 @@ export default function RaffleParticipant({ raffleId, priceInCents }: { raffleId
   return (
     <div className="participant-box">
       <h2>Escolha quantos números deseja</h2>
-      <p>Os números disponíveis serão escolhidos automaticamente para você.</p>
+      <p>Os números serão gerados automaticamente.</p>
 
       {!payment && (
         <>
