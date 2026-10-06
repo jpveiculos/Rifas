@@ -3,10 +3,9 @@
 import { useState } from "react";
 
 type Props = {
-  raffleName: string;
 };
 
-export default function ShareRaffle({ raffleName }: Props) {
+export default function ShareRaffle() {
   const [copied, setCopied] = useState(false);
 
   async function share() {
