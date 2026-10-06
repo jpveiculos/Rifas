@@ -3243,3 +3243,97 @@ body {
     letter-spacing: -.1px;
   }
 }
+
+
+/* ===== HOME: quatro links juntos, pequenos e em uma unica linha ===== */
+.home-bottom-links {
+  width: 100%;
+  padding: 6px 0 18px;
+}
+
+.home-bottom-links-row {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.home-bottom-link {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: none;
+  height: 32px;
+  padding: 0 6px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-decoration: none;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: none !important;
+}
+
+.home-bottom-icon {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
+}
+
+.home-bottom-link.instagram-link {
+  color: #fff;
+  background: linear-gradient(135deg, #f9ce34 0%, #ee2a7b 48%, #6228d7 100%);
+}
+
+.home-bottom-link.whatsapp-link {
+  color: #fff;
+  background: #20b858;
+}
+
+.home-bottom-link.terms-link {
+  color: rgba(255,255,255,.9) !important;
+  background: transparent !important;
+  border: 1px solid rgba(255,255,255,.3);
+}
+
+.home-bottom-link.app-link {
+  color: #ffd21a !important;
+  background: transparent !important;
+  border: 1px solid rgba(255,210,26,.48);
+}
+
+@media (max-width: 640px) {
+  .home-bottom-links {
+    padding: 4px 0 16px;
+  }
+
+  .home-bottom-links-row {
+    gap: 4px;
+  }
+
+  .home-bottom-link {
+    height: 28px;
+    padding: 0 4px;
+    gap: 3px;
+    font-size: 8px;
+  }
+
+  .home-bottom-icon {
+    width: 14px;
+    height: 14px;
+    flex-basis: 14px;
+  }
+}
+
+/* Os containers antigos não são mais usados na home, mas ficam neutros caso reapareçam. */
+.home-quick-links {
+  display: none !important;
+}
