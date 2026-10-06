@@ -3185,3 +3185,61 @@ body {
     font-size: 11px;
   }
 }
+
+
+/* ===== HOME: quatro atalhos inferiores em uma unica fileira ===== */
+.home-quick-links {
+  padding: 6px 0 18px !important;
+}
+
+.home-quick-links .quick-links {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  justify-content: center;
+  align-items: center;
+  gap: 7px !important;
+  width: 100%;
+}
+
+.home-quick-links .quick-link {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  min-height: 34px !important;
+  height: 34px;
+  padding: 0 7px !important;
+  border-radius: 999px;
+  font-size: 10px !important;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: none !important;
+}
+
+.social-links-section {
+  padding: 10px 0 4px !important;
+}
+
+.social-links-section .social-links {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+/* Mantem Instagram e WhatsApp acima; os quatro atalhos ficam juntos abaixo. */
+@media (max-width: 640px) {
+  .home-quick-links {
+    padding: 4px 0 18px !important;
+  }
+
+  .home-quick-links .quick-links {
+    gap: 5px !important;
+  }
+
+  .home-quick-links .quick-link {
+    min-height: 30px !important;
+    height: 30px;
+    padding: 0 5px !important;
+    font-size: 9px !important;
+    letter-spacing: -.1px;
+  }
+}
