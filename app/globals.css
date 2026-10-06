@@ -3560,3 +3560,25 @@ main.section::after {
     font-size: 15px;
   }
 }
+
+
+/* ===== PAGINA DA RIFA: corrigir contraste dos textos do seletor ===== */
+.raffle-detail-page .participant-box {
+  color: #10233b !important;
+}
+
+.raffle-detail-page .participant-box > p {
+  color: #536b82 !important;
+  font-weight: 600;
+}
+
+.raffle-detail-page .quantity-option,
+.raffle-detail-page .quantity-option strong {
+  color: #10233b !important;
+}
+
+.raffle-detail-page .quantity-option span,
+.raffle-detail-page .quantity-option.selected span {
+  color: #1767d9 !important;
+  font-weight: 800;
+}
