@@ -3388,6 +3388,42 @@ body {
   font-size: 12px;
 }
 
+
+/* ===== ADMIN: atalho para voltar ao menu ===== */
+.admin-back-to-menu {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 18px;
+  border-radius: 999px;
+  background: #0d63df;
+  border: 2px solid #64c8ff;
+  color: #fff !important;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 900;
+  box-shadow: 0 8px 24px rgba(0,0,0,.28);
+  transition: transform .15s ease, filter .15s ease;
+}
+.admin-back-to-menu:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+@media (max-width: 640px) {
+  .admin-back-to-menu {
+    right: 14px;
+    bottom: 14px;
+    min-height: 44px;
+    padding: 0 15px;
+    font-size: 14px;
+  }
+}
+
 /* ===== PAGINAS INTERNAS: fundo preto limpo, sem "tela" por baixo dos cards ===== */
 .raffle-detail-page,
 .account-page-clean,
