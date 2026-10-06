@@ -2832,3 +2832,47 @@ body {
   .raffle-card .raffle-meta { font-size: 9px; margin: 10px 0; padding-top: 9px; }
   .raffle-card .primary-button { min-height: 42px; font-size: 11px; }
 }
+
+
+/* ===== HOME: texto menor mais legível ===== */
+.raffle-card .raffle-code-public {
+  color: rgba(255,255,255,.90) !important;
+  font-size: 11px;
+  font-weight: 700;
+}
+.raffle-card p {
+  color: rgba(255,255,255,.92) !important;
+  font-size: 14px;
+}
+.raffle-card .raffle-meta {
+  color: rgba(255,255,255,.92) !important;
+  font-size: 12px;
+}
+.raffle-card .card-price small {
+  color: rgba(255,255,255,.88) !important;
+  font-size: 13px;
+}
+.raffle-card .badge {
+  font-size: 11px;
+}
+@media (max-width: 640px) {
+  .raffle-card .raffle-code-public {
+    color: rgba(255,255,255,.92) !important;
+    font-size: 9px;
+  }
+  .raffle-card p {
+    color: rgba(255,255,255,.92) !important;
+    font-size: 11px;
+  }
+  .raffle-card .raffle-meta {
+    color: rgba(255,255,255,.94) !important;
+    font-size: 10px;
+  }
+  .raffle-card .card-price small {
+    color: rgba(255,255,255,.90) !important;
+    font-size: 10px;
+  }
+  .raffle-card .badge {
+    font-size: 9px;
+  }
+}
