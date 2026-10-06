@@ -26,6 +26,22 @@ async function main() {
       min === 1 &&
       max === raffle.totalNumbers;
 
+    const isAlreadyRenumbered =
+      raffle.totalNumbers === 10000 &&
+      count === 10000 &&
+      min === 0 &&
+      max === 9999;
+
+    if (isAlreadyRenumbered) {
+      await prisma.raffle.update({
+        where: { id: raffle.id },
+        data: { totalNumbers: 9999 }
+      });
+      migrated += 1;
+      console.log(`Faixa corrigida: ${raffle.productName} (${raffle.id})`);
+      continue;
+    }
+
     if (!isLegacy) continue;
 
     await prisma.$transaction(async (tx) => {
