@@ -90,7 +90,7 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <main style={{minHeight:"100vh",padding:"32px 16px",background:"#f5f5f5",fontFamily:"Arial, Helvetica, sans-serif"}}>
+    <main className="admin-users-page" style={{minHeight:"100vh",padding:"32px 16px",fontFamily:"Arial, Helvetica, sans-serif"}}>
       <div style={{maxWidth:1100,margin:"0 auto"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:12,flexWrap:"wrap"}}>
           <div>
