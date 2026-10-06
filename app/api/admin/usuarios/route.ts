@@ -11,6 +11,8 @@ export async function GET(request: Request) {
   const q = String(url.searchParams.get("q") ?? "").trim();
 
   const userId = String(url.searchParams.get("userId") ?? "").trim();
+  const page = Math.max(1, Number(url.searchParams.get("page") ?? "1") || 1);
+  const pageSize = 30;
 
   const users = await prisma.user.findMany({
     where: q
@@ -23,7 +25,8 @@ export async function GET(request: Request) {
         }
       : undefined,
     orderBy: { createdAt: "desc" },
-    take: 50,
+    take: pageSize + 1,
+    skip: userId ? 0 : (page - 1) * pageSize,
     select: {
       id: true, name: true, city: true, username: true, whatsapp: true,
       createdAt: true,
@@ -31,7 +34,10 @@ export async function GET(request: Request) {
     }
   });
 
-  if (!userId) return NextResponse.json({ users });
+  if (!userId) {
+    const hasMore = users.length > pageSize;
+    return NextResponse.json({ users: hasMore ? users.slice(0, pageSize) : users, hasMore, page, pageSize });
+  }
 
   const [participations, numbers] = await Promise.all([
     prisma.raffleParticipation.findMany({
