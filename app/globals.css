@@ -446,63 +446,719 @@ a { color: inherit; text-decoration: none; }
   }
 }
 
-/* Minha Área */
-.account-page { min-height: calc(100vh - 78px); padding: 42px 0 76px; background: linear-gradient(180deg, #eef6ff 0, #f7f9fc 300px); }
-.account-container { max-width: 1060px; }
-.account-section { margin-top: 24px; padding: 24px; border: 1px solid #dce6f1; border-radius: 20px; background: #fff; box-shadow: 0 8px 24px rgba(22,42,65,.05); }
-.account-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 18px; }
-.account-section-heading h2 { margin: 5px 0 0; font-size: 25px; letter-spacing: -.7px; }
-.account-section-heading > span { color: #728096; font-size: 13px; font-weight: 800; }
-.account-list { display: grid; gap: 14px; }
-.account-raffle-card { display: grid; grid-template-columns: 180px 1fr; overflow: hidden; border: 1px solid #e0e7ef; border-radius: 16px; background: #fbfdff; }
-.account-card-image {
-  height: 180px;
-  min-height: 180px;
+/* Minha Conta — estrutura única e limpa */
+.account-page-clean {
+  min-height: calc(100vh - 78px);
+  padding: 28px 0 145px;
+  background: #f5f8fc;
+}
+
+.account-page-clean .account-section {
+  margin-top: 0;
+  padding: 22px;
+  border: 1px solid #dce6f1;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(22,42,65,.05);
+}
+
+.account-page-clean .account-section + .account-section {
+  margin-top: 18px;
+}
+
+.account-page-clean .account-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.account-page-clean .account-section-heading h1,
+.account-page-clean .account-section-heading h2 {
+  margin: 4px 0 0;
+}
+
+.account-title-card {
+  display: inline-flex;
+  align-items: center;
+  min-height: 58px;
+  padding: 10px 22px;
+  border: 1px solid #d7e2ef;
+  border-radius: 15px;
+  background: #eaf2fb;
+}
+
+.account-title-card h1 {
+  margin: 0 !important;
+  color: #17263b;
+  font-size: 30px;
+  line-height: 1;
+  white-space: nowrap;
+  letter-spacing: -.8px;
+}
+
+.account-product-list {
+  display: grid;
+  gap: 10px;
+}
+
+.account-product-group {
+  overflow: hidden;
+  border: 1px solid #dce6f1;
+  border-radius: 14px;
+  background: #fbfdff;
+}
+
+.account-product-summary {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.account-product-summary::-webkit-details-marker,
+.account-product-summary::marker {
+  display: none;
+}
+
+.account-product-image {
+  width: 82px;
+  height: 82px;
+  min-width: 82px;
+  overflow: hidden;
   display: grid;
   place-items: center;
+  border-radius: 10px;
+  background: #eef5fb;
+}
+
+.account-product-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+.account-product-image span {
+  color: #0d63df;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.account-product-info {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.account-product-info strong {
   overflow: hidden;
+  color: #17263b;
+  font-size: 17px;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-product-info span,
+.account-product-info small {
+  color: #6c7888;
+  font-size: 11px;
+  line-height: 1.25;
+}
+
+.account-product-info small {
+  color: #9a6800;
+  font-weight: 800;
+}
+
+.account-product-open {
+  min-width: 58px;
+  padding: 7px 9px;
+  border-radius: 9px;
+  background: #eef6ff;
+  color: #0d63df;
+  font-size: 10px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.account-product-purchases {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid #e5edf5;
+}
+
+.account-raffle-card {
+  display: grid;
+  grid-template-columns: 145px minmax(0, 1fr);
+  overflow: hidden;
+  min-width: 0;
+  border: 1px solid #cfe1ef;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #f8fcff, #fffdf3);
+}
+
+.account-card-image {
+  width: 145px;
+  height: 145px;
+  min-height: 145px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
   background: linear-gradient(135deg, #0d63df, #12a0ec);
   color: #fff;
   font-weight: 900;
 }
+
 .account-card-image img {
   display: block;
   width: 100%;
   height: 100%;
-  min-height: 0;
-  max-width: 100%;
   object-fit: contain;
   object-position: center;
 }
-.account-card-content { padding: 18px; }
-.account-card-content h3 { margin: 9px 0 4px; font-size: 20px; color: #17263b; }
-.account-card-content > p { margin: 0; color: #6c7888; font-size: 13px; }
-.account-status { display: inline-flex; padding: 6px 10px; border-radius: 999px; font-size: 11px; font-weight: 900; }
-.status-active { background: #dff8e9; color: #128c4d; }
-.status-pending { background: #fff2cf; color: #9a6800; }
-.account-pending-payment {
-  margin-top: 14px;
-  padding: 14px;
-  border: 1px solid #f0d98c;
-  border-radius: 12px;
-  background: #fffaf0;
-  display: grid;
-  gap: 8px;
+
+.account-card-content {
+  min-width: 0;
+  padding: 15px;
 }
-.account-pending-payment > strong { color: #8a5d00; font-size: 15px; }
-.account-pending-payment > span { color: #6b7280; font-size: 12px; line-height: 1.45; }
-.account-numbers { margin-top: 15px; padding: 12px; border-radius: 12px; background: #f1f7fd; }
-.account-numbers > span { display: block; margin-bottom: 8px; color: #64748b; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
-.account-numbers > div { display: flex; flex-wrap: wrap; gap: 7px; }
-.account-numbers b { min-width: 55px; padding: 8px 7px; border-radius: 8px; text-align: center; background: #0d63df; color: #fff; font-size: 12px; }
-.account-numbers b.winning-number { background: #f2b500; color: #17263b; box-shadow: 0 0 0 2px #ffe68b; }
-.account-button { width: 100%; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 0 16px; border: 1px solid #d4dfeb; border-radius: 10px; background: #fff; color: #0d63df; font-weight: 800; }
-.account-result { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; padding: 13px 14px; border-radius: 11px; background: #fff5c9; color: #745100; }
-.account-result span { font-size: 12px; font-weight: 700; }
-.account-result strong { font-size: 18px; }
-.account-empty { padding: 28px; border: 2px dashed #d7e0ea; border-radius: 14px; text-align: center; color: #68778a; }
-.account-empty strong, .account-empty span { display: block; }
-.account-empty span { margin-top: 6px; font-size: 13px; }
+
+.account-card-content h3 {
+  margin: 7px 0 3px;
+  color: #17263b;
+  font-size: 19px;
+}
+
+.account-card-content > p {
+  margin: 0;
+  color: #6c7888;
+  font-size: 13px;
+}
+
+.account-status-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.account-status {
+  display: inline-flex;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.status-active {
+  background: #dff8e9;
+  color: #128c4d;
+}
+
+.status-pending {
+  background: #fff2cf;
+  color: #9a6800;
+}
+
+.account-numbers {
+  margin-top: 11px;
+  padding: 9px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #eaf6ff, #fff8dc);
+}
+
+.account-numbers > span {
+  display: block;
+  margin-bottom: 8px;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+.account-numbers > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.account-numbers b {
+  min-width: 48px;
+  padding: 7px 6px;
+  border-radius: 8px;
+  background: #0d63df;
+  color: #fff;
+  font-size: 12px;
+  text-align: center;
+}
+
+.account-numbers b.winning-number {
+  background: #f2b500;
+  color: #17263b;
+  box-shadow: 0 0 0 2px #ffe68b;
+}
+
+.account-button {
+  width: 100%;
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  padding: 0 16px;
+  border: 1px solid #d4dfeb;
+  border-radius: 10px;
+  background: #fff;
+  color: #0d63df;
+  font-weight: 800;
+}
+
+.account-results-list {
+  display: grid;
+  gap: 9px;
+}
+
+.account-result-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 13px 15px;
+  border: 1px solid #cfe1ef;
+  border-radius: 13px;
+  background: linear-gradient(135deg, #f5fbff, #fffbed);
+}
+
+.account-result-main {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.account-result-main > span {
+  color: #137747;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+.account-result-main strong {
+  color: #17263b;
+  font-size: 15px;
+}
+
+.account-result-main small {
+  overflow: hidden;
+  color: #6b7888;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-result-number {
+  min-width: 112px;
+  padding-left: 13px;
+  border-left: 1px solid #dce6f1;
+  text-align: right;
+}
+
+.account-result-number span,
+.account-result-number small {
+  display: block;
+  color: #758296;
+  font-size: 9px;
+}
+
+.account-result-number strong {
+  display: block;
+  margin: 2px 0;
+  color: #e0a800;
+  font-size: 17px;
+  letter-spacing: .4px;
+}
+
+.account-empty {
+  padding: 28px;
+  border: 2px dashed #d7e0ea;
+  border-radius: 14px;
+  color: #68778a;
+  text-align: center;
+}
+
+.account-empty strong,
+.account-empty span {
+  display: block;
+}
+
+.account-empty span {
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.account-empty-small {
+  padding: 18px 12px;
+}
+
+.account-pending-section {
+  margin-bottom: 18px;
+}
+
+.account-pending-menu {
+  overflow: hidden;
+  border: 2px solid #f2b800;
+  border-radius: 18px;
+  background: #fff8d9;
+  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+}
+
+.account-pending-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px 18px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.account-pending-summary::-webkit-details-marker {
+  display: none;
+}
+
+.account-pending-summary > div {
+  display: grid;
+  gap: 3px;
+}
+
+.account-pending-summary .section-kicker {
+  color: #9a6800;
+}
+
+.account-pending-summary strong {
+  color: #10233b;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.account-pending-summary span:not(.section-kicker) {
+  color: #5f6f80;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.account-pending-open {
+  flex: 0 0 auto;
+  padding: 9px 14px;
+  border-radius: 999px;
+  background: #ffd21a;
+  color: #10233b;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.account-pending-list {
+  display: grid;
+  gap: 12px;
+  padding: 0 14px 14px;
+}
+
+.account-pending-card {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid #e1bf42;
+  border-radius: 14px;
+  background: #fffdf0;
+}
+
+.account-pending-card-image {
+  min-height: 150px;
+  overflow: hidden;
+  background: #0e2b44;
+}
+
+.account-pending-card-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.account-pending-card-image span {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  color: #fff;
+  font-weight: 900;
+}
+
+.account-pending-card-content {
+  min-width: 0;
+  padding: 13px;
+}
+
+.account-pending-card-content h3 {
+  margin: 7px 0 3px;
+  color: #10233b;
+  font-size: 18px;
+}
+
+.account-pending-card-content p {
+  margin: 0 0 10px;
+  color: #5f6f80;
+  font-size: 12px;
+}
+
+.account-pending-card .account-numbers {
+  margin-top: 8px;
+  background: #f7fbff;
+}
+
+.account-pending-card .account-pending-payment {
+  margin-top: 10px;
+}
+
+.account-page-clean .share-box {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 12px 0 0;
+  overflow: hidden;
+  text-align: center;
+}
+
+.account-page-clean .share-box > div:first-child {
+  width: 100%;
+  min-width: 0;
+}
+
+.account-page-clean .share-box strong {
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.account-page-clean .share-actions {
+  width: 100%;
+  justify-content: center;
+}
+
+.account-page-clean .share-main {
+  margin: 0 auto;
+}
+
+.account-footer {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+@media (max-width: 700px) {
+  .account-page-clean {
+    padding: 20px 0 145px;
+  }
+
+  .account-page-clean .account-section {
+    padding: 15px;
+  }
+
+  .account-page-clean .account-section-heading {
+    margin-bottom: 13px;
+  }
+
+  .account-title-card {
+    width: 100%;
+    min-height: 54px;
+    padding: 9px 17px;
+  }
+
+  .account-title-card h1 {
+    font-size: clamp(23px, 7vw, 29px);
+  }
+
+  .account-product-summary {
+    grid-template-columns: 64px minmax(0, 1fr) auto;
+    gap: 9px;
+    padding: 8px;
+  }
+
+  .account-product-image {
+    width: 64px;
+    height: 64px;
+    min-width: 64px;
+    border-radius: 8px;
+  }
+
+  .account-product-info strong {
+    font-size: 15px;
+  }
+
+  .account-product-info span,
+  .account-product-info small {
+    font-size: 10px;
+  }
+
+  .account-product-open {
+    min-width: 52px;
+    padding: 7px 8px;
+    font-size: 9px;
+  }
+
+  .account-product-purchases {
+    padding: 8px;
+  }
+
+  .account-raffle-card {
+    grid-template-columns: 84px minmax(0, 1fr);
+    border-radius: 11px;
+  }
+
+  .account-card-image {
+    width: 84px;
+    height: 84px;
+    min-height: 84px;
+  }
+
+  .account-card-content {
+    padding: 9px;
+  }
+
+  .account-card-content h3 {
+    margin: 4px 0 2px;
+    font-size: 14px;
+  }
+
+  .account-card-content > p {
+    font-size: 9px;
+  }
+
+  .account-status {
+    padding: 4px 6px;
+    font-size: 8px;
+  }
+
+  .account-numbers {
+    margin-top: 6px;
+    padding: 6px;
+  }
+
+  .account-numbers > span {
+    margin-bottom: 4px;
+    font-size: 8px;
+  }
+
+  .account-numbers > div {
+    gap: 4px;
+  }
+
+  .account-numbers b {
+    min-width: 40px;
+    padding: 5px 4px;
+    font-size: 9px;
+  }
+
+  .account-button {
+    min-height: 30px;
+    margin-top: 6px;
+    padding: 0 9px;
+    font-size: 9px;
+  }
+
+  .account-results-section .account-section-heading h2 {
+    font-size: 21px;
+  }
+
+  .account-results-section .account-section-heading > span {
+    font-size: 10px;
+  }
+
+  .account-result-card {
+    grid-template-columns: 1fr;
+    gap: 9px;
+    padding: 11px 12px;
+  }
+
+  .account-result-number {
+    min-width: 0;
+    padding: 8px 0 0;
+    border-left: 0;
+    border-top: 1px solid #dce6f1;
+    text-align: left;
+  }
+
+  .account-result-number strong {
+    font-size: 15px;
+  }
+
+  .account-pending-summary {
+    padding: 14px;
+  }
+
+  .account-pending-summary strong {
+    font-size: 17px;
+  }
+
+  .account-pending-summary span:not(.section-kicker) {
+    font-size: 11px;
+  }
+
+  .account-pending-open {
+    padding: 8px 10px;
+    font-size: 10px;
+  }
+
+  .account-pending-card {
+    grid-template-columns: 86px minmax(0, 1fr);
+  }
+
+  .account-pending-card-image {
+    min-height: 130px;
+  }
+
+  .account-pending-card-content {
+    padding: 10px;
+  }
+
+  .account-pending-card-content h3 {
+    font-size: 15px;
+  }
+
+  .account-page-clean .share-box {
+    padding: 12px 10px;
+    gap: 9px;
+    border-radius: 14px;
+  }
+
+  .account-page-clean .share-box strong {
+    font-size: 12px;
+    line-height: 1.25;
+  }
+
+  .account-page-clean .share-main {
+    min-height: 38px;
+    padding: 0 20px;
+    font-size: 14px;
+  }
+
+  .account-footer .footer-inner {
+    min-height: 48px;
+  }
+
+  .account-footer .footer-contact {
+    white-space: nowrap;
+  }
+}
 
 .raffle-result-admin { display: flex; align-items: center; gap: 7px; width: 100%; margin-top: 8px; }
 .raffle-result-admin input { min-height: 40px; width: 120px; padding: 0 10px; border: 1px solid #d7e0ea; border-radius: 9px; background: #fff; }
@@ -1523,226 +2179,6 @@ a { color: inherit; text-decoration: none; }
     width: 22px;
     height: 22px;
     flex-basis: 22px;
-  }
-}
-
-
-/* Minha Conta — cartões ainda mais compactos no celular */
-@media (max-width: 700px) {
-  .account-page-clean .account-list {
-    gap: 8px;
-  }
-
-  .account-page-clean .account-raffle-card {
-    grid-template-columns: 82px minmax(0, 1fr);
-    border-radius: 11px;
-  }
-
-  .account-page-clean .account-card-image,
-  .account-page-clean .account-card-image img {
-    min-height: 82px;
-    height: 100%;
-  }
-
-  .account-page-clean .account-card-content {
-    padding: 8px;
-  }
-
-  .account-page-clean .account-card-content h3 {
-    margin: 4px 0 2px;
-    font-size: 14px;
-    line-height: 1.1;
-  }
-
-  .account-page-clean .account-card-content > p {
-    font-size: 9px;
-    line-height: 1.15;
-  }
-
-  .account-page-clean .account-status {
-    padding: 3px 6px;
-    font-size: 7px;
-  }
-
-  .account-page-clean .account-numbers {
-    margin-top: 6px;
-    padding: 6px;
-    border-radius: 8px;
-  }
-
-  .account-page-clean .account-numbers > span {
-    margin-bottom: 4px;
-    font-size: 8px;
-  }
-
-  .account-page-clean .account-numbers > div {
-    gap: 4px;
-  }
-
-  .account-page-clean .account-numbers b {
-    min-width: 34px;
-    padding: 4px 3px;
-    border-radius: 6px;
-    font-size: 9px;
-  }
-
-  .account-page-clean .account-button {
-    min-height: 29px;
-    margin-top: 5px;
-    padding: 0 8px;
-    border-radius: 8px;
-    font-size: 9px;
-  }
-}
-
-
-/* Minha Conta — cards baixos/achatados para ocupar menos espaço vertical */
-@media (max-width: 700px) {
-  .account-page-clean .account-raffle-card {
-    grid-template-columns: 72px minmax(0, 1fr);
-    min-height: 0;
-    border-radius: 10px;
-  }
-
-  .account-page-clean .account-card-image,
-  .account-page-clean .account-card-image img {
-    min-height: 0;
-    height: 100%;
-    max-height: 122px;
-  }
-
-  .account-page-clean .account-card-content {
-    padding: 7px 8px;
-    min-height: 0;
-  }
-
-  .account-page-clean .account-card-content h3 {
-    margin: 3px 0 1px;
-    font-size: 14px;
-    line-height: 1.05;
-  }
-
-  .account-page-clean .account-card-content > p {
-    font-size: 8px;
-    line-height: 1.05;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .account-page-clean .account-status {
-    padding: 3px 6px;
-    font-size: 7px;
-    line-height: 1;
-  }
-
-  .account-page-clean .account-numbers {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    margin-top: 5px;
-    padding: 5px 6px;
-    border-radius: 7px;
-  }
-
-  .account-page-clean .account-numbers > span {
-    margin: 0;
-    font-size: 7px;
-    white-space: nowrap;
-  }
-
-  .account-page-clean .account-numbers > div {
-    gap: 3px;
-    flex: 1;
-  }
-
-  .account-page-clean .account-numbers b {
-    min-width: 45px;
-    padding: 5px 4px;
-    border-radius: 6px;
-    font-size: 10px;
-    line-height: 1;
-  }
-
-  .account-page-clean .account-button {
-    min-height: 28px;
-    margin-top: 5px;
-    padding: 0 8px;
-    border-radius: 7px;
-    font-size: 9px;
-    line-height: 1;
-  }
-}
-
-
-/* Minha Conta — compactação máxima, mantendo os números destacados */
-@media (max-width: 700px) {
-  .account-page-clean .account-list {
-    gap: 5px;
-  }
-
-  .account-page-clean .account-raffle-card {
-    grid-template-columns: 58px minmax(0, 1fr);
-    border-radius: 8px;
-  }
-
-  .account-page-clean .account-card-image {
-    height: 88px;
-    min-height: 88px;
-    max-height: 88px;
-  }
-
-  .account-page-clean .account-card-image img {
-    height: 100%;
-    min-height: 0;
-    max-height: none;
-  }
-
-  .account-page-clean .account-card-content {
-    padding: 4px 6px;
-  }
-
-  .account-page-clean .account-card-content h3 {
-    margin: 1px 0 0;
-    font-size: 11px;
-    line-height: 1;
-  }
-
-  .account-page-clean .account-card-content > p {
-    font-size: 7px;
-    line-height: 1;
-  }
-
-  .account-page-clean .account-status {
-    padding: 2px 4px;
-    font-size: 6px;
-  }
-
-  .account-page-clean .account-numbers {
-    margin-top: 3px;
-    padding: 3px 5px;
-    gap: 5px;
-    border-radius: 5px;
-  }
-
-  .account-page-clean .account-numbers > span {
-    font-size: 6px;
-  }
-
-  /* O número permanece praticamente no tamanho atual. */
-  .account-page-clean .account-numbers b {
-    min-width: 45px;
-    padding: 5px 4px;
-    font-size: 10px;
-    border-radius: 5px;
-  }
-
-  .account-page-clean .account-button {
-    min-height: 22px;
-    margin-top: 3px;
-    padding: 0 6px;
-    border-radius: 5px;
-    font-size: 7px;
   }
 }
 
@@ -4355,160 +4791,4 @@ body:not(:has(.home-bottom-links)) .social-links-section {
   background: #ffe1e5 !important;
   color: #9d1c30 !important;
   border: 1px solid #ef8c9c;
-}
-
-
-/* ===== MINHA CONTA: menus por produto + pagamentos pendentes em destaque ===== */
-.account-pending-section {
-  margin-bottom: 18px;
-}
-
-.account-pending-menu {
-  overflow: hidden;
-  border: 2px solid #f2b800;
-  border-radius: 18px;
-  background: #fff8d9 !important;
-  box-shadow: 0 8px 24px rgba(0,0,0,.22);
-}
-
-.account-pending-summary {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 16px 18px;
-  cursor: pointer;
-  list-style: none;
-  color: #10233b !important;
-}
-
-.account-pending-summary::-webkit-details-marker {
-  display: none;
-}
-
-.account-pending-summary > div {
-  display: grid;
-  gap: 3px;
-}
-
-.account-pending-summary .section-kicker {
-  color: #9a6800 !important;
-}
-
-.account-pending-summary strong {
-  font-size: 20px;
-  font-weight: 900;
-  color: #10233b !important;
-}
-
-.account-pending-summary span:not(.section-kicker) {
-  color: #5f6f80 !important;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.account-pending-open {
-  flex: 0 0 auto;
-  padding: 9px 14px;
-  border-radius: 999px;
-  background: #ffd21a !important;
-  color: #10233b !important;
-  font-size: 12px;
-  font-weight: 900;
-}
-
-.account-pending-list {
-  display: grid;
-  gap: 12px;
-  padding: 0 14px 14px;
-}
-
-.account-pending-card {
-  display: grid;
-  grid-template-columns: 110px minmax(0, 1fr);
-  overflow: hidden;
-  border: 1px solid #e1bf42;
-  border-radius: 14px;
-  background: #fffdf0 !important;
-}
-
-.account-pending-card-image {
-  min-height: 150px;
-  background: #0e2b44;
-}
-
-.account-pending-card-image img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.account-pending-card-image span {
-  display: grid;
-  place-items: center;
-  height: 100%;
-  color: #fff;
-  font-weight: 900;
-}
-
-.account-pending-card-content {
-  padding: 13px;
-  color: #10233b !important;
-}
-
-.account-pending-card-content h3 {
-  margin: 7px 0 3px;
-  color: #10233b !important;
-  font-size: 18px;
-}
-
-.account-pending-card-content p {
-  margin: 0 0 10px;
-  color: #5f6f80 !important;
-  font-size: 12px;
-}
-
-.account-pending-card .account-numbers {
-  margin-top: 8px;
-  background: #f7fbff !important;
-}
-
-.account-pending-card .account-pending-payment {
-  margin-top: 10px;
-}
-
-@media (max-width: 640px) {
-  .account-pending-summary {
-    padding: 14px;
-  }
-
-  .account-pending-summary strong {
-    font-size: 17px;
-  }
-
-  .account-pending-summary span:not(.section-kicker) {
-    font-size: 11px;
-  }
-
-  .account-pending-open {
-    padding: 8px 10px;
-    font-size: 10px;
-  }
-
-  .account-pending-card {
-    grid-template-columns: 86px minmax(0, 1fr);
-  }
-
-  .account-pending-card-image {
-    min-height: 130px;
-  }
-
-  .account-pending-card-content {
-    padding: 10px;
-  }
-
-  .account-pending-card-content h3 {
-    font-size: 15px;
-  }
 }
