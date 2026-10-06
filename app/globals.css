@@ -212,7 +212,7 @@ a { color: inherit; text-decoration: none; }
 
 .quantity-selector {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
   margin: 8px 0 16px;
 }
@@ -374,7 +374,7 @@ a { color: inherit; text-decoration: none; }
   .info-label { font-size: 12px; }
   .info-value { font-size: 15px; }
   .share-box { padding: 16px 13px; }
-  .quantity-selector { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .quantity-selector { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
   .quantity-option { min-height: 68px; border-radius: 12px; }
   .quantity-option strong { font-size: 21px; }
   .quantity-option span { font-size: 10px; }
