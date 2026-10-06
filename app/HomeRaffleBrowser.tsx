@@ -6,9 +6,6 @@ import { FormEvent, useState } from "react";
 type RaffleCardData = {
   id: string;
   raffleCode: string | null;
-  name: string;
-  city: string;
-  topicName: string;
   productName: string;
   description: string;
   imageUrls: string[];
@@ -24,18 +21,16 @@ type Props = {
 };
 
 function formatNumber(value: number | string) {
-  return String(value).padStart(5, "0");
+  return String(value).padStart(4, "0");
 }
 
 function RaffleCard({
   raffle,
   finished = false,
-  isLoggedIn,
   onParticipate
 }: {
   raffle: RaffleCardData;
   finished?: boolean;
-  isLoggedIn: boolean;
   onParticipate: (raffleId: string) => void;
 }) {
   const winningNumbers = raffle.winningNumbers?.length > 0
@@ -92,12 +87,10 @@ function RaffleCard({
 function RaffleGroups({
   raffles,
   finished = false,
-  isLoggedIn,
   onParticipate
 }: {
   raffles: RaffleCardData[];
   finished?: boolean;
-  isLoggedIn: boolean;
   onParticipate: (raffleId: string) => void;
 }) {
   if (raffles.length === 0) return null;
@@ -114,7 +107,6 @@ function RaffleGroups({
             <RaffleCard
               raffle={raffle}
               finished={finished}
-              isLoggedIn={isLoggedIn}
               onParticipate={onParticipate}
               key={raffle.id}
             />
