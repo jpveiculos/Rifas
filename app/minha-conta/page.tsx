@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import SiteHeader from "@/app/SiteHeader";
+import PaymentCountdown from "./PaymentCountdown";
 
 export const dynamic = "force-dynamic";
 
@@ -86,7 +87,9 @@ export default async function AccountPage() {
           raffleCode: true,
           name: true,
           productName: true,
-          imageUrls: true
+          imageUrls: true,
+          // prazo da cobrança Pix; usado pela contagem regressiva em tempo real
+          mercadopagoExpiresAt: true
         }
       }
     }
@@ -199,9 +202,9 @@ export default async function AccountPage() {
                   {pendingParticipations.map((item) => {
                     const reservation = numbersByReservation.get(item.reservationId);
                     const mine = participationNumbers(item.reservationId);
-                    const reservationExpiresAt = reservation?.reservedAt
-                      ? new Date(reservation.reservedAt.getTime() + 30 * 60 * 1000)
-                      : null;
+                    const paymentExpiresAt = item.mercadopagoExpiresAt
+                      ? item.mercadopagoExpiresAt.toISOString()
+                      : new Date(item.createdAt.getTime() + 30 * 60 * 1000).toISOString();
 
                     return (
                       <article className="account-pending-card" key={item.id}>
@@ -228,14 +231,7 @@ export default async function AccountPage() {
                           <div className="account-pending-payment">
                             <strong>Pagamento pendente</strong>
                             <span>
-                              Você tem 30 minutos para pagar esta reserva.
-                              {reservationExpiresAt
-                                ? " Expira às " + reservationExpiresAt.toLocaleTimeString("pt-BR", {
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                    timeZone: "America/Sao_Paulo"
-                                  }) + "."
-                                : ""}
+<PaymentCountdown expiresAt={paymentExpiresAt} />
                             </span>
                             {item.mercadopagoQrCodeBase64 && (
                               <details className="payment-qr-details">
@@ -305,9 +301,9 @@ export default async function AccountPage() {
                           const mine = participationNumbers(item.reservationId);
                           const isPending = item.status === "PENDING";
                           const isBonus = item.mercadopagoStatus === "bonus";
-                          const reservationExpiresAt = reservation?.reservedAt
-                            ? new Date(reservation.reservedAt.getTime() + 30 * 60 * 1000)
-                            : null;
+                          const paymentExpiresAt = item.mercadopagoExpiresAt
+                            ? item.mercadopagoExpiresAt.toISOString()
+                            : new Date(item.createdAt.getTime() + 30 * 60 * 1000).toISOString();
 
                           return (
                             <article className="account-raffle-card" key={item.id}>
@@ -349,14 +345,7 @@ export default async function AccountPage() {
                                   <div className="account-pending-payment">
                                     <strong>Pagamento pendente</strong>
                                     <span>
-                                      Você tem 30 minutos para pagar esta reserva.
-                                      {reservationExpiresAt
-                                        ? " Expira às " + reservationExpiresAt.toLocaleTimeString("pt-BR", {
-                                            hour: "2-digit",
-                                            minute: "2-digit",
-                                            timeZone: "America/Sao_Paulo"
-                                          }) + "."
-                                        : ""}
+<PaymentCountdown expiresAt={paymentExpiresAt} />
                                     </span>
 
                                     {item.mercadopagoQrCodeBase64 && (
