@@ -199,6 +199,8 @@ export default function AdminUsersPage() {
               <button className="admin-users-close" onClick={()=>setSelected(null)} aria-label="Fechar">×</button>
             </div>
             <div className="admin-users-modal-body">
+              {message && <div className="admin-users-modal-message success">{message}</div>}
+              {error && <div className="admin-users-modal-message error">{error}</div>}
               {(["name","city","username","whatsapp"] as const).map(field=>(
                 <label key={field}>
                   {field==="name"?"Nome completo":field==="city"?"Cidade":field==="username"?"Usuário":"WhatsApp"}
