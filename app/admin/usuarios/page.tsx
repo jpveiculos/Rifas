@@ -25,15 +25,18 @@ export default function AdminUsersPage() {
   const [participations, setParticipations] = useState<Participation[]>([]);
   const [userNumbers, setUserNumbers] = useState<UserNumber[]>([]);
   const [saving, setSaving] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
 
   async function load() {
-    const r = await fetch("/api/admin/usuarios?q=" + encodeURIComponent(q), { cache:"no-store" });
+    const r = await fetch("/api/admin/usuarios?q=" + encodeURIComponent(q) + "&page=" + page, { cache:"no-store" });
     const data = await r.json();
     if (!r.ok) { setError(data.error || "Não foi possível carregar os participantes."); return; }
     setUsers(data.users || []);
+    setHasMore(Boolean(data.hasMore));
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [page]);
 
   async function selectUser(user: User) {
     setSelected(user);
@@ -102,8 +105,8 @@ export default function AdminUsersPage() {
         </div>
 
         <div style={{display:"flex",gap:8,margin:"20px 0"}}>
-          <input value={q} onChange={e=>setQ(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")load();}} placeholder="Nome, usuário ou WhatsApp" style={{flex:1,padding:12}} />
-          <button onClick={load} style={{padding:"10px 18px"}}>Buscar</button>
+          <input value={q} onChange={e=>setQ(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"){setPage(1); load();}}} placeholder="Nome, usuário ou WhatsApp" style={{flex:1,padding:12}} />
+          <button onClick={()=>{setPage(1); load();}} style={{padding:"10px 18px"}}>Buscar</button>
         </div>
 
         {message && <div style={{padding:12,background:"#e7f7e7",marginBottom:12}}>{message}</div>}
@@ -174,12 +177,69 @@ export default function AdminUsersPage() {
               <p><strong>Histórico:</strong> {selected._count.participations} participação(ões) · {selected._count.numbers} número(s) vinculado(s).</p>
               <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
                 <button onClick={save} disabled={saving} style={{padding:"11px 18px"}}>{saving?"Salvando...":"Salvar alterações"}</button>
-                <button onClick={remove} disabled={saving || selected._count.participations>0 || selected._count.numbers>0} style={{padding:"11px 18px",background:"#b00020",color:"#fff"}}>Excluir cadastro</button>
+                <button onClick={remove} disabled={saving} style={{padding:"11px 18px",background:"#b00020",color:"#fff"}}>Excluir cadastro</button>
               </div>
             </>}
           </section>
         </div>
+        <div className="admin-users-pagination">
+          <button onClick={()=>setPage(p=>Math.max(1,p-1))} disabled={page===1}>Anterior</button>
+          <span>Página {page}</span>
+          <button onClick={()=>setPage(p=>p+1)} disabled={!hasMore}>Próxima</button>
+        </div>
       </div>
+      {selected && (
+        <div className="admin-users-modal-backdrop" onMouseDown={e=>{if(e.currentTarget===e.target)setSelected(null);}}>
+          <div className="admin-users-modal" role="dialog" aria-modal="true">
+            <div className="admin-users-modal-head">
+              <div>
+                <h2>Dados do participante</h2>
+                <p>{selected.name} · @{selected.username}</p>
+              </div>
+              <button className="admin-users-close" onClick={()=>setSelected(null)} aria-label="Fechar">×</button>
+            </div>
+            <div className="admin-users-modal-body">
+              {(["name","city","username","whatsapp"] as const).map(field=>(
+                <label key={field}>
+                  {field==="name"?"Nome completo":field==="city"?"Cidade":field==="username"?"Usuário":"WhatsApp"}
+                  <input value={form[field]} onChange={e=>setForm(v=>({...v,[field]:e.target.value}))} />
+                </label>
+              ))}
+              <label>Nova senha (deixe em branco para manter)
+                <input type="password" value={form.password} onChange={e=>setForm(v=>({...v,password:e.target.value}))} />
+              </label>
+              <div className="admin-users-history">
+                <h3>Rifas deste participante</h3>
+                {participations.length===0 ? <p>Nenhuma compra/participação registrada.</p> : participations.map(p=>(
+                  <div key={p.id} className="admin-users-history-card">
+                    <strong>{p.raffle.productName || p.raffle.name}</strong>
+                    <div>Rifa: {p.raffle.name}{p.raffle.raffleCode ? ` · ID ${p.raffle.raffleCode}` : ""}</div>
+                    <div>{p.quantity} número(s) · R$ {(p.amountInCents/100).toFixed(2).replace(".",",")} · {p.status}</div>
+                    <small>Participação em {new Date(p.createdAt).toLocaleString("pt-BR")}</small>
+                  </div>
+                ))}
+                <h3>Números vinculados</h3>
+                {userNumbers.length===0 ? <p>Nenhum número vinculado.</p> : Object.entries(userNumbers.reduce<Record<string, { raffle: UserNumber["raffle"]; numbers: number[] }>>((acc,n)=>{
+                  const key=n.raffle.id;
+                  if(!acc[key]) acc[key]={raffle:n.raffle,numbers:[]};
+                  acc[key].numbers.push(n.number);
+                  return acc;
+                },{})).map(([key,group])=>(
+                  <div key={key} className="admin-users-history-card">
+                    <strong>{group.raffle.productName || group.raffle.name}</strong>
+                    <div>Rifa: {group.raffle.name}{group.raffle.raffleCode ? ` · ID ${group.raffle.raffleCode}` : ""}</div>
+                    <div>Números: {group.numbers.join(", ")}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="admin-users-modal-actions">
+              <button onClick={save} disabled={saving}>Salvar alterações</button>
+              <button onClick={remove} disabled={saving} className="danger">Excluir cadastro</button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
