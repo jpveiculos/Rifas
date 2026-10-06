@@ -4248,3 +4248,22 @@ body:not(:has(.home-bottom-links)) .social-links-section {
 .raffle-detail-page .payment-box h3 {
   font-weight: 900;
 }
+
+
+/* ===== ADMIN PARTICIPANTES: mensagens com fundo claro e texto legível ===== */
+.admin-users-inline-message {
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  font-weight: 800;
+}
+.admin-users-inline-message.success {
+  background: #d9f7e5 !important;
+  color: #126b3a !important;
+  border: 1px solid #63c995;
+}
+.admin-users-inline-message.error {
+  background: #ffe1e5 !important;
+  color: #9d1c30 !important;
+  border: 1px solid #ef8c9c;
+}
