@@ -2763,3 +2763,72 @@ body {
   background: #b9daf3;
 }
 
+
+
+/* ===== HOME: banner único da região + cards refinados ===== */
+.raffle-city-groups { display: block; }
+.raffle-city-group { display: grid; gap: 16px; }
+.raffle-city-heading {
+  width: 100%;
+  min-width: 0;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: #0d1b2a;
+  border: 2px solid rgba(255, 193, 7, .72);
+  box-shadow: 0 8px 24px rgba(0,0,0,.28);
+}
+.raffle-city-heading::before {
+  width: 5px;
+  min-height: 34px;
+  margin-right: 12px;
+  background: linear-gradient(180deg, #ffd21a, #ffb800);
+}
+.raffle-city-heading h3 {
+  color: #fff !important;
+  font-size: clamp(20px, 6vw, 34px);
+  line-height: 1.05;
+  letter-spacing: -.7px;
+  font-weight: 900;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+}
+.raffle-card {
+  background: #0e2b44 !important;
+  border: 1px solid rgba(66, 185, 255, .78);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.34);
+}
+.raffle-card-content { padding: 14px; }
+.raffle-card h3 { color: #fff !important; margin: 9px 0 5px; font-size: 20px; }
+.raffle-card p { color: rgba(255,255,255,.78) !important; }
+.raffle-card .raffle-code-public { color: rgba(255,255,255,.72); }
+.card-price { color: #20c9f4 !important; }
+.card-price small { color: rgba(255,255,255,.72) !important; }
+.raffle-meta {
+  border-top-color: rgba(111, 198, 238, .38);
+  color: rgba(255,255,255,.8);
+}
+.raffle-card .primary-button { min-height: 50px; border-radius: 12px; font-size: 15px; }
+
+@media (max-width: 640px) {
+  .raffle-section { padding: 24px 0 64px; }
+  .raffle-city-group { gap: 12px; }
+  .raffle-city-heading { padding: 10px 12px; border-radius: 14px; }
+  .raffle-city-heading::before { width: 5px; min-height: 31px; margin-right: 10px; }
+  .raffle-city-heading h3 {
+    font-size: clamp(20px, 6.4vw, 27px);
+    letter-spacing: -.6px;
+  }
+  .raffle-mosaic { gap: 10px; }
+  .raffle-card { border-radius: 14px; }
+  .raffle-card-content { padding: 11px; }
+  .raffle-card .badge { font-size: 8px; padding: 5px 7px; }
+  .raffle-card .raffle-code-public { font-size: 9px; margin-top: 5px; }
+  .raffle-card h3 { font-size: 15px; line-height: 1.16; margin-top: 8px; }
+  .raffle-card p { font-size: 10px; line-height: 1.28; }
+  .raffle-card .card-price { font-size: 19px; margin-top: 11px; }
+  .raffle-card .card-price small { font-size: 9px; }
+  .raffle-card .raffle-meta { font-size: 9px; margin: 10px 0; padding-top: 9px; }
+  .raffle-card .primary-button { min-height: 42px; font-size: 11px; }
+}
