@@ -118,9 +118,9 @@ export async function DELETE(request: Request) {
     });
     if (!user) return NextResponse.json({ error: "Usuário não encontrado." }, { status: 404 });
 
-    if (user._count.participations > 0 || user._count.numbers > 0) {
+    if (user._count.participations > 0) {
       return NextResponse.json({
-        error: "Este participante possui histórico de participação ou números vinculados. Para preservar o histórico financeiro e dos sorteios, o cadastro não pode ser excluído."
+        error: "Este participante possui compras/participações registradas. Para preservar o histórico financeiro e dos sorteios, o cadastro não pode ser excluído. Cadastros sem participações podem ser excluídos normalmente."
       }, { status: 409 });
     }
 
