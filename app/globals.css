@@ -3499,3 +3499,17 @@ main.section::before,
 main.section::after {
   display: none !important;
 }
+
+
+/* ===== HOME: afastar os quatro atalhos das rifas e aproximar do rodape ===== */
+.home-bottom-links {
+  margin-top: clamp(65px, 10vh, 105px) !important;
+  padding-bottom: 8px !important;
+}
+
+@media (max-width: 640px) {
+  .home-bottom-links {
+    margin-top: clamp(70px, 11vh, 115px) !important;
+    padding-bottom: 6px !important;
+  }
+}
