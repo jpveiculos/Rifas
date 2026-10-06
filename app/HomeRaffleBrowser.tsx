@@ -89,17 +89,6 @@ function RaffleCard({
   );
 }
 
-function getTopicName(value: string) {
-  return value.replace(/^rifas\s+em\s+/i, "").trim();
-}
-
-function getRaffleCity(raffle: RaffleCardData) {
-  const city = getTopicName(raffle.topicName?.trim() || raffle.city?.trim());
-  if (city) return city;
-  const fallback = raffle.name.replace(/^rifa\s*/i, "").trim();
-  return fallback || "Região";
-}
-
 function RaffleGroups({
   raffles,
   finished = false,
@@ -111,43 +100,30 @@ function RaffleGroups({
   isLoggedIn: boolean;
   onParticipate: (raffleId: string) => void;
 }) {
-  const groups = new Map<string, { city: string; raffles: RaffleCardData[] }>();
-
-  for (const raffle of raffles) {
-    const city = getRaffleCity(raffle);
-    const key = city.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-    const current = groups.get(key);
-    if (current) {
-      current.raffles.push(raffle);
-    } else {
-      groups.set(key, { city, raffles: [raffle] });
-    }
-  }
+  if (raffles.length === 0) return null;
 
   return (
     <div className="raffle-city-groups">
-      {Array.from(groups.values()).map(({ city, raffles: cityRaffles }) => (
-        <section className="raffle-city-group" key={city}>
-          <div className="raffle-city-heading">
-            <h3>{city === "Paramirim-BA" ? "Paramirim-BA e Região" : `Rifas em ${city}`}</h3>
-          </div>
-          <div className="raffle-grid raffle-mosaic">
-            {cityRaffles.map((raffle) => (
-              <RaffleCard
-                raffle={raffle}
-                finished={finished}
-                isLoggedIn={isLoggedIn}
-                onParticipate={onParticipate}
-                key={raffle.id}
-              />
-            ))}
-          </div>
-        </section>
-      ))}
+      <section className="raffle-city-group">
+        <div className="raffle-city-heading">
+          <h3>Rifas Em Paramirim E Região</h3>
+        </div>
+
+        <div className="raffle-grid raffle-mosaic">
+          {raffles.map((raffle) => (
+            <RaffleCard
+              raffle={raffle}
+              finished={finished}
+              isLoggedIn={isLoggedIn}
+              onParticipate={onParticipate}
+              key={raffle.id}
+            />
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
-
 type ModalMode = "login" | "register";
 
 function AccessModal({
