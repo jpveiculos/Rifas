@@ -3596,3 +3596,10 @@ main.section::after {
   background: #0b68cf !important;
   color: #fff !important;
 }
+
+
+/* Texto auxiliar do seletor: preto sobre o card claro */
+.raffle-detail-page .participant-box > p {
+  color: #000 !important;
+  font-weight: 700;
+}
