@@ -235,7 +235,8 @@ export async function createMercadoPagoParticipation({
         mercadopagoPaidAmountInCents: 0,
         mercadopagoQrCode: String(paymentMethod.qr_code),
         mercadopagoQrCodeBase64: String(paymentMethod.qr_code_base64 || ""),
-        mercadopagoTicketUrl: String(paymentMethod.ticket_url || "")
+        mercadopagoTicketUrl: String(paymentMethod.ticket_url || ""),
+        mercadopagoExpiresAt: new Date(Date.now() + 30 * 60 * 1000)
       }
     });
 
