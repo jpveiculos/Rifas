@@ -139,6 +139,7 @@ model RaffleParticipation {
   mercadopagoQrCode            String?             @db.Text
   mercadopagoQrCodeBase64      String?             @db.Text
   mercadopagoTicketUrl         String?             @db.Text
+  mercadopagoExpiresAt         DateTime?
   createdAt                    DateTime            @default(now())
   updatedAt                    DateTime            @updatedAt
   approvedAt                   DateTime?
