@@ -2876,3 +2876,20 @@ body {
     font-size: 9px;
   }
 }
+
+
+/* ===== HOME: manter o tamanho original e apenas reforcar o branco ===== */
+@media (max-width: 640px) {
+  .raffle-card p {
+    font-size: 10px;
+  }
+  .raffle-card .raffle-meta {
+    font-size: 9px;
+  }
+  .raffle-card .card-price small {
+    font-size: 9px;
+  }
+  .raffle-card .badge {
+    font-size: 8px;
+  }
+}
