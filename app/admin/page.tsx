@@ -565,7 +565,7 @@ export default function AdminPage() {
             </div>
           </div>
 
-          <nav className="admin-main-nav" aria-label="Menu administrativo">
+          <nav id="admin-menu" className="admin-main-nav" aria-label="Menu administrativo">
             <a className="admin-nav-item admin-nav-primary" href="#criar-rifa">
               <span>＋</span>
               <strong>Criar nova rifa</strong>
@@ -1014,6 +1014,10 @@ export default function AdminPage() {
             </div>
           )}
         </section>
+
+        <a className="admin-back-to-menu" href="#admin-menu" aria-label="Voltar ao menu administrativo">
+          ↑ Voltar ao menu
+        </a>
       </div>
     </main>
   );
