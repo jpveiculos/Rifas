@@ -2893,3 +2893,199 @@ body {
     font-size: 8px;
   }
 }
+
+
+/* ===== TEMA GLOBAL RIFASTOP: mesmo padrão visual da página principal =====
+   Fundo preto, superfícies azul-claro, cartões de destaque azul-escuro
+   e contraste reforçado para textos/brancos. Estas regras são globais
+   para páginas atuais e novas páginas que usem as classes do site.
+*/
+:root {
+  --site-bg: #000;
+  --site-panel: #cfe8fb;
+  --site-card: #0e2b44;
+  --site-text: #10233b;
+  --site-white: #fff;
+  --site-muted-white: rgba(255,255,255,.92);
+  --site-gold: #ffd21a;
+}
+
+html, body {
+  background: var(--site-bg) !important;
+  color: var(--site-white);
+}
+
+body {
+  color: var(--site-white);
+}
+
+/* Links de navegação/voltar sobre o fundo preto */
+.back-link,
+.admin-page .back-link,
+.raffle-detail-page > .container > .back-link,
+.account-page .back-link,
+.account-page-clean .back-link,
+.terms-page .back-link,
+.download-page .back-link {
+  color: #fff !important;
+  font-weight: 800;
+  text-shadow: 0 1px 2px rgba(0,0,0,.55);
+}
+
+.back-link:hover,
+.admin-page .back-link:hover {
+  color: var(--site-gold) !important;
+}
+
+/* Títulos e textos soltos sobre fundo preto */
+.admin-page .admin-heading h1,
+.admin-page .admin-heading p,
+.admin-page .admin-title-row h1,
+.admin-page .admin-title-row p,
+.admin-page .admin-kicker,
+.admin-page .section-heading-row,
+.admin-page .section-heading-row h2,
+.admin-page .section-heading-row p,
+.admin-page .admin-badge {
+  color: #fff !important;
+}
+
+.admin-page .admin-badge {
+  background: #0e2b44 !important;
+  border: 1px solid rgba(66,185,255,.55);
+}
+
+/* Cartões administrativos: mesma linguagem dos cartões da home */
+.admin-page .form-section,
+.admin-page .form-section-nested,
+.admin-page .admin-overview > div,
+.admin-page .raffle-admin-card,
+.admin-page .admin-empty {
+  background: var(--site-panel) !important;
+  color: var(--site-text);
+  border-color: rgba(66,185,255,.48) !important;
+}
+
+.admin-page .form-section h2,
+.admin-page .form-section h3,
+.admin-page .form-section label,
+.admin-page .form-section p,
+.admin-page .form-help,
+.admin-page .form-section small,
+.admin-page .admin-overview strong,
+.admin-page .admin-overview span,
+.admin-page .raffle-admin-main h3,
+.admin-page .raffle-admin-main p,
+.admin-page .raffle-admin-meta,
+.admin-page .admin-empty,
+.admin-page .admin-empty strong {
+  color: var(--site-text) !important;
+}
+
+/* Botões de voltar/ações continuam com contraste forte */
+.admin-page .secondary-button,
+.admin-page .primary-button {
+  font-weight: 800;
+}
+
+.admin-page .secondary-button {
+  background: #b9daf3 !important;
+  color: #10233b !important;
+  border-color: rgba(16,35,59,.18) !important;
+}
+
+.admin-page .primary-button {
+  background: linear-gradient(100deg, #ffd400, #ffb000) !important;
+  color: #10233b !important;
+}
+
+/* Detalhe da rifa: cartão externo azul-escuro como a home */
+.raffle-detail-page .raffle-card {
+  background: var(--site-card) !important;
+  border-color: rgba(66,185,255,.78) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.34);
+}
+
+.raffle-detail-page .raffle-card-content,
+.raffle-detail-page .raffle-code-public,
+.raffle-detail-page .raffle-code-detail,
+.raffle-detail-page .raffle-description {
+  color: var(--site-muted-white) !important;
+}
+
+.raffle-detail-page .raffle-card-content h3 {
+  color: #fff !important;
+}
+
+.raffle-detail-page .info-item,
+.raffle-detail-page .account-result {
+  background: var(--site-panel) !important;
+  border-color: rgba(66,185,255,.38) !important;
+}
+
+.raffle-detail-page .info-label,
+.raffle-detail-page .info-value {
+  color: var(--site-text) !important;
+}
+
+/* Textos brancos que aparecem sobre azul-claro precisam continuar visíveis. */
+.quantity-selector,
+.participant-box,
+.share-box,
+.generated-numbers,
+.payment-box,
+.account-section,
+.terms-card,
+.download-card {
+  color: var(--site-text);
+}
+
+.quantity-selector p,
+.participant-box > p,
+.share-box span,
+.generated-numbers p {
+  color: rgba(16,35,59,.72);
+}
+
+.quantity-option span {
+  color: #5b7187;
+}
+
+/* Realce consistente para qualquer texto branco em cartões escuros. */
+.raffle-card strong,
+.raffle-card span,
+.raffle-card small,
+.account-raffle-card strong,
+.account-raffle-card span,
+.admin-nav-item,
+.admin-nav-item strong,
+.admin-nav-item small {
+  text-shadow: 0 1px 2px rgba(0,0,0,.22);
+}
+
+/* Novas páginas que adotarem .site-panel/.site-card herdam o padrão automaticamente. */
+.site-panel {
+  background: var(--site-panel) !important;
+  color: var(--site-text) !important;
+  border: 1px solid rgba(66,185,255,.42);
+  border-radius: 16px;
+}
+
+.site-card {
+  background: var(--site-card) !important;
+  color: #fff !important;
+  border: 1px solid rgba(66,185,255,.78);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.34);
+}
+
+.site-card h1,
+.site-card h2,
+.site-card h3,
+.site-card p,
+.site-card span,
+.site-card small,
+.site-card strong,
+.site-card label {
+  color: inherit;
+}
