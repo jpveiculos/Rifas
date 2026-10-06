@@ -4114,3 +4114,22 @@ body:not(:has(.home-bottom-links)) .social-links-section {
   color: #9d1c30 !important;
   border: 1px solid #ef8c9c !important;
 }
+
+
+/* ===== HOME: cores oficiais das redes + titulo regional sem corte ===== */
+.home-bottom-link.instagram-link {
+  color: #fff !important;
+  background: linear-gradient(45deg, #feda75 0%, #fa7e1e 25%, #d62976 50%, #962fbf 75%, #4f5bd5 100%) !important;
+}
+
+.home-bottom-link.whatsapp-link {
+  color: #fff !important;
+  background: #25D366 !important;
+}
+
+@media (max-width: 640px) {
+  .raffle-city-heading h3 {
+    font-size: 22px !important;
+    letter-spacing: -.6px !important;
+  }
+}
