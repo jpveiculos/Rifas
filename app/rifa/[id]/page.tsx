@@ -54,7 +54,7 @@ export default async function RafflePage({ params }: Props) {
           )}
 
           {raffle.status === "ACTIVE" && <RaffleParticipant raffleId={raffle.id} priceInCents={raffle.priceInCents} />}
-          <ShareRaffle raffleName={raffle.name} />
+          <ShareRaffle />
         </div></article>
       </div></main>
     </>
