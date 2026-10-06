@@ -87,10 +87,12 @@ function RaffleCard({
 function RaffleGroups({
   raffles,
   finished = false,
+  isLoggedIn,
   onParticipate
 }: {
   raffles: RaffleCardData[];
   finished?: boolean;
+  isLoggedIn: boolean;
   onParticipate: (raffleId: string) => void;
 }) {
   if (raffles.length === 0) return null;
