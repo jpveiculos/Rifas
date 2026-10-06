@@ -252,7 +252,7 @@ export async function POST(request: Request) {
         Prisma.sql`
           INSERT INTO "RaffleNumber" ("id", "raffleId", "number")
           SELECT md5(${created.id} || ':' || series::text), ${created.id}, series
-          FROM generate_series(1, ${totalNumbers}) AS series
+          FROM generate_series(0, ${totalNumbers} - 1) AS series
         `
       );
 
