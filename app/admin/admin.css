@@ -296,3 +296,56 @@
 
 .boost-admin-button{display:inline-flex;align-items:center;justify-content:center;min-height:40px;margin-top:12px;padding:0 15px;border-radius:10px;background:#111318;color:#fff;text-decoration:none;font-size:13px;font-weight:800;box-shadow:0 8px 18px rgba(17,19,24,.14)}
 .boost-admin-button:hover{transform:translateY(-1px);background:#20252d}
+
+
+/* ===== TEMA GLOBAL ADMIN: fundo preto + paineis azuis + contraste ===== */
+.admin-page {
+  background: #000 !important;
+  color: #fff !important;
+}
+
+.admin-page .back-link {
+  color: #fff !important;
+  font-weight: 800;
+}
+
+.admin-page .back-link:hover {
+  color: #ffd21a !important;
+}
+
+.admin-page .admin-heading h1,
+.admin-page .admin-heading p {
+  color: #fff !important;
+}
+
+.admin-page .admin-badge {
+  background: #0e2b44 !important;
+  color: #fff !important;
+  border: 1px solid rgba(66,185,255,.55);
+}
+
+.admin-page .form-section,
+.admin-page .form-section-nested,
+.admin-page .admin-overview div,
+.admin-page .raffle-admin-card,
+.admin-page .admin-empty {
+  background: #cfe8fb !important;
+  color: #10233b !important;
+  border-color: rgba(66,185,255,.48) !important;
+}
+
+.admin-page .form-section h2,
+.admin-page .form-section h3,
+.admin-page .form-section label,
+.admin-page .form-section p,
+.admin-page .form-help,
+.admin-page .form-section small,
+.admin-page .admin-overview strong,
+.admin-page .admin-overview span,
+.admin-page .raffle-admin-main h3,
+.admin-page .raffle-admin-main p,
+.admin-page .raffle-admin-meta,
+.admin-page .admin-empty,
+.admin-page .admin-empty strong {
+  color: #10233b !important;
+}
