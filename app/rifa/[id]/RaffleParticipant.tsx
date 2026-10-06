@@ -203,7 +203,7 @@ export default function RaffleParticipant({ raffleId, priceInCents }: { raffleId
         <div className="generated-numbers">
           <h3>Seus números reservados</h3>
           <div className="number-list">
-            {numbers.map((number) => <span key={number}>{String(number).padStart(5, "0")}</span>)}
+            {numbers.map((number) => <span key={number}>{String(number).padStart(4, "0")}</span>)}
           </div>
 
           {!payment && (
