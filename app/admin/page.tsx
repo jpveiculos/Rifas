@@ -48,7 +48,7 @@ const initialForm = {
   city: "",
   productName: "",
   description: "",
-  totalNumbers: "10000",
+  totalNumbers: "9999",
   pricePerNumber: "1,00",
   endDate: ""
 };
