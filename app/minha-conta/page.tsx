@@ -87,9 +87,7 @@ export default async function AccountPage() {
           raffleCode: true,
           name: true,
           productName: true,
-          imageUrls: true,
-          // prazo da cobrança Pix; usado pela contagem regressiva em tempo real
-          mercadopagoExpiresAt: true
+          imageUrls: true
         }
       }
     }
