@@ -185,7 +185,7 @@ export default async function AccountPage() {
         <div className="container account-container">
           {pendingParticipations.length > 0 && (
             <section className="account-pending-section">
-              <details className="account-pending-menu" open>
+              <details className="account-pending-menu">
                 <summary className="account-pending-summary">
                   <div>
                     <span className="section-kicker">ATENÇÃO</span>
