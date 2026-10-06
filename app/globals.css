@@ -645,7 +645,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 .home-raffle-browser {
-  margin-top: 0;
+  margin-top: -24px;
 }
 
 .raffle-city-groups {
@@ -4200,16 +4200,6 @@ body:not(:has(.home-bottom-links)) .social-links-section {
   border: 1px solid #ef8c9c !important;
 }
 
-
-/* HOME: espaçamento definitivo entre cabeçalho e conteúdo. */
-@media (max-width: 640px) {
-  main.raffle-section {
-    padding-top: 12px !important;
-  }
-  .home-raffle-browser {
-    margin-top: 0 !important;
-  }
-}
 
 /* ===== HOME: cores oficiais das redes + titulo regional sem corte ===== */
 .home-bottom-link.instagram-link {
