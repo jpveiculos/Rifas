@@ -607,13 +607,15 @@ a { color: inherit; text-decoration: none; }
 
 .account-card-image {
   width: 145px;
-  height: 145px;
-  min-height: 145px;
+  aspect-ratio: 3 / 2;
+  height: auto;
+  min-height: 0;
+  align-self: start;
   overflow: hidden;
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, #0d63df, #12a0ec);
-  color: #fff;
+  background: #eef5fb;
+  color: #0d63df;
   font-weight: 900;
 }
 
@@ -907,7 +909,31 @@ a { color: inherit; text-decoration: none; }
 
 .account-pending-card-content {
   min-width: 0;
-  padding: 13px;
+  align-self: start;
+  padding: 10px 12px;
+}
+
+.account-pending-payment {
+  display: grid;
+  gap: 5px;
+  margin-top: 7px;
+  color: #10233b;
+}
+
+.account-pending-payment strong {
+  color: #10233b !important;
+  font-size: 13px;
+  line-height: 1.15;
+}
+
+.account-pending-payment > span {
+  color: #5f6f80 !important;
+  font-size: 11px;
+  line-height: 1.25;
+}
+
+.account-pending-payment .payment-link {
+  margin-top: 4px;
 }
 
 .account-pending-card-content h3 {
@@ -928,7 +954,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 .account-pending-card .account-pending-payment {
-  margin-top: 10px;
+  margin-top: 7px;
 }
 
 .account-page-clean .share-box {
@@ -1030,12 +1056,15 @@ a { color: inherit; text-decoration: none; }
 
   .account-card-image {
     width: 84px;
-    height: 84px;
-    min-height: 84px;
+    aspect-ratio: 3 / 2;
+    height: auto;
+    min-height: 0;
+    align-self: start;
   }
 
   .account-card-content {
-    padding: 9px;
+    align-self: start;
+    padding: 7px 8px;
   }
 
   .account-card-content h3 {
@@ -1130,6 +1159,25 @@ a { color: inherit; text-decoration: none; }
     width: 86px;
     aspect-ratio: 3 / 2;
     height: auto;
+    align-self: start;
+  }
+
+  .account-pending-card-content {
+    padding: 7px 8px;
+  }
+
+  .account-pending-payment {
+    gap: 4px;
+    margin-top: 5px;
+  }
+
+  .account-pending-payment strong {
+    font-size: 12px;
+  }
+
+  .account-pending-payment > span {
+    font-size: 10px;
+    line-height: 1.2;
   }
 
   .account-pending-card-content {
