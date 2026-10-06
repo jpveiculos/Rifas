@@ -110,7 +110,7 @@ export default function AdminUsersPage() {
         {error && <div style={{padding:12,background:"#fde8e8",marginBottom:12}}>{error}</div>}
 
         <div style={{display:"grid",gridTemplateColumns:"minmax(280px,1fr) minmax(320px,1.2fr)",gap:18}}>
-          <section style={{background:"#fff",padding:16,borderRadius:12}}>
+          <section className="admin-users-panel admin-users-list" style={{padding:16,borderRadius:12}}>
             <h2>Participantes</h2>
             {users.map(user=>(
               <button key={user.id} onClick={()=>selectUser(user)} style={{display:"block",width:"100%",textAlign:"left",padding:12,marginBottom:8,border:"1px solid #ddd",background:selected?.id===user.id?"#eef5ff":"#fff",borderRadius:8}}>
@@ -122,7 +122,7 @@ export default function AdminUsersPage() {
             {users.length===0 && <p>Nenhum participante encontrado.</p>}
           </section>
 
-          <section style={{background:"#fff",padding:16,borderRadius:12}}>
+          <section className="admin-users-panel admin-users-editor" style={{padding:16,borderRadius:12}}>
             <h2>Dados do participante</h2>
             {!selected ? <p>Selecione um participante para editar.</p> : <>
               {(["name","city","username","whatsapp"] as const).map(field=>(
@@ -135,14 +135,14 @@ export default function AdminUsersPage() {
                 Nova senha (deixe em branco para manter)
                 <input type="password" value={form.password} onChange={e=>setForm(v=>({...v,password:e.target.value}))} style={{display:"block",width:"100%",padding:10,marginTop:4}} />
               </label>
-              <div style={{margin:"18px 0",padding:"14px",background:"#eef5ff",border:"1px solid #cbdff8",borderRadius:10}}>
+              <div className="admin-users-history" style={{margin:"18px 0",padding:"14px",borderRadius:10}}>
                 <h3 style={{margin:"0 0 10px"}}>Rifas deste participante</h3>
                 {participations.length===0 ? (
                   <p style={{margin:0}}>Nenhuma compra/participação registrada.</p>
                 ) : (
                   <div style={{display:"grid",gap:10}}>
                     {participations.map(p=>(
-                      <div key={p.id} style={{padding:12,background:"#fff",border:"1px solid #d8e3ef",borderRadius:8}}>
+                      <div key={p.id} className="admin-users-history-card" style={{padding:12,borderRadius:8}}>
                         <strong>{p.raffle.productName || p.raffle.name}</strong>
                         <div>Rifa: {p.raffle.name}{p.raffle.raffleCode ? ` · ID ${p.raffle.raffleCode}` : ""}</div>
                         <div>{p.quantity} número(s) · R$ {(p.amountInCents/100).toFixed(2).replace(".",",")} · {p.status}</div>
@@ -162,7 +162,7 @@ export default function AdminUsersPage() {
                       acc[key].numbers.push(n.number);
                       return acc;
                     },{})).map(([key,group])=>(
-                      <div key={key} style={{padding:10,background:"#fff",border:"1px solid #d8e3ef",borderRadius:8}}>
+                      <div key={key} className="admin-users-history-card" style={{padding:10,borderRadius:8}}>
                         <strong>{group.raffle.productName || group.raffle.name}</strong>
                         <div>Rifa: {group.raffle.name}{group.raffle.raffleCode ? ` · ID ${group.raffle.raffleCode}` : ""}</div>
                         <div>Números: {group.numbers.join(", ")}</div>
