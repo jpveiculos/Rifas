@@ -177,6 +177,7 @@ export default async function AccountPage() {
                   const reservation = numbersByReservation.get(item.reservationId);
                   const mine = participationNumbers(item.reservationId);
                   const isPending = item.status === "PENDING";
+                  const isBonus = item.mercadopagoStatus === "bonus";
                   const reservationExpiresAt = reservation?.reservedAt
                     ? new Date(reservation.reservedAt.getTime() + 30 * 60 * 1000)
                     : null;
@@ -190,14 +191,23 @@ export default async function AccountPage() {
                         )}
                       </div>
                       <div className="account-card-content">
-                        <span className={"account-status " + (isPending ? "status-pending" : "status-active")}>
-                          {isPending ? "Aguardando pagamento" : "Participando"}
-                        </span>
+<div className="account-status-row">
+                          <span className={"account-status " + (isPending ? "status-pending" : "status-active")}>
+                            {isPending ? "Aguardando pagamento" : isBonus ? "Bônus da plataforma" : "Participando"}
+                          </span>
+                          {isBonus && <span className="account-bonus-badge">🎁 Números bônus</span>}
+                        </div>
                         <h3>{item.raffle.productName}</h3>
                         <p>
                           {item.raffle.name}
                           {item.raffle.raffleCode ? " · ID " + item.raffle.raffleCode : ""}
                         </p>
+                        {isBonus && (
+                          <div className="account-bonus-message">
+                            🎁 <strong>Você recebeu estes números como bônus da plataforma.</strong>
+                            <span>Não houve cobrança por esta participação.</span>
+                          </div>
+                        )}
                         <div className="account-numbers">
                           <span>{isPending ? "Números reservados" : "Seus números"}</span>
                           <div>
