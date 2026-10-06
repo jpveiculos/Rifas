@@ -936,20 +936,38 @@ a { color: inherit; text-decoration: none; }
   margin-top: 4px;
 }
 
+.payment-countdown {
+  display: block;
+  color: #5f6f80;
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.payment-countdown strong {
+  color: #9a6800;
+  font-variant-numeric: tabular-nums;
+}
+
+.payment-countdown.expired {
+  color: #b42318;
+  font-weight: 800;
+}
+
 .account-pending-card-content h3 {
-  margin: 7px 0 3px;
+  margin: 5px 0 2px;
   color: #10233b;
   font-size: 18px;
 }
 
 .account-pending-card-content p {
-  margin: 0 0 10px;
+  margin: 0 0 6px;
   color: #5f6f80;
   font-size: 12px;
 }
 
 .account-pending-card .account-numbers {
-  margin-top: 8px;
+  margin-top: 5px;
+  padding: 6px;
   background: #f7fbff;
 }
 
@@ -1178,6 +1196,10 @@ a { color: inherit; text-decoration: none; }
   .account-pending-payment > span {
     font-size: 10px;
     line-height: 1.2;
+  }
+
+  .payment-countdown {
+    font-size: 10px;
   }
 
   .account-pending-card-content {
