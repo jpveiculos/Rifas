@@ -44,6 +44,13 @@ async function main() {
          WHERE "raffleId" = $1`,
         raffle.id
       );
+
+      // 10.000 posições passam a representar exatamente 0000..9999.
+      // O 10.000 antigo vira 9999 e não deve mais existir como faixa.
+      await tx.raffle.update({
+        where: { id: raffle.id },
+        data: { totalNumbers: 9999 }
+      });
     });
 
     migrated += 1;
