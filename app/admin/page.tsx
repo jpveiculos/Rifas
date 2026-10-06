@@ -780,7 +780,7 @@ export default function AdminPage() {
             <section className="form-section form-section-nested">
               <h3>Números e preço</h3>
               <div className="form-grid">
-                <label>Quantidade de números<input required min="1" max="1000000" type="number" value={form.totalNumbers} onChange={(e) => update("totalNumbers", e.target.value)} /></label>
+                <label>Quantidade de números<input required min="1" max="9999" type="number" value={form.totalNumbers} onChange={(e) => update("totalNumbers", e.target.value)} /></label>
                 <label>Valor por número<input required inputMode="decimal" value={form.pricePerNumber} onChange={(e) => update("pricePerNumber", e.target.value)} placeholder="1,00" /></label>
               </div>
             </section>
