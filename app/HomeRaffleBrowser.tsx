@@ -106,7 +106,7 @@ function RaffleGroups({
     <div className="raffle-city-groups">
       <section className="raffle-city-group">
         <div className="raffle-city-heading">
-          <h3>Rifas Em Paramirim E Região</h3>
+          <h3>Rifas em Paramirim e Região</h3>
         </div>
 
         <div className="raffle-grid raffle-mosaic">
