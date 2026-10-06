@@ -78,6 +78,23 @@ export async function POST(request: Request) {
         });
         if (updated.count !== 1) throw new Error("NUMBER_CONFLICT");
       }
+
+      // A bonificação também cria uma participação confirmada, sem cobrança.
+      // Isso faz a rifa aparecer corretamente na "Minha Conta" do cliente.
+      await tx.raffleParticipation.create({
+        data: {
+          raffleId,
+          userId,
+          reservationId: bonusReservationId,
+          quantity,
+          amountInCents: 0,
+          status: "APPROVED",
+          mercadopagoStatus: "bonus",
+          mercadopagoStatusDetail: "Números creditados como bonificação pelo administrador.",
+          mercadopagoPaidAmountInCents: 0,
+          approvedAt: new Date()
+        }
+      });
     });
 
     return NextResponse.json({
