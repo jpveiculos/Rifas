@@ -109,8 +109,8 @@ export default function AdminUsersPage() {
           <button onClick={()=>{setPage(1); load();}} style={{padding:"10px 18px"}}>Buscar</button>
         </div>
 
-        {message && <div style={{padding:12,background:"#e7f7e7",marginBottom:12}}>{message}</div>}
-        {error && <div style={{padding:12,background:"#fde8e8",marginBottom:12}}>{error}</div>}
+        {message && <div className="admin-users-inline-message success">{message}</div>}
+        {error && <div className="admin-users-inline-message error">{error}</div>}
 
         <div style={{display:"grid",gridTemplateColumns:"minmax(280px,1fr) minmax(320px,1.2fr)",gap:18}}>
           <section className="admin-users-panel admin-users-list" style={{padding:16,borderRadius:12}}>
