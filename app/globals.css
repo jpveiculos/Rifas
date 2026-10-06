@@ -3350,6 +3350,44 @@ body {
   padding-bottom: 20px !important;
 }
 
+.account-status-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.account-bonus-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: #fff2b8;
+  border: 1px solid #e1bb00;
+  color: #7a5a00;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.account-bonus-message {
+  display: grid;
+  gap: 3px;
+  margin: 10px 0 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fff8d9;
+  border: 1px solid #e4c84f;
+  color: #26384e;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.account-bonus-message span {
+  color: #66778b;
+  font-size: 12px;
+}
+
 /* ===== PAGINAS INTERNAS: fundo preto limpo, sem "tela" por baixo dos cards ===== */
 .raffle-detail-page,
 .account-page-clean,
