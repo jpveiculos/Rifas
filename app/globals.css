@@ -3344,6 +3344,12 @@ body {
 }
 
 
+/* Conta: sem espaço artificial antes do rodapé após remover os links inferiores. */
+.account-page-clean {
+  min-height: auto !important;
+  padding-bottom: 20px !important;
+}
+
 /* ===== PAGINAS INTERNAS: fundo preto limpo, sem "tela" por baixo dos cards ===== */
 .raffle-detail-page,
 .account-page-clean,
