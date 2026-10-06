@@ -4267,3 +4267,159 @@ body:not(:has(.home-bottom-links)) .social-links-section {
   color: #9d1c30 !important;
   border: 1px solid #ef8c9c;
 }
+
+
+/* ===== MINHA CONTA: menus por produto + pagamentos pendentes em destaque ===== */
+.account-pending-section {
+  margin-bottom: 18px;
+}
+
+.account-pending-menu {
+  overflow: hidden;
+  border: 2px solid #f2b800;
+  border-radius: 18px;
+  background: #fff8d9 !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.22);
+}
+
+.account-pending-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px 18px;
+  cursor: pointer;
+  list-style: none;
+  color: #10233b !important;
+}
+
+.account-pending-summary::-webkit-details-marker {
+  display: none;
+}
+
+.account-pending-summary > div {
+  display: grid;
+  gap: 3px;
+}
+
+.account-pending-summary .section-kicker {
+  color: #9a6800 !important;
+}
+
+.account-pending-summary strong {
+  font-size: 20px;
+  font-weight: 900;
+  color: #10233b !important;
+}
+
+.account-pending-summary span:not(.section-kicker) {
+  color: #5f6f80 !important;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.account-pending-open {
+  flex: 0 0 auto;
+  padding: 9px 14px;
+  border-radius: 999px;
+  background: #ffd21a !important;
+  color: #10233b !important;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.account-pending-list {
+  display: grid;
+  gap: 12px;
+  padding: 0 14px 14px;
+}
+
+.account-pending-card {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid #e1bf42;
+  border-radius: 14px;
+  background: #fffdf0 !important;
+}
+
+.account-pending-card-image {
+  min-height: 150px;
+  background: #0e2b44;
+}
+
+.account-pending-card-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.account-pending-card-image span {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  color: #fff;
+  font-weight: 900;
+}
+
+.account-pending-card-content {
+  padding: 13px;
+  color: #10233b !important;
+}
+
+.account-pending-card-content h3 {
+  margin: 7px 0 3px;
+  color: #10233b !important;
+  font-size: 18px;
+}
+
+.account-pending-card-content p {
+  margin: 0 0 10px;
+  color: #5f6f80 !important;
+  font-size: 12px;
+}
+
+.account-pending-card .account-numbers {
+  margin-top: 8px;
+  background: #f7fbff !important;
+}
+
+.account-pending-card .account-pending-payment {
+  margin-top: 10px;
+}
+
+@media (max-width: 640px) {
+  .account-pending-summary {
+    padding: 14px;
+  }
+
+  .account-pending-summary strong {
+    font-size: 17px;
+  }
+
+  .account-pending-summary span:not(.section-kicker) {
+    font-size: 11px;
+  }
+
+  .account-pending-open {
+    padding: 8px 10px;
+    font-size: 10px;
+  }
+
+  .account-pending-card {
+    grid-template-columns: 86px minmax(0, 1fr);
+  }
+
+  .account-pending-card-image {
+    min-height: 130px;
+  }
+
+  .account-pending-card-content {
+    padding: 10px;
+  }
+
+  .account-pending-card-content h3 {
+    font-size: 15px;
+  }
+}
