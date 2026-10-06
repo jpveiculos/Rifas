@@ -154,7 +154,12 @@ export default function AdminPage() {
         setError(data.error ?? "Não foi possível pesquisar usuários.");
         return;
       }
-      setBonusUsers(data.users ?? []);
+      const users = data.users ?? [];
+      setBonusUsers(users);
+      // Quando a pesquisa encontra um único cadastro, ele já fica selecionado.
+      // Assim o administrador pode escolher a rifa e bonificar sem precisar tocar
+      // novamente no único resultado encontrado.
+      if (users.length === 1) setSelectedBonusUser(users[0]);
     } catch {
       setError("Não foi possível pesquisar usuários.");
     }
