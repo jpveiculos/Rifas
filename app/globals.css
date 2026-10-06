@@ -354,11 +354,25 @@ a { color: inherit; text-decoration: none; }
   .raffle-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .raffle-card { border-radius: 13px; }
   .raffle-card-image { height: 108px; }
-  .raffle-card-content { padding: 10px; }
+  .raffle-card-content {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+  }
   .raffle-card .badge { padding: 4px 6px; font-size: 8px; }
   .raffle-card .raffle-code-public { font-size: 9px; margin-top: 5px; }
   .raffle-card h3 { margin: 7px 0 4px; font-size: 14px; line-height: 1.15; }
-  .raffle-card p { min-height: 0; margin-bottom: 2px; font-size: 10px; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .raffle-card p {
+    min-height: 25px;
+    height: 25px;
+    margin-bottom: 2px;
+    font-size: 10px;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
   .raffle-card .card-price { margin-top: 8px; font-size: 17px; }
   .raffle-card .card-price small { font-size: 9px; }
   .raffle-card .raffle-meta { margin: 8px 0; padding-top: 7px; font-size: 9px; }
