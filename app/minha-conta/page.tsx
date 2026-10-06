@@ -296,11 +296,6 @@ export default async function AccountPage() {
         </div>
       </main>
 
-      <section className="quick-links-section account-quick-links">
-        <div className="container quick-links">
-          <Link className="quick-link terms-link" href="/termos-de-uso">Termos de Uso</Link>
-          <Link className="quick-link app-link" href="/baixar-app">Baixar Aplicativo</Link>
-        </div>
-      </section>    </>
+    </>
   );
 }
