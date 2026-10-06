@@ -10,6 +10,8 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const q = String(url.searchParams.get("q") ?? "").trim();
 
+  const userId = String(url.searchParams.get("userId") ?? "").trim();
+
   const users = await prisma.user.findMany({
     where: q
       ? {
@@ -29,7 +31,29 @@ export async function GET(request: Request) {
     }
   });
 
-  return NextResponse.json({ users });
+  if (!userId) return NextResponse.json({ users });
+
+  const [participations, numbers] = await Promise.all([
+    prisma.raffleParticipation.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true, quantity: true, amountInCents: true, status: true,
+        createdAt: true, approvedAt: true,
+        raffle: { select: { id: true, raffleCode: true, name: true, productName: true, priceInCents: true, status: true } }
+      }
+    }),
+    prisma.raffleNumber.findMany({
+      where: { reservedByUserId: userId },
+      orderBy: [{ raffleId: "asc" }, { number: "asc" }],
+      select: {
+        id: true, number: true, status: true, reservationId: true, confirmedAt: true,
+        raffle: { select: { id: true, raffleCode: true, name: true, productName: true, priceInCents: true } }
+      }
+    })
+  ]);
+
+  return NextResponse.json({ users, participations, numbers });
 }
 
 export async function PATCH(request: Request) {
