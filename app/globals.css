@@ -3337,3 +3337,165 @@ body {
 .home-quick-links {
   display: none !important;
 }
+
+
+/* ===== PAGINAS INTERNAS: fundo preto limpo, sem "tela" por baixo dos cards ===== */
+.raffle-detail-page,
+.account-page-clean,
+.terms-page,
+.download-page,
+.auth-page {
+  background: #000 !important;
+  background-image: none !important;
+}
+
+.raffle-detail-page::before,
+.raffle-detail-page::after,
+.account-page-clean::before,
+.terms-page::before,
+.download-page::before {
+  display: none !important;
+}
+
+/* O card da rifa segue o mesmo desenho compacto da home. */
+.raffle-detail-page {
+  min-height: calc(100vh - 78px);
+  padding: 22px 0 42px !important;
+  overflow: visible;
+}
+
+.raffle-detail-page .container {
+  width: min(100% - 32px, 1120px);
+  margin: 0 auto;
+}
+
+.raffle-detail-page .raffle-card {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  border: 2px solid rgba(66,185,255,.72) !important;
+  border-radius: 20px;
+  background: #0e2b44 !important;
+  box-shadow: 0 10px 28px rgba(0,0,0,.28) !important;
+}
+
+.raffle-detail-page .raffle-card-content {
+  padding: 16px !important;
+  background: #0e2b44 !important;
+}
+
+.raffle-detail-page .raffle-card-content h1 {
+  margin: 12px 0 8px !important;
+  color: #fff !important;
+  font-size: clamp(30px, 7vw, 52px) !important;
+  line-height: 1.08;
+  letter-spacing: -.8px;
+}
+
+.raffle-detail-page .raffle-card-content > h3 {
+  margin: 12px 0 6px !important;
+  color: #fff !important;
+  font-size: 22px;
+}
+
+.raffle-detail-page .raffle-code-detail {
+  margin: 5px 0 10px !important;
+  color: rgba(255,255,255,.9) !important;
+}
+
+.raffle-detail-page .raffle-gallery {
+  margin: 12px 0 !important;
+  gap: 8px;
+}
+
+.raffle-detail-page .raffle-gallery img {
+  border: 2px solid rgba(66,185,255,.48);
+  border-radius: 14px;
+  background: #0e2b44;
+}
+
+.raffle-detail-page .raffle-description {
+  color: rgba(255,255,255,.9) !important;
+  font-size: 14px !important;
+  line-height: 1.45;
+}
+
+.raffle-detail-page .info-row {
+  margin: 16px 0 4px !important;
+  gap: 10px;
+}
+
+.raffle-detail-page .info-item {
+  padding: 12px 14px !important;
+  border-radius: 12px;
+  background: #cfe8fb !important;
+  border-color: rgba(66,185,255,.38) !important;
+}
+
+.raffle-detail-page .info-label,
+.raffle-detail-page .info-value {
+  color: #10233b !important;
+}
+
+.raffle-detail-page .participant-box,
+.raffle-detail-page .share-box {
+  margin-top: 18px !important;
+  padding: 18px !important;
+  border-radius: 16px;
+  background: #cfe8fb !important;
+  border-color: rgba(66,185,255,.42) !important;
+}
+
+@media (max-width: 640px) {
+  .raffle-detail-page {
+    padding: 14px 0 34px !important;
+  }
+
+  .raffle-detail-page .container {
+    width: min(100% - 24px, 1120px);
+  }
+
+  .raffle-detail-page .raffle-card {
+    border-radius: 17px;
+  }
+
+  .raffle-detail-page .raffle-card-content {
+    padding: 14px !important;
+  }
+
+  .raffle-detail-page .raffle-card-content h1 {
+    font-size: 34px !important;
+    margin: 10px 0 6px !important;
+  }
+
+  .raffle-detail-page .raffle-gallery {
+    margin: 10px 0 !important;
+  }
+
+  .raffle-detail-page .raffle-card-content > h3 {
+    font-size: 19px;
+    margin-top: 10px !important;
+  }
+
+  .raffle-detail-page .raffle-description {
+    font-size: 13px !important;
+  }
+
+  .raffle-detail-page .info-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 12px !important;
+  }
+}
+
+/* Todos os cards ficam sobre o fundo preto, sem uma camada colorida atrás. */
+main.section,
+main.raffle-section,
+main.raffle-detail-page {
+  background-color: #000 !important;
+}
+
+main.section::before,
+main.section::after {
+  display: none !important;
+}
