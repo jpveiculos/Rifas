@@ -644,6 +644,10 @@ a { color: inherit; text-decoration: none; }
   .raffle-card .primary-button { min-height: 40px; font-size: 11px; }
 }
 
+.home-raffle-browser {
+  margin-top: -24px;
+}
+
 .raffle-city-groups {
   display: grid;
   gap: 34px;
