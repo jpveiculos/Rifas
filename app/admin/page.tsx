@@ -61,7 +61,7 @@ const statusLabel: Record<Raffle["status"], string> = {
 };
 
 function formatNumber(value: number | string) {
-  return String(value).padStart(5, "0");
+  return String(value).padStart(4, "0");
 }
 
 export default function AdminPage() {
