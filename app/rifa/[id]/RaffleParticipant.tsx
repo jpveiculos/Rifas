@@ -15,8 +15,8 @@ type Payment = {
 };
 
 export default function RaffleParticipant({ raffleId, priceInCents }: { raffleId: string; priceInCents: number }) {
-  const QUICK_QUANTITIES = [5, 10, 20, 30, 50, 100];
-  const [quantity, setQuantity] = useState("5");
+  const QUICK_QUANTITIES = [1, 5, 10, 20, 30, 50, 100];
+  const [quantity, setQuantity] = useState("1");
   const [showCustomQuantity, setShowCustomQuantity] = useState(false);
   const [numbers, setNumbers] = useState<number[]>([]);
   const [reservationId, setReservationId] = useState("");
@@ -28,8 +28,8 @@ export default function RaffleParticipant({ raffleId, priceInCents }: { raffleId
 
   async function generateNumbers() {
     const requestedQuantity = Number(quantity);
-    if (!Number.isInteger(requestedQuantity) || requestedQuantity < 5) {
-      setError("Escolha pelo menos 5 números.");
+    if (!Number.isInteger(requestedQuantity) || requestedQuantity < 1) {
+      setError("Escolha pelo menos 1 número.");
       return;
     }
 
