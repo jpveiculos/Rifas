@@ -98,23 +98,15 @@ function RaffleGroups({
   if (raffles.length === 0) return null;
 
   return (
-    <div className="raffle-city-groups">
-      <section className="raffle-city-group">
-        <div className="raffle-city-heading">
-          <h3>Rifas em Paramirim-BA e Região</h3>
-        </div>
-
-        <div className="raffle-grid raffle-mosaic">
-          {raffles.map((raffle) => (
-            <RaffleCard
-              raffle={raffle}
-              finished={finished}
-              onParticipate={onParticipate}
-              key={raffle.id}
-            />
-          ))}
-        </div>
-      </section>
+    <div className="raffle-grid raffle-mosaic">
+      {raffles.map((raffle) => (
+        <RaffleCard
+          raffle={raffle}
+          finished={finished}
+          onParticipate={onParticipate}
+          key={raffle.id}
+        />
+      ))}
     </div>
   );
 }
