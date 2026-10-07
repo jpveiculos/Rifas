@@ -342,7 +342,7 @@ async function applyMercadoPagoOrder(participationId: string, order: any) {
       return;
     }
 
-    if (["failed", "canceled", "expired", "refunded"].includes(orderStatus)) {
+    if (["failed", "canceled", "expired"].includes(orderStatus)) {
       await tx.raffleNumber.updateMany({
         where: {
           raffleId: participation.raffleId,
