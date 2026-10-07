@@ -5014,7 +5014,3 @@ body:not(:has(.home-bottom-links)) .social-links-section {
   padding-bottom: 0;
 }
 
-.home-page ~ .footer {
-  position: static;
-  margin-top: 0;
-}
