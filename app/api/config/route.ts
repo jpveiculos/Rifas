@@ -77,7 +77,7 @@ export async function PATCH(request: Request) {
   }
 
   if (hasHeroImage) {
-    const value = body.heroImageUrl === null ? null : String(body.heroImageUrl ?? "").trim();
+    const value = body.heroImageUrl === null ? "" : String(body.heroImageUrl ?? "").trim();
     if (value && !value.startsWith("data:image/")) {
       return NextResponse.json({ error: "A imagem enviada é inválida." }, { status: 400 });
     }
