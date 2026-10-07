@@ -12,6 +12,12 @@ export default async function SiteHeader() {
           <span>Rifas<strong>TOP</strong></span>
         </Link>
 
+        {user ? (
+          <div className="header-greeting" aria-label={"Usuário conectado: " + user.name}>
+            Olá, <strong>{user.name.split(/\s+/)[0]}</strong>!
+          </div>
+        ) : null}
+
         <div className="header-actions">
           {user ? (
             <>
