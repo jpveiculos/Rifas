@@ -5012,14 +5012,18 @@ body:not(:has(.home-bottom-links)) .social-links-section {
 /* Home: rodapé acompanha o conteúdo sem criar faixa vazia. */
 .home-page {
   padding-bottom: 0;
+  min-height: 0;
 }
 
 body:has(.home-page) {
   padding-bottom: 0;
 }
 
-.home-page ~ .footer {
+body:has(.home-page) .footer {
   position: static;
+  left: auto;
+  right: auto;
+  bottom: auto;
   margin-top: 0;
 }
 
