@@ -102,7 +102,8 @@ function paymentData(participation: any) {
     qrCodeBase64: participation.mercadopagoQrCodeBase64,
     ticketUrl: participation.mercadopagoTicketUrl,
     orderStatus: participation.mercadopagoStatus,
-    orderStatusDetail: participation.mercadopagoStatusDetail
+    orderStatusDetail: participation.mercadopagoStatusDetail,
+    expiresAt: participation.mercadopagoExpiresAt
   };
 }
 
@@ -119,12 +120,8 @@ export async function createMercadoPagoParticipation({
     where: { reservationId }
   });
 
-  if (existing) {
-    if (existing.userId !== userId || existing.raffleId !== raffleId) {
-      throw new Error("Reserva inválida.");
-    }
-
-    return paymentData(existing);
+  if (existing && (existing.userId !== userId || existing.raffleId !== raffleId)) {
+    throw new Error("Reserva inválida.");
   }
 
   const raffle = await prisma.raffle.findUnique({
@@ -143,28 +140,6 @@ export async function createMercadoPagoParticipation({
     throw new Error("Esta rifa não está disponível para pagamento.");
   }
 
-  const reservationLimit = new Date(Date.now() - 30 * 60 * 1000);
-
-  const expiredNumbers = await prisma.raffleNumber.updateMany({
-    where: {
-      raffleId,
-      reservationId,
-      reservedByUserId: userId,
-      status: "RESERVED",
-      reservedAt: { lt: reservationLimit }
-    },
-    data: {
-      status: "AVAILABLE",
-      reservationId: null,
-      reservedAt: null,
-      reservedByUserId: null
-    }
-  });
-
-  if (expiredNumbers.count > 0) {
-    throw new Error("A reserva expirou após 30 minutos. Escolha novos números.");
-  }
-
   const reservedNumbers = await prisma.raffleNumber.findMany({
     where: {
       raffleId,
@@ -180,7 +155,7 @@ export async function createMercadoPagoParticipation({
   }
 
   const amountInCents = moneyInCents(raffle.priceInCents * reservedNumbers.length);
-  const participation = await prisma.raffleParticipation.create({
+  const participation = existing ?? await prisma.raffleParticipation.create({
     data: {
       raffleId,
       userId,
@@ -190,12 +165,16 @@ export async function createMercadoPagoParticipation({
     }
   });
 
+  if (participation.status === "APPROVED" || participation.mercadopagoOrderId) {
+    return paymentData(participation);
+  }
+
   try {
     const amount = (amountInCents / 100).toFixed(2);
     const order = await mpRequest("/v1/orders", {
       method: "POST",
       headers: {
-        "X-Idempotency-Key": crypto.randomUUID()
+        "X-Idempotency-Key": "rifas-participation-" + participation.id
       },
       body: JSON.stringify({
         type: "online",
@@ -242,30 +221,21 @@ export async function createMercadoPagoParticipation({
 
     return paymentData(updated);
   } catch (error) {
-    await prisma.$transaction([
-      prisma.raffleParticipation.update({
-        where: { id: participation.id },
-        data: {
-          status: "REJECTED",
-          mercadopagoStatus: "failed",
-          mercadopagoStatusDetail: String(error instanceof Error ? error.message : "Falha ao criar pagamento.")
-        }
-      }),
-      prisma.raffleNumber.updateMany({
-        where: {
-          raffleId,
-          reservationId,
-          reservedByUserId: userId,
-          status: "RESERVED"
-        },
-        data: {
-          status: "AVAILABLE",
-          reservationId: null,
-          reservedAt: null,
-          reservedByUserId: null
-        }
-      })
-    ]);
+    // Uma falha de rede/time-out não significa que o pagamento não foi criado.
+    // A participação permanece PENDING e os números continuam reservados até
+    // o Mercado Pago informar um estado final. A chave de idempotência acima
+    // permite repetir a criação sem duplicar a cobrança.
+    await prisma.raffleParticipation.update({
+      where: { id: participation.id },
+      data: {
+        mercadopagoStatus: "action_required",
+        mercadopagoStatusDetail: String(
+          error instanceof Error
+            ? error.message
+            : "Não foi possível concluir a comunicação com o Mercado Pago. Tente novamente."
+        )
+      }
+    });
 
     throw error;
   }
@@ -336,32 +306,9 @@ async function applyMercadoPagoOrder(participationId: string, order: any) {
 
     if (participation.status === "APPROVED") return;
 
-    if (participation.raffle.status !== "ACTIVE") {
-      await tx.raffleNumber.updateMany({
-        where: {
-          raffleId: participation.raffleId,
-          reservationId: participation.reservationId,
-          reservedByUserId: participation.userId,
-          status: "RESERVED"
-        },
-        data: {
-          status: "AVAILABLE",
-          reservationId: null,
-          reservedAt: null,
-          reservedByUserId: null
-        }
-      });
-
-      await tx.raffleParticipation.update({
-        where: { id: participation.id },
-        data: {
-          status: "REJECTED",
-          mercadopagoStatusDetail: "Rifa encerrada antes da confirmação do pagamento."
-        }
-      });
-      return;
-    }
-
+    // O status local nunca é encerrado pelo relógio da plataforma.
+    // A participação só muda para APPROVED ou REJECTED em resposta a um
+    // estado final informado pelo Mercado Pago.
     if (orderStatus === "processed" && orderStatusDetail === "accredited") {
       if (paidAmountInCents < participation.amountInCents) {
         throw new Error("O valor confirmado pelo Mercado Pago é inferior ao valor da participação.");
