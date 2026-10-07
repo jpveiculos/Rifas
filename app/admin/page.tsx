@@ -1,6 +1,5 @@
 "use client";
 
-import "./admin.css";
 
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
