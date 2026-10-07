@@ -4180,6 +4180,7 @@ main.section::after {
 */
 .home-bottom-links {
   display: block !important;
+  padding-top: 22px !important;
 }
 
 .home-bottom-link.instagram-link {
