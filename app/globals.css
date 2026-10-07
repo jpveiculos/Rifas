@@ -4874,3 +4874,40 @@ body:not(:has(.home-bottom-links)) .social-links-section {
   color: #9d1c30 !important;
   border: 1px solid #ef8c9c;
 }
+
+
+/* ===== FAIXA DE DESTAQUE DA HOME ===== */
+.home-hero-banner {
+  width: 100%;
+  padding: 10px 0 14px;
+  background: #000;
+}
+
+.home-hero-banner-inner {
+  width: min(1400px, calc(100% - 24px));
+  height: clamp(190px, 24vw, 310px);
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #05070b;
+}
+
+.home-hero-banner-inner img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+@media (max-width: 700px) {
+  .home-hero-banner {
+    padding: 8px 0 10px;
+  }
+
+  .home-hero-banner-inner {
+    width: calc(100% - 14px);
+    height: 180px;
+    border-radius: 12px;
+  }
+}
