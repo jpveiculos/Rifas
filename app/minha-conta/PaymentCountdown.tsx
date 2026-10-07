@@ -22,7 +22,7 @@ export default function PaymentCountdown({ expiresAt }: Props) {
   }, [expiresAt]);
 
   if (ms <= 0) {
-    return <span className="payment-countdown expired">Prazo para pagamento encerrado.</span>;
+    return <span className="payment-countdown expired">Código Pix expirado. Aguardando retorno do Mercado Pago.</span>;
   }
 
   const totalSeconds = Math.ceil(ms / 1000);
