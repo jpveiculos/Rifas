@@ -13,9 +13,6 @@ export default async function SiteHeader() {
         </Link>
 
         <div className="header-actions">
-          <Link className="header-link" href="/">Início</Link>
-          <Link className="header-link" href="/#rifas">Rifas</Link>
-
           {user ? (
             <>
               <Link className="header-login" href="/minha-conta">Minha Conta</Link>
