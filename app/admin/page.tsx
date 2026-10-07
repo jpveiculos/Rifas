@@ -44,7 +44,6 @@ type Raffle = {
 
 const initialForm = {
   raffleCode: "",
-  city: "",
   productName: "",
   description: "",
   totalNumbers: "9999",
