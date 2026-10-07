@@ -45,12 +45,12 @@ export default function CadastroPage() {
         <h1>Criar conta</h1>
         <p>Preencha seus dados para criar sua conta.</p>
 
-        <form className="auth-form" onSubmit={submit}>
-          <label>Nome completo<input required minLength={3} maxLength={100} autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo" /></label>
-          <label>Nome da cidade<input required minLength={2} maxLength={80} autoComplete="address-level2" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Sua cidade" /></label>
-          <label>Contato<input required inputMode="tel" autoComplete="tel" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="WhatsApp ou telefone" /></label>
-          <label>Nome de usuário<input required minLength={3} maxLength={30} autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="ex.: joao123" /></label>
-          <label>Senha<input required minLength={4} type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Crie sua senha" /></label>
+        <form className="auth-form" onSubmit={submit} noValidate={false}>
+          <label className="auth-field"><span>Nome completo</span><input required minLength={3} maxLength={100} autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Seu nome completo" /></label>
+          <label className="auth-field"><span>Nome da cidade</span><input required minLength={2} maxLength={80} autoComplete="address-level2" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Sua cidade" /></label>
+          <label className="auth-field"><span>Contato</span><input required inputMode="tel" autoComplete="tel" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="WhatsApp ou telefone" /></label>
+          <label className="auth-field"><span>Nome de usuário</span><input required minLength={3} maxLength={30} autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="ex.: joao123" /></label>
+          <label className="auth-field"><span>Senha</span><input required minLength={4} type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Crie sua senha" /></label>
           <button className="primary-button" type="submit" disabled={loading}>{loading ? "Criando..." : "Criar minha conta"}</button>
         </form>
 
