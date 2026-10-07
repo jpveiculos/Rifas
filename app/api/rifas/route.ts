@@ -200,9 +200,6 @@ export async function POST(request: Request) {
     const raffleCodeInput = normalizeRaffleCode(String(body.raffleCode ?? ""));
     const productName = String(body.productName ?? "").trim();
     const name = productName;
-    const city = String(body.city ?? "").trim();
-    const topicIdInput = String(body.topicId ?? "").trim();
-    const newTopicName = normalizeTopicName(String(body.newTopicName ?? ""));
     const description = String(body.description ?? "").trim();
     const totalNumbers = Number(body.totalNumbers);
     const priceInCents = parsePrice(String(body.pricePerNumber ?? ""));
@@ -220,32 +217,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "A data de encerramento precisa ser futura." }, { status: 400 });
     }
 
-    if (!topicIdInput && !newTopicName) {
-      return NextResponse.json({ error: "Selecione um tópico ou crie um novo tópico para a rifa." }, { status: 400 });
-    }
-
     const raffleCode = raffleCodeInput || await generateRaffleCode();
 
     const raffle = await prisma.$transaction(async (tx) => {
-      let topicId = topicIdInput || null;
-      if (newTopicName) {
-        const normalized = normalizeTopicKey(newTopicName);
-        const topic = await tx.raffleTopic.upsert({
-          where: { normalized },
-          update: {},
-          create: { name: newTopicName, normalized }
-        });
-        topicId = topic.id;
-      } else if (topicId) {
-        const topic = await tx.raffleTopic.findUnique({ where: { id: topicId }, select: { id: true } });
-        if (!topic) throw new Error("Tópico não encontrado.");
-      }
-
-      const selectedTopic = topicId ? await tx.raffleTopic.findUnique({ where: { id: topicId }, select: { name: true } }) : null;
-      const raffleCity = city || selectedTopic?.name || newTopicName;
-      if (!raffleCity) throw new Error("Tópico não informado.");
       const created = await tx.raffle.create({
-        data: { raffleCode, name, city: raffleCity, topicId, productName, description, imageUrls, totalNumbers, priceInCents, endDate }
+        data: {
+          raffleCode,
+          name,
+          city: "",
+          topicId: null,
+          productName,
+          description,
+          imageUrls,
+          totalNumbers,
+          priceInCents,
+          endDate
+        }
       });
 
       await tx.$executeRaw(
