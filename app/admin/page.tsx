@@ -83,6 +83,8 @@ export default function AdminPage() {
   const [instagramHandle, setInstagramHandle] = useState("rifastop.com.br");
   const [savingWhatsapp, setSavingWhatsapp] = useState(false);
   const [savingInstagram, setSavingInstagram] = useState(false);
+  const [heroImageUrl, setHeroImageUrl] = useState<string | null>(null);
+  const [savingHeroImage, setSavingHeroImage] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingList, setLoadingList] = useState(true);
   const [message, setMessage] = useState("");
@@ -113,6 +115,7 @@ export default function AdminPage() {
       const data = await response.json();
       if (response.ok && data.contactWhatsapp) setContactWhatsapp(data.contactWhatsapp);
       if (response.ok && data.instagramHandle) setInstagramHandle(data.instagramHandle || "rifastop.com.br");
+      if (response.ok) setHeroImageUrl(data.heroImageUrl ?? null);
     } catch {}
   }
 
@@ -288,6 +291,56 @@ export default function AdminPage() {
       setError("Não foi possível conectar ao servidor.");
     } finally {
       setSavingTopic(false);
+    }
+  }
+
+  async function saveHeroImage(file: File) {
+    setSavingHeroImage(true);
+    setError("");
+    setMessage("");
+    try {
+      const converted = await compressImage(file);
+      const response = await fetch("/api/config", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ heroImageUrl: converted })
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        setError(data.error ?? "Não foi possível salvar a imagem de destaque.");
+        return;
+      }
+      setHeroImageUrl(data.heroImageUrl ?? null);
+      setMessage("Imagem de destaque atualizada.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível preparar a imagem.");
+    } finally {
+      setSavingHeroImage(false);
+    }
+  }
+
+  async function removeHeroImage() {
+    if (!window.confirm("Remover a imagem de destaque da página inicial?")) return;
+    setSavingHeroImage(true);
+    setError("");
+    setMessage("");
+    try {
+      const response = await fetch("/api/config", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ heroImageUrl: null })
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        setError(data.error ?? "Não foi possível remover a imagem.");
+        return;
+      }
+      setHeroImageUrl(null);
+      setMessage("Imagem de destaque removida.");
+    } catch {
+      setError("Não foi possível conectar ao servidor.");
+    } finally {
+      setSavingHeroImage(false);
     }
   }
 
@@ -596,6 +649,37 @@ export default function AdminPage() {
               </div>
             </div>
             <div className="admin-settings-grid">
+            <div className="admin-contact-setting admin-hero-setting">
+              <div className="admin-setting-label">Imagem de destaque da página inicial</div>
+              <span className="admin-setting-help">Essa faixa aparece no topo da página principal. Você pode trocar a imagem quando quiser.</span>
+              {heroImageUrl ? (
+                <div className="admin-hero-preview">
+                  <img src={heroImageUrl} alt="Prévia da imagem de destaque" />
+                </div>
+              ) : (
+                <div className="admin-hero-empty">Nenhuma imagem cadastrada</div>
+              )}
+              <div className="admin-hero-actions">
+                <label className="primary-button compact-button admin-file-button">
+                  {savingHeroImage ? "Salvando..." : heroImageUrl ? "Trocar imagem" : "Adicionar imagem"}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    disabled={savingHeroImage}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      e.target.value = "";
+                      if (file) void saveHeroImage(file);
+                    }}
+                  />
+                </label>
+                {heroImageUrl ? (
+                  <button className="secondary-button compact-button" type="button" onClick={removeHeroImage} disabled={savingHeroImage}>
+                    Remover
+                  </button>
+                ) : null}
+              </div>
+            </div>
             <div className="admin-contact-setting">
               <label>WhatsApp de contato
                 <input
