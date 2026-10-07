@@ -23,51 +23,6 @@ export default async function AccountPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
-  const reservationCutoff = new Date(Date.now() - 30 * 60 * 1000);
-
-  const expiredReservations = await prisma.raffleNumber.findMany({
-    where: {
-      reservedByUserId: user.id,
-      status: "RESERVED",
-      reservedAt: { lt: reservationCutoff }
-    },
-    select: { reservationId: true }
-  });
-
-  const expiredReservationIds = expiredReservations
-    .map((item) => item.reservationId)
-    .filter((value): value is string => Boolean(value));
-
-  if (expiredReservationIds.length > 0) {
-    await prisma.$transaction([
-      prisma.raffleNumber.updateMany({
-        where: {
-          reservedByUserId: user.id,
-          status: "RESERVED",
-          reservationId: { in: expiredReservationIds }
-        },
-        data: {
-          status: "AVAILABLE",
-          reservationId: null,
-          reservedAt: null,
-          reservedByUserId: null
-        }
-      }),
-      prisma.raffleParticipation.updateMany({
-        where: {
-          userId: user.id,
-          status: "PENDING",
-          reservationId: { in: expiredReservationIds }
-        },
-        data: {
-          status: "REJECTED",
-          mercadopagoStatus: "expired",
-          mercadopagoStatusDetail: "Reserva expirada após 30 minutos sem pagamento."
-        }
-      })
-    ]);
-  }
-
   const siteSettings = await prisma.siteSettings.findUnique({
     where: { id: 1 },
     select: { contactWhatsapp: true }
@@ -96,7 +51,7 @@ export default async function AccountPage() {
   const numbers = await prisma.raffleNumber.findMany({
     where: {
       reservedByUserId: user.id,
-      status: { in: ["RESERVED", "CONFIRMED"] },
+      status: "CONFIRMED",
       raffle: { status: "ACTIVE" }
     },
     select: {
