@@ -44,8 +44,6 @@ type Raffle = {
 
 const initialForm = {
   raffleCode: "",
-  topicId: "",
-  newTopicName: "",
   city: "",
   productName: "",
   description: "",
@@ -68,12 +66,6 @@ function formatNumber(value: number | string) {
 export default function AdminPage() {
   const [form, setForm] = useState(initialForm);
   const [raffles, setRaffles] = useState<Raffle[]>([]);
-  const [topics, setTopics] = useState<{ id: string; name: string }[]>([]);
-  const [editingTopicId, setEditingTopicId] = useState("");
-  const [editingTopicName, setEditingTopicName] = useState("");
-  const [savingTopic, setSavingTopic] = useState(false);
-  const [deletingTopicId, setDeletingTopicId] = useState("");
-  const [topicDeleteTargets, setTopicDeleteTargets] = useState<Record<string, string>>({});
   const [bonusSearch, setBonusSearch] = useState("");
   const [bonusUsers, setBonusUsers] = useState<{ id: string; name: string; username: string; whatsapp: string; city: string }[]>([]);
   const [selectedBonusUser, setSelectedBonusUser] = useState<{ id: string; name: string; username: string; whatsapp: string; city: string } | null>(null);
@@ -102,7 +94,6 @@ export default function AdminPage() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "Não foi possível carregar as rifas.");
       setRaffles(data.raffles ?? []);
-      setTopics(data.topics ?? []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível carregar as rifas.");
     } finally {
@@ -204,94 +195,6 @@ export default function AdminPage() {
       setError("Não foi possível conectar ao servidor.");
     } finally {
       setSavingBonus(false);
-    }
-  }
-
-  async function deleteTopic(topicId: string, topicName: string) {
-    const targetTopicId = topicDeleteTargets[topicId] ?? "";
-    const targetTopic = topics.find((topic) => topic.id === targetTopicId);
-
-    if (!targetTopicId || !targetTopic) {
-      setError("Escolha primeiro o tópico que vai receber as rifas deste tópico.");
-      return;
-    }
-
-    const targetName = targetTopic.name.replace(/^Rifas em\s+/i, "");
-    const confirmation = window.confirm(
-      `Excluir "Rifas em ${topicName}" e mover todas as rifas dele para "Rifas em ${targetName}"? O tópico antigo será removido do sistema e as rifas continuarão normalmente.`
-    );
-    if (!confirmation) return;
-
-    setDeletingTopicId(topicId);
-    setError("");
-    setMessage("");
-
-    try {
-      const response = await fetch("/api/rifas", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topicId, targetTopicId })
-      });
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.error ?? "Não foi possível excluir o tópico.");
-        return;
-      }
-
-      setMessage(data.message ?? "Tópico excluído e rifas transferidas.");
-      setTopicDeleteTargets((current) => {
-        const next = { ...current };
-        delete next[topicId];
-        return next;
-      });
-      if (editingTopicId === topicId) {
-        setEditingTopicId("");
-        setEditingTopicName("");
-      }
-      await loadRaffles();
-    } catch {
-      setError("Não foi possível conectar ao servidor.");
-    } finally {
-      setDeletingTopicId("");
-    }
-  }
-  async function saveTopicName() {
-    const topicName = editingTopicName.trim();
-    if (!editingTopicId || !topicName) {
-      setError("Informe o novo nome do tópico.");
-      return;
-    }
-
-    setSavingTopic(true);
-    setError("");
-    setMessage("");
-
-    try {
-      const response = await fetch("/api/rifas", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          editTopic: true,
-          topicId: editingTopicId,
-          topicName
-        })
-      });
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.error ?? "Não foi possível editar o tópico.");
-        return;
-      }
-
-      setMessage("Nome do tópico atualizado.");
-      setEditingTopicId("");
-      setEditingTopicName("");
-      await loadRaffles();
-    } catch {
-      setError("Não foi possível conectar ao servidor.");
-    } finally {
-      setSavingTopic(false);
     }
   }
 
@@ -726,120 +629,6 @@ export default function AdminPage() {
           <form className="admin-form" onSubmit={submit}>
             <section className="form-section form-section-nested">
               <label>ID da rifa<input value={form.raffleCode} onChange={(e) => update("raffleCode", e.target.value)} placeholder="Ex.: RIFA-001 ou deixe vazio" /><small>Se deixar vazio, o sistema gera um ID automaticamente.</small></label>
-                            <label>Tópico regional da rifa
-                <select
-                  value={form.topicId}
-                  disabled={Boolean(form.newTopicName.trim())}
-                  onChange={(e) => {
-                    update("topicId", e.target.value);
-                    if (e.target.value) update("newTopicName", "");
-                  }}
-                >
-                  <option value="">Selecione um tópico</option>
-                  {topics.map((topic) => <option value={topic.id} key={topic.id}>Rifas em {topic.name.replace(/^Rifas em\s+/i, "")}</option>)}
-                </select>
-                <small>Escolha um tópico existente ou deixe este campo e o próximo em branco para usar um novo tópico.</small>
-              </label>
-              <label>Novo tópico regional
-                <input
-                  value={form.newTopicName}
-                  disabled={Boolean(form.topicId)}
-                  onChange={(e) => {
-                    update("newTopicName", e.target.value);
-                    if (e.target.value.trim()) update("topicId", "");
-                  }}
-                  placeholder="Ex.: Paramirim-BA"
-                />
-                <small>Digite somente o nome do local. Ao preencher, o tópico existente fica desativado. O sistema exibirá como "Rifas em Nome do local".</small>
-              </label>
-
-              {topics.length > 0 && (
-                <div className="topic-edit-box">
-                  <h3>Editar tópicos regionais</h3>
-                  <p className="form-help">Corrija o nome de um tópico já salvo sem precisar criar outro. A alteração será aplicada às rifas vinculadas a ele.</p>
-                  <div className="topic-edit-list">
-                    {topics.map((topic) => {
-                      const isEditing = editingTopicId === topic.id;
-                      return (
-                        <div className="topic-edit-row" key={topic.id}>
-                          {isEditing ? (
-                            <>
-                              <input
-                                value={editingTopicName}
-                                onChange={(e) => setEditingTopicName(e.target.value)}
-                                placeholder="Nome do tópico"
-                                autoFocus
-                              />
-                              <button className="primary-button compact-button" type="button" onClick={saveTopicName} disabled={savingTopic}>
-                                {savingTopic ? "Salvando..." : "Salvar"}
-                              </button>
-                              <button
-                                className="secondary-button compact-button"
-                                type="button"
-                                onClick={() => {
-                                  setEditingTopicId("");
-                                  setEditingTopicName("");
-                                }}
-                                disabled={savingTopic}
-                              >
-                                Cancelar
-                              </button>
-                            </>
-                          ) : (
-                            <>
-                              <span className="topic-edit-name">Rifas em {topic.name.replace(/^Rifas em\s+/i, "")}</span>
-                              <button
-                                className="secondary-button compact-button"
-                                type="button"
-                                onClick={() => {
-                                  setEditingTopicId(topic.id);
-                                  setEditingTopicName(topic.name.replace(/^Rifas em\s+/i, ""));
-                                  setMessage("");
-                                  setError("");
-                                }}
-                              >
-                                Editar nome
-                              </button>
-                              {topics.length > 1 && (
-                                <div className="topic-delete-action">
-                                  <select
-                                    className="topic-delete-target"
-                                    value={topicDeleteTargets[topic.id] ?? ""}
-                                    onChange={(e) =>
-                                      setTopicDeleteTargets((current) => ({
-                                        ...current,
-                                        [topic.id]: e.target.value
-                                      }))
-                                    }
-                                    disabled={deletingTopicId === topic.id}
-                                  >
-                                    <option value="">Mover rifas para...</option>
-                                    {topics
-                                      .filter((target) => target.id !== topic.id)
-                                      .map((target) => (
-                                        <option value={target.id} key={target.id}>
-                                          Rifas em {target.name.replace(/^Rifas em\s+/i, "")}
-                                        </option>
-                                      ))}
-                                  </select>
-                                  <button
-                                    className="danger-button compact-button topic-delete-button danger-topic-button"
-                                    type="button"
-                                    onClick={() => deleteTopic(topic.id, topic.name.replace(/^Rifas em\s+/i, ""))}
-                                    disabled={deletingTopicId === topic.id || !topicDeleteTargets[topic.id]}
-                                  >
-                                    {deletingTopicId === topic.id ? "Excluindo tópico..." : "🗑️ Excluir e transferir"}
-                                  </button>
-                                </div>
-                              )}
-                            </>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
               <label>Nome do produto<input required value={form.productName} onChange={(e) => update("productName", e.target.value)} placeholder="Ex.: Chevrolet Celta 2012" /></label>
                 <label>Descrição<textarea required value={form.description} onChange={(e) => update("description", e.target.value)} placeholder="Descreva o produto e as informações importantes." rows={6} /></label>
             </section>
