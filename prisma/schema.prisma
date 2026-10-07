@@ -36,6 +36,7 @@ model SiteSettings {
   id             Int      @id @default(1)
   contactWhatsapp String   @default("77998315360")
   instagramHandle String   @default("rifastop.com.br")
+  heroImageUrl   String?  @db.Text
   updatedAt      DateTime @updatedAt
 }
 
