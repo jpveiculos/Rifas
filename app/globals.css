@@ -1452,61 +1452,8 @@ a { color: inherit; text-decoration: none; }
   .raffle-card .primary-button { min-height: 40px; font-size: 11px; }
 }
 
-.home-raffle-browser {
-  margin-top: 0;
-}
-
-.raffle-city-groups {
-  display: grid;
-  gap: 34px;
-}
-.raffle-city-group {
-  display: grid;
-  gap: 16px;
-}
-
-.raffle-city-heading {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  padding: 13px 18px;
-  border-radius: 15px;
-  background: rgba(255,255,255,.92);
-  border: 2px solid rgba(13,99,223,.18);
-  box-shadow: 0 8px 22px rgba(9,38,72,.13);
-  position: relative;
-  overflow: hidden;
-}
-.raffle-city-heading::before {
-  content: "";
-  width: 6px;
-  align-self: stretch;
-  min-height: 34px;
-  margin-right: 12px;
-  border-radius: 99px;
-  background: linear-gradient(180deg, #0d63df, #ffbd00);
-}
-.raffle-city-heading h3 {
-  margin: 0;
-  color: #10233b;
-  font-size: clamp(25px, 5vw, 40px);
-  line-height: 1;
-  letter-spacing: -.8px;
-  font-weight: 900;
-  white-space: nowrap;
-}
 @media (max-width: 640px) {
-  .raffle-city-groups { gap: 26px; }
-  .raffle-city-group { gap: 11px; }
-  .raffle-city-heading {
-    padding: 7px 0 3px;
   }
-  .raffle-city-heading h3 {
-    font-size: 25px;
-    letter-spacing: -.7px;
-    white-space: nowrap;
-  }
-}
 
 /* Conta do participante — layout limpo */
 .account-page-clean {
@@ -2682,10 +2629,7 @@ body {
 /* Contraste no fundo preto: textos que ficam diretamente sobre o fundo passam a ser brancos. */
 .raffle-section .browser-results-heading h3,
 .raffle-section .browser-results-heading > span,
-.raffle-section .raffle-city-heading h3 {
-  color: #fff;
-}
-.terms-page > .container > .back-link,
+.raffle-section .terms-page > .container > .back-link,
 .download-page > .container > .back-link {
   color: #fff;
 }
@@ -2697,22 +2641,6 @@ body {
 }
 
 /* Refinamento exclusivo do título "Rifas em ..." */
-.raffle-city-heading {
-  background: #0d1b2a;
-  border: 1px solid rgba(255, 189, 0, .55);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, .28);
-  padding: 14px 18px;
-}
-.raffle-city-heading::before {
-  width: 5px;
-  background: linear-gradient(180deg, #ffbd00, #ffd84d);
-}
-.raffle-city-heading h3 {
-  color: #fff !important;
-  text-shadow: 0 1px 2px rgba(0,0,0,.35);
-}
-
-
 /* Cabeçalho e rodapé com o mesmo preto do fundo do site. */
 .site-header {
   background: #000;
@@ -3438,33 +3366,6 @@ body {
 
 
 /* ===== HOME: banner único da região + cards refinados ===== */
-.raffle-city-groups { display: block; }
-.raffle-city-group { display: grid; gap: 16px; }
-.raffle-city-heading {
-  width: 100%;
-  min-width: 0;
-  padding: 12px 16px;
-  border-radius: 16px;
-  background: #0d1b2a;
-  border: 2px solid rgba(255, 193, 7, .72);
-  box-shadow: 0 8px 24px rgba(0,0,0,.28);
-}
-.raffle-city-heading::before {
-  width: 5px;
-  min-height: 34px;
-  margin-right: 12px;
-  background: linear-gradient(180deg, #ffd21a, #ffb800);
-}
-.raffle-city-heading h3 {
-  color: #fff !important;
-  font-size: clamp(20px, 6vw, 34px);
-  line-height: 1.05;
-  letter-spacing: -.7px;
-  font-weight: 900;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: clip;
-}
 .raffle-card {
   background: #0e2b44 !important;
   border: 1px solid rgba(66, 185, 255, .78);
@@ -3485,13 +3386,6 @@ body {
 
 @media (max-width: 640px) {
   .raffle-section { padding: 12px 0 12px; }
-  .raffle-city-group { gap: 12px; }
-  .raffle-city-heading { padding: 10px 12px; border-radius: 14px; }
-  .raffle-city-heading::before { width: 5px; min-height: 31px; margin-right: 10px; }
-  .raffle-city-heading h3 {
-    font-size: clamp(20px, 6.4vw, 27px);
-    letter-spacing: -.6px;
-  }
   .raffle-mosaic { gap: 10px; }
   .raffle-card { border-radius: 14px; }
   .raffle-card-content { padding: 11px; }
@@ -4244,20 +4138,6 @@ main.section::after {
 }
 
 
-/* ===== HOME: afastar os quatro atalhos das rifas e aproximar do rodape ===== */
-.home-bottom-links {
-  margin-top: 28px !important;
-  padding-bottom: 8px !important;
-}
-
-@media (max-width: 640px) {
-  .home-bottom-links {
-    margin-top: 24px !important;
-    padding-bottom: 6px !important;
-  }
-}
-
-
 /* ===== BOTAO COMPARTILHAR: alto contraste na pagina da rifa ===== */
 .raffle-detail-page .share-box {
   background: #cfe8fb !important;
@@ -4871,11 +4751,7 @@ body:not(:has(.home-bottom-links)) .social-links-section {
 }
 
 @media (max-width: 640px) {
-  .raffle-city-heading h3 {
-    font-size: 22px !important;
-    letter-spacing: -.6px !important;
   }
-}
 
 
 /* ===== PAGAMENTO DA RIFA: contraste dos textos sobre azul-claro ===== */
@@ -5028,22 +4904,4 @@ body:not(:has(.home-bottom-links)) .social-links-section {
   }
 }
 
-
-/* Home: rodapé acompanha o conteúdo sem criar faixa vazia. */
-.home-page {
-  padding-bottom: 0;
-  min-height: 0;
-}
-
-body:has(.home-page) {
-  padding-bottom: 0;
-}
-
-body:has(.home-page) .footer {
-  position: static;
-  left: auto;
-  right: auto;
-  bottom: auto;
-  margin-top: 0;
-}
 
