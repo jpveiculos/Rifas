@@ -4898,8 +4898,8 @@ body:not(:has(.home-bottom-links)) .social-links-section {
 }
 
 .home-hero-banner-inner {
-  width: min(1400px, calc(100% - 24px));
-  height: clamp(190px, 24vw, 310px);
+  width: min(1200px, calc(100% - 24px));
+  aspect-ratio: 1.91 / 1;
   margin: 0 auto;
   overflow: hidden;
   border-radius: 16px;
@@ -4910,7 +4910,7 @@ body:not(:has(.home-bottom-links)) .social-links-section {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
 }
 
@@ -4921,7 +4921,7 @@ body:not(:has(.home-bottom-links)) .social-links-section {
 
   .home-hero-banner-inner {
     width: calc(100% - 14px);
-    height: 180px;
+    aspect-ratio: 1.91 / 1;
     border-radius: 12px;
   }
 }
