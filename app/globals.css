@@ -23,13 +23,13 @@ a { color: inherit; text-decoration: none; }
   color: #fff;
   box-shadow: 0 5px 24px rgba(9, 25, 42, .18);
 }
-.site-header-inner { min-height: 58px; display: flex; align-items: center; justify-content: space-between; gap: 28px; }
+.site-header-inner { min-height: 46px; height: 46px; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
 .brand {
   display: inline-flex;
   align-items: center;
   gap: 0;
   font-family: var(--site-font);
-  font-size: 25px;
+  font-size: 22px;
   line-height: 1;
   font-weight: 900;
   -webkit-text-stroke: .35px currentColor;
@@ -40,8 +40,8 @@ a { color: inherit; text-decoration: none; }
 .header-link { color: #fff; font-size: 14px; font-weight: 700; opacity: .92; }
 .header-link:hover { color: #ffd21a; }
 .header-login {
-  min-height: 38px; display: inline-flex; align-items: center; justify-content: center;
-  padding: 0 16px; border: 1px solid rgba(255,255,255,.25); border-radius: 999px;
+  min-height: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;
+  padding: 0 13px; border: 1px solid rgba(255,255,255,.25); border-radius: 999px;
   font-size: 14px; font-weight: 800; background: rgba(255,255,255,.05);
 }
 .header-login:hover { background: #ffd21a; color: #0d1b2a; }
@@ -2194,12 +2194,13 @@ a { color: inherit; text-decoration: none; }
 
 @media (max-width: 640px) {
   .site-header-inner {
-    min-height: 68px;
-    gap: 12px;
+    min-height: 42px;
+    height: 42px;
+    gap: 8px;
   }
 
-   .brand {
-    font-size: 24px;
+  .brand {
+    font-size: 20px;
   }
 
   .header-actions {
@@ -2212,9 +2213,10 @@ a { color: inherit; text-decoration: none; }
 
   .header-login,
   .header-logout {
-    min-height: 38px;
-    padding: 0 12px;
-    font-size: 12px;
+    min-height: 30px;
+    height: 30px;
+    padding: 0 11px;
+    font-size: 11px;
   }
 }
 
