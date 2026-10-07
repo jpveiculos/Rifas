@@ -2,6 +2,16 @@ import { prisma } from "@/lib/prisma";
 
 const DEFAULT_INSTAGRAM = "rifastop.com.br";
 
+export async function getSiteHeroImage() {
+  const rows = await prisma.$queryRaw<Array<{ heroImageUrl: string | null }>>`
+    SELECT "heroImageUrl"
+    FROM "SiteSettings"
+    WHERE id = 1
+    LIMIT 1
+  `;
+  return rows[0]?.heroImageUrl ?? null;
+}
+
 export async function ensureSiteInstagramColumn() {
   await prisma.$executeRawUnsafe(
     'ALTER TABLE "SiteSettings" ADD COLUMN IF NOT EXISTS "instagramHandle" TEXT NOT NULL DEFAULT \'rifastop.com.br\''
