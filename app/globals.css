@@ -4899,7 +4899,7 @@ body:not(:has(.home-bottom-links)) .social-links-section {
 
 .home-hero-banner-inner {
   width: min(1200px, calc(100% - 24px));
-  aspect-ratio: 1.91 / 1;
+  aspect-ratio: 16 / 9;
   margin: 0 auto;
   overflow: hidden;
   border-radius: 16px;
