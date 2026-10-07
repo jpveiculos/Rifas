@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import SiteHeader from "@/app/SiteHeader";
-import PaymentCountdown from "./PaymentCountdown";
 
 export const dynamic = "force-dynamic";
 
@@ -22,51 +21,6 @@ function formatDate(value: Date | string) {
 export default async function AccountPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
-
-  const reservationCutoff = new Date(Date.now() - 30 * 60 * 1000);
-
-  const expiredReservations = await prisma.raffleNumber.findMany({
-    where: {
-      reservedByUserId: user.id,
-      status: "RESERVED",
-      reservedAt: { lt: reservationCutoff }
-    },
-    select: { reservationId: true }
-  });
-
-  const expiredReservationIds = expiredReservations
-    .map((item) => item.reservationId)
-    .filter((value): value is string => Boolean(value));
-
-  if (expiredReservationIds.length > 0) {
-    await prisma.$transaction([
-      prisma.raffleNumber.updateMany({
-        where: {
-          reservedByUserId: user.id,
-          status: "RESERVED",
-          reservationId: { in: expiredReservationIds }
-        },
-        data: {
-          status: "AVAILABLE",
-          reservationId: null,
-          reservedAt: null,
-          reservedByUserId: null
-        }
-      }),
-      prisma.raffleParticipation.updateMany({
-        where: {
-          userId: user.id,
-          status: "PENDING",
-          reservationId: { in: expiredReservationIds }
-        },
-        data: {
-          status: "REJECTED",
-          mercadopagoStatus: "expired",
-          mercadopagoStatusDetail: "Reserva expirada após 30 minutos sem pagamento."
-        }
-      })
-    ]);
-  }
 
   const siteSettings = await prisma.siteSettings.findUnique({
     where: { id: 1 },
@@ -198,11 +152,7 @@ export default async function AccountPage() {
 
                 <div className="account-pending-list">
                   {pendingParticipations.map((item) => {
-                    const reservation = numbersByReservation.get(item.reservationId);
                     const mine = participationNumbers(item.reservationId);
-                    const paymentExpiresAt = item.mercadopagoExpiresAt
-                      ? item.mercadopagoExpiresAt.toISOString()
-                      : new Date(item.createdAt.getTime() + 30 * 60 * 1000).toISOString();
 
                     return (
                       <article className="account-pending-card" key={item.id}>
@@ -222,15 +172,13 @@ export default async function AccountPage() {
                             {item.raffle.name}
                             {item.raffle.raffleCode ? " · ID " + item.raffle.raffleCode : ""}
                           </p>
-                          <div className="account-numbers">
-                            <span>Números reservados</span>
-                            <div>{mine.map((number) => <b key={number}>{formatNumber(number)}</b>)}</div>
-                          </div>
+                          <div className="account-numbers account-numbers-hidden">
+                              <span>Números reservados</span>
+                              <div><b>••••</b></div>
+                            </div>
                           <div className="account-pending-payment">
                             <strong>Pagamento pendente</strong>
-                            <span>
-<PaymentCountdown expiresAt={paymentExpiresAt} />
-                            </span>
+                            <span>Aguardando confirmação do Mercado Pago. Os números serão exibidos após a aprovação.</span>
                             {item.mercadopagoQrCodeBase64 && (
                               <details className="payment-qr-details">
                                 <summary className="secondary-button account-button payment-link">Pagar agora</summary>
@@ -333,18 +281,18 @@ export default async function AccountPage() {
                                 <div className="account-numbers">
                                   <span>{isPending ? "Números reservados" : "Seus números"}</span>
                                   <div>
-                                    {mine.map((number) => (
-                                      <b key={number}>{formatNumber(number)}</b>
-                                    ))}
+                                    {isPending ? (
+                                      <b>••••</b>
+                                    ) : (
+                                      mine.map((number) => <b key={number}>{formatNumber(number)}</b>)
+                                    )}
                                   </div>
                                 </div>
 
                                 {isPending && (
                                   <div className="account-pending-payment">
                                     <strong>Pagamento pendente</strong>
-                                    <span>
-<PaymentCountdown expiresAt={paymentExpiresAt} />
-                                    </span>
+                                    <span>Aguardando confirmação do Mercado Pago. Os números serão exibidos após a aprovação.</span>
 
                                     {item.mercadopagoQrCodeBase64 && (
                                       <details className="payment-qr-details">
