@@ -11,7 +11,7 @@ export default async function HomePage() {
   const user = await getCurrentUser();
   const siteSettings = await prisma.siteSettings.findUnique({
     where: { id: 1 },
-    select: { contactWhatsapp: true }
+    select: { contactWhatsapp: true, heroImageUrl: true }
   });
   const instagramHandle = await getSiteInstagramHandle();
   const raffles = await prisma.raffle.findMany({
@@ -50,6 +50,14 @@ export default async function HomePage() {
   return (
     <>
       <SiteHeader />
+
+      {siteSettings?.heroImageUrl ? (
+        <section className="home-hero-banner" aria-label="Destaque da RifasTOP">
+          <div className="home-hero-banner-inner">
+            <img src={siteSettings.heroImageUrl} alt="RifasTOP — Rifas em Paramirim-BA e Região" />
+          </div>
+        </section>
+      ) : null}
 
       <main>
         <section className="section raffle-section" id="rifas">
