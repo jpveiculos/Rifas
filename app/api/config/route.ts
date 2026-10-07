@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { cleanInstagramHandle, ensureSiteInstagramColumn, getSiteInstagramHandle } from "@/lib/site-settings";
 
 function cleanWhatsapp(value: unknown) {
@@ -18,7 +19,8 @@ export async function GET() {
   return NextResponse.json(
     {
       contactWhatsapp: settings.contactWhatsapp,
-      instagramHandle
+      instagramHandle,
+      heroImageUrl: settings.heroImageUrl ?? null
     },
     { headers: { "Cache-Control": "no-store" } }
   );
@@ -30,9 +32,14 @@ export async function PATCH(request: Request) {
 
   const hasWhatsapp = body.contactWhatsapp !== undefined;
   const hasInstagram = body.instagramHandle !== undefined;
+  const hasHeroImage = body.heroImageUrl !== undefined;
 
-  if (!hasWhatsapp && !hasInstagram) {
+  if (!hasWhatsapp && !hasInstagram && !hasHeroImage) {
     return NextResponse.json({ error: "Nenhuma configuração foi informada." }, { status: 400 });
+  }
+
+  if ((hasWhatsapp || hasInstagram || hasHeroImage) && !(await isAdminAuthenticated())) {
+    return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
   }
 
   const current = await prisma.siteSettings.upsert({
@@ -55,6 +62,7 @@ export async function PATCH(request: Request) {
   }
 
   let instagramHandle = await getSiteInstagramHandle();
+  let heroImageUrl = current.heroImageUrl ?? null;
   if (hasInstagram) {
     instagramHandle = cleanInstagramHandle(body.instagramHandle);
     if (!instagramHandle) {
@@ -68,5 +76,20 @@ export async function PATCH(request: Request) {
     `;
   }
 
-  return NextResponse.json({ contactWhatsapp, instagramHandle });
+  if (hasHeroImage) {
+    const value = body.heroImageUrl === null ? null : String(body.heroImageUrl ?? "").trim();
+    if (value && !value.startsWith("data:image/")) {
+      return NextResponse.json({ error: "A imagem enviada é inválida." }, { status: 400 });
+    }
+    if (value.length > 2_500_000) {
+      return NextResponse.json({ error: "A imagem ficou muito grande. Use uma imagem menor." }, { status: 400 });
+    }
+    heroImageUrl = value || null;
+    await prisma.siteSettings.update({
+      where: { id: 1 },
+      data: { heroImageUrl }
+    });
+  }
+
+  return NextResponse.json({ contactWhatsapp, instagramHandle, heroImageUrl });
 }
