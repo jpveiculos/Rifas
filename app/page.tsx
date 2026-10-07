@@ -59,7 +59,7 @@ export default async function HomePage() {
         </section>
       ) : null}
 
-      <main>
+      <main className="home-page">
         <section className="section raffle-section" id="rifas">
           <div className="container">
             {raffles.length === 0 ? (
@@ -100,13 +100,6 @@ export default async function HomePage() {
                 </a>
                 <Link className="home-bottom-link terms-link" href="/termos-de-uso">Termos de Uso</Link>
                 <Link className="home-bottom-link app-link" href="/baixar-app">Baixar Aplicativo</Link>
-              </div>
-            </section>
-
-            <section className="quick-links-section home-quick-links">
-              <div className="quick-links">
-                <Link className="quick-link terms-link" href="/termos-de-uso">Termos de Uso</Link>
-                <Link className="quick-link app-link" href="/baixar-app">Baixar Aplicativo</Link>
               </div>
             </section>
           </div>
