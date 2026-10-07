@@ -203,7 +203,9 @@ export default function RaffleParticipant({ raffleId, priceInCents }: { raffleId
         <div className="generated-numbers">
           <h3>Seus números reservados</h3>
           <div className="number-list">
-            {numbers.map((number) => <span key={number}>{String(number).padStart(4, "0")}</span>)}
+            {payment?.status === "PENDING"
+              ? <span>••••</span>
+              : numbers.map((number) => <span key={number}>{String(number).padStart(4, "0")}</span>)}
           </div>
 
           {!payment && (
@@ -265,7 +267,7 @@ export default function RaffleParticipant({ raffleId, priceInCents }: { raffleId
                 </a>
               )}
 
-              <p className="payment-waiting">Aguardando confirmação do pagamento...</p>
+              <p className="payment-waiting">Aguardando confirmação do pagamento. Os números reais serão exibidos após a aprovação.</p>
             </>
           )}
         </div>
