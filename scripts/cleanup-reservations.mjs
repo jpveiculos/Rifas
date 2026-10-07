@@ -3,45 +3,20 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  const cutoff = new Date(Date.now() - 30 * 60 * 1000);
-
-  const released = await prisma.raffleNumber.updateMany({
-    where: {
-      status: "RESERVED",
-      reservedAt: { lt: cutoff }
-    },
-    data: {
-      status: "AVAILABLE",
-      reservationId: null,
-      reservedAt: null,
-      reservedByUserId: null
-    }
-  });
-
-  const rejected = await prisma.raffleParticipation.updateMany({
-    where: {
-      status: "PENDING",
-      createdAt: { lt: cutoff }
-    },
-    data: {
-      status: "REJECTED",
-      mercadopagoStatus: "expired",
-      mercadopagoStatusDetail: "Reserva expirada após 30 minutos sem pagamento."
-    }
-  });
-
+  // IMPORTANT: payment reservations are never released by a local timer.
+  // PENDING participations remain PENDING until Mercado Pago reports a final
+  // negative state (failed/canceled/expired). This script only removes expired
+  // authentication sessions.
   const sessions = await prisma.session.deleteMany({
     where: { expiresAt: { lt: new Date() } }
   });
 
-  console.log(
-    `Limpeza concluída: ${released.count} reservas liberadas, ${rejected.count} pagamentos pendentes expirados e ${sessions.count} sessões expiradas removidas.`
-  );
+  console.log(`Limpeza concluída: ${sessions.count} sessões expiradas removidas. Reservas de pagamento não foram liberadas por relógio local.`);
 }
 
 main()
   .catch((error) => {
-    console.error("Falha na limpeza de reservas:", error);
+    console.error("Falha na limpeza de sessões:", error);
     process.exitCode = 1;
   })
   .finally(async () => {
