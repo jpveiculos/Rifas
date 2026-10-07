@@ -4066,12 +4066,6 @@ body {
 }
 
 /* ===== PAGINAS INTERNAS: fundo preto limpo, sem "tela" por baixo dos cards ===== */
-.raffle-detail-page,
-.account-page-clean,
-.terms-page,
-.download-page,
-
-
 .raffle-detail-page::before,
 .raffle-detail-page::after,
 .account-page-clean::before,
