@@ -42,9 +42,9 @@ export default function LoginPage() {
         <h1>Entrar</h1>
         <p>Entre com seu usuário e senha para participar das rifas.</p>
 
-        <form className="auth-form" onSubmit={submit}>
-          <label>Usuário<input required autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} /></label>
-          <label>Senha<input required type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} /></label>
+        <form className="auth-form" onSubmit={submit} noValidate={false}>
+          <label className="auth-field"><span>Usuário</span><input required autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} /></label>
+          <label className="auth-field"><span>Senha</span><input required type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} /></label>
           <button className="primary-button" type="submit" disabled={loading}>{loading ? "Entrando..." : "Entrar"}</button>
         </form>
 
