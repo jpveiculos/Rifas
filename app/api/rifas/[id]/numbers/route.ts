@@ -31,19 +31,45 @@ export async function POST(request: Request, { params }: Params) {
 
     const reservationLimit = new Date(Date.now() - 30 * 60 * 1000);
 
-    await prisma.raffleNumber.updateMany({
-      where: {
-        raffleId: id,
-        status: "RESERVED",
-        reservedAt: { lt: reservationLimit }
-      },
-      data: {
-        status: "AVAILABLE",
-        reservationId: null,
-        reservedAt: null,
-        reservedByUserId: null
-      }
+    // Uma reserva que já possui uma participação não é encerrada pelo relógio do site.
+    // O Mercado Pago será a autoridade para confirmar ou encerrar a cobrança.
+    const staleReservations = await prisma.raffleNumber.findMany({
+      where: { raffleId: id, status: "RESERVED", reservedAt: { lt: reservationLimit } },
+      select: { reservationId: true }
     });
+
+    const staleReservationIds = staleReservations
+      .map((item) => item.reservationId)
+      .filter(Boolean) as string[];
+
+    const paymentBackedReservationIds = staleReservationIds.length > 0
+      ? new Set(
+          (await prisma.raffleParticipation.findMany({
+            where: { reservationId: { in: staleReservationIds } },
+            select: { reservationId: true }
+          })).map((item) => item.reservationId)
+        )
+      : new Set<string>();
+
+    const staleWithoutPayment = staleReservationIds.filter(
+      (reservationId) => !paymentBackedReservationIds.has(reservationId)
+    );
+
+    if (staleWithoutPayment.length > 0) {
+      await prisma.raffleNumber.updateMany({
+        where: {
+          raffleId: id,
+          status: "RESERVED",
+          reservationId: { in: staleWithoutPayment }
+        },
+        data: {
+          status: "AVAILABLE",
+          reservationId: null,
+          reservedAt: null,
+          reservedByUserId: null
+        }
+      });
+    }
 
     const available = await prisma.raffleNumber.findMany({
       where: { raffleId: id, status: "AVAILABLE" },
