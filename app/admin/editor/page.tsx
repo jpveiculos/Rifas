@@ -62,6 +62,18 @@ export default function VisualSiteEditor() {
     });
   }
 
+  function moveByIndex(id: BlockId, offset: number) {
+    setConfig((current) => {
+      const order = [...current.order];
+      const from = order.indexOf(id);
+      const to = Math.max(0, Math.min(order.length - 1, from + offset));
+      if (from === to) return current;
+      order.splice(from, 1);
+      order.splice(to, 0, id);
+      return { ...current, order };
+    });
+  }
+
   async function save() {
     setSaving(true);
     setMessage("");
