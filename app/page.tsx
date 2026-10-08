@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import HomeRaffleBrowser from "@/app/HomeRaffleBrowser";
@@ -49,7 +50,7 @@ export default async function HomePage() {
 
   const whatsapp = siteSettings?.contactWhatsapp ?? "77998315360";
 
-  const sections: Record<string, React.ReactNode> = {
+  const sections: Record<string, ReactNode> = {
     hero: editor.visible.hero && siteSettings?.heroImageUrl ? (
       <section className="home-hero-banner" aria-label="Destaque da RifasTOP" key="hero">
         <div className="home-hero-banner-inner">
