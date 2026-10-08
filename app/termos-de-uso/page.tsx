@@ -16,7 +16,7 @@ export default function TermosDeUsoPage() {
 
         <article className="terms-card">
           <h1>Termos de Uso</h1>
-          <p className="terms-updated">Última atualização: 01 de outubro de 2026</p>
+          <p className="terms-updated">Última atualização: 08 de outubro de 2026</p>
 
           <p>Bem-vindo ao <strong>RifasTOP</strong>. Este Termo de Uso estabelece as regras para utilização da plataforma, incluindo cadastro de usuários, participação em rifas, aquisição de números, criação e divulgação de rifas, pagamentos, sorteios, cancelamentos e demais funcionalidades disponibilizadas pelo site.</p>
           <p>Ao criar uma conta, participar de uma rifa ou utilizar qualquer funcionalidade do RifasTOP, o usuário declara que leu e concorda com estes Termos de Uso.</p>
@@ -41,9 +41,14 @@ export default function TermosDeUsoPage() {
           <p>Os pagamentos realizados para participação em uma rifa deverão seguir as instruções apresentadas na plataforma. A confirmação da participação dependerá da confirmação do pagamento correspondente.</p>
           <p>Em caso de pagamento realizado e não identificado, o usuário poderá entrar em contato pelos canais disponibilizados pelo RifasTOP, apresentando as informações necessárias para localização da transação.</p>
 
-          <h2>6. Cancelamento de rifas</h2>
-          <p>Uma rifa poderá ser cancelada, suspensa, pausada ou removida quando necessário, inclusive por decisão do responsável pela rifa, por questões operacionais, técnicas, legais ou de segurança.</p>
-          <p>Quando uma rifa for cancelada após a realização de pagamentos, o tratamento dos valores pagos e eventual restituição deverá observar as condições informadas para aquela rifa e a legislação aplicável.</p>
+          <h2>6. Prorrogação, cancelamento e reembolso</h2>
+          <p>Cada rifa possui prazo, quantidade de números e condições específicas informadas em sua respectiva página. Caso, ao final do prazo inicialmente previsto, a quantidade de números vendidos não seja suficiente para a realização da rifa conforme as condições divulgadas, o prazo poderá ser prorrogado pelo período necessário para buscar a conclusão da venda dos números disponíveis, sempre respeitando a legislação e as condições aplicáveis à respectiva rifa.</p>
+          <p>Durante eventual período de prorrogação, a rifa permanecerá disponível para participação e os números ainda disponíveis poderão continuar sendo adquiridos. A existência de uma prorrogação não altera os números já confirmados nem prejudica os direitos dos participantes.</p>
+          <p>Se, após as prorrogações permitidas e dentro do período máximo definido para a respectiva rifa, a quantidade necessária de números não for alcançada, a rifa poderá ser cancelada.</p>
+          <p>Em caso de cancelamento da rifa após a realização de pagamentos, os valores efetivamente pagos pelos participantes afetados serão <strong>integralmente reembolsados</strong>, observadas as condições da respectiva rifa e a legislação aplicável. Sempre que tecnicamente possível, o reembolso será realizado pelo mesmo meio de pagamento utilizado na participação ou por outro meio seguro indicado para a restituição.</p>
+          <p>O reembolso será referente aos valores efetivamente pagos e identificados como participação na rifa cancelada. Reservas não pagas ou pagamentos que não tenham sido efetivamente identificados não geram, por si só, direito a reembolso.</p>
+          <p>Após o cancelamento e o respectivo reembolso, os números vinculados à participação cancelada deixarão de produzir qualquer efeito para fins de apuração de ganhador.</p>
+          <p>Os prazos de prorrogação, eventual limite máximo para continuidade da rifa e demais condições específicas poderão ser informados na própria página da rifa e deverão ser observados pelos participantes.</p>
 
                     <h2>7. Sorteio pela Loteria Federal e apuração do ganhador</h2>
           <p>Quando a respectiva rifa utilizar a Loteria Federal como referência para o sorteio, a apuração será realizada com base no resultado oficial do concurso, observando obrigatoriamente a seguinte ordem de prioridade: <strong>1º prêmio → 2º prêmio → 3º prêmio → 4º prêmio → 5º prêmio</strong>.</p>
@@ -67,38 +72,38 @@ export default function TermosDeUsoPage() {
           <h2>9. Entrega do prêmio</h2>
           <p>A entrega do prêmio ou, quando prevista para a respectiva rifa, o pagamento do valor correspondente via Pix, será realizada conforme as condições estabelecidas na respectiva rifa. O ganhador poderá ser solicitado a fornecer informações necessárias para confirmação de sua identidade e para realização da entrega ou do pagamento.</p>
 
-          <h2>9. Responsabilidade de quem cria uma rifa</h2>
+          <h2>10. Responsabilidade de quem cria uma rifa</h2>
           <p>O responsável pela criação de uma rifa declara que possui legitimidade para anunciar o produto ou prêmio informado e assume responsabilidade pelas informações fornecidas.</p>
           <ul><li>Fornecer informações verdadeiras sobre o produto ou prêmio.</li><li>Possuir autorização ou direito para oferecer o produto anunciado.</li><li>Cumprir as obrigações legais aplicáveis à realização da rifa.</li><li>Realizar a entrega do prêmio conforme as condições anunciadas.</li></ul>
           <p>O cadastramento de uma rifa na plataforma não significa, por si só, que o RifasTOP tenha validado a propriedade, procedência ou regularidade jurídica do produto anunciado.</p>
 
-          <h2>10. Responsabilidade do RifasTOP</h2>
+          <h2>11. Responsabilidade do RifasTOP</h2>
           <p>O RifasTOP disponibiliza a infraestrutura tecnológica da plataforma, mas não assume automaticamente a condição de proprietário dos produtos anunciados pelos usuários nem substitui as obrigações do responsável por cada rifa.</p>
           <p>A plataforma poderá suspender temporariamente determinadas funcionalidades quando necessário para manutenção, atualização, segurança ou correção de problemas técnicos.</p>
 
-          <h2>11. Condutas proibidas</h2>
+          <h2>12. Condutas proibidas</h2>
           <p>É proibido utilizar o RifasTOP para praticar fraude ou tentativa de fraude, utilizar informações falsas, manipular resultados ou sistemas, explorar falhas técnicas, tentar acessar contas de terceiros, realizar atividades ilícitas, anunciar produtos cuja comercialização ou divulgação seja proibida ou praticar qualquer conduta que viole a legislação brasileira.</p>
 
-          <h2>12. Privacidade e proteção de dados</h2>
+          <h2>13. Privacidade e proteção de dados</h2>
           <p>O RifasTOP poderá coletar e utilizar dados pessoais necessários para criação e manutenção da conta, autenticação, participação em rifas, processamento de pagamentos, comunicação com o usuário, prevenção de fraudes, segurança da plataforma e cumprimento de obrigações legais.</p>
           <p>O tratamento de dados pessoais deverá observar a <strong>Lei nº 13.709/2018 — Lei Geral de Proteção de Dados Pessoais (LGPD)</strong> e demais normas aplicáveis.</p>
 
-          <h2>13. Comunicações</h2>
+          <h2>14. Comunicações</h2>
           <p>O usuário poderá receber comunicações relacionadas à sua conta, às suas participações, aos pagamentos, às rifas das quais participa e a informações importantes sobre o funcionamento da plataforma.</p>
 
-          <h2>14. Propriedade intelectual</h2>
+          <h2>15. Propriedade intelectual</h2>
           <p>O conteúdo, identidade visual, marca, logotipo, layout, textos, códigos, elementos gráficos e demais componentes próprios do RifasTOP são protegidos pela legislação aplicável. É proibida a reprodução, cópia, modificação, distribuição ou utilização comercial não autorizada desses elementos.</p>
 
-          <h2>15. Disponibilidade da plataforma</h2>
+          <h2>16. Disponibilidade da plataforma</h2>
           <p>O RifasTOP busca manter a plataforma disponível e funcionando adequadamente, mas não garante funcionamento ininterrupto. Podem ocorrer indisponibilidades decorrentes de manutenção, falhas de servidores, serviços de terceiros, problemas de conexão, ataques cibernéticos ou outros acontecimentos fora do controle razoável da plataforma.</p>
 
-          <h2>16. Alterações destes Termos</h2>
+          <h2>17. Alterações destes Termos</h2>
           <p>O RifasTOP poderá atualizar estes Termos de Uso sempre que necessário para adequação da plataforma, alterações de funcionalidades ou atendimento à legislação aplicável. A versão atualizada ficará disponível no site.</p>
 
-          <h2>17. Legislação aplicável</h2>
+          <h2>18. Legislação aplicável</h2>
           <p>Este Termo de Uso será interpretado de acordo com as leis da República Federativa do Brasil. As atividades de sorteio, promoção comercial ou outras modalidades reguladas pela legislação brasileira deverão observar as normas e autorizações aplicáveis a cada caso.</p>
 
-          <h2>18. Contato</h2>
+          <h2>19. Contato</h2>
           <p>Para dúvidas, solicitações ou informações relacionadas ao uso do RifasTOP, o usuário poderá utilizar os canais de contato disponibilizados na plataforma.</p>
 
           <div className="terms-footer-brand"><strong>RifasTOP</strong><span>Plataforma de Rifas</span></div>
