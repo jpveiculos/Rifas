@@ -50,6 +50,18 @@ export default function VisualSiteEditor() {
     setDragging(null);
   }
 
+  function moveByIndex(id: BlockId, offset: number) {
+    setConfig((current) => {
+      const order = [...current.order];
+      const from = order.indexOf(id);
+      const to = Math.max(0, Math.min(order.length - 1, from + offset));
+      if (from === to) return current;
+      order.splice(from, 1);
+      order.splice(to, 0, id);
+      return { ...current, order };
+    });
+  }
+
   async function save() {
     setSaving(true);
     setMessage("");
@@ -92,7 +104,7 @@ export default function VisualSiteEditor() {
         <section className="ve-canvas">
           <div className="ve-canvas-top"><span>PRÉVIA DA PÁGINA INICIAL</span><span>rifastop.com.br</span></div>
           {config.order.map((id) => config.visible[id] && <article key={id} draggable={!preview} onDragStart={() => setDragging(id)} onDragOver={(e) => e.preventDefault()} onDrop={() => moveBlock(id)} onDragEnd={() => setDragging(null)} className={"ve-block " + (dragging === id ? "is-dragging" : "")}>
-            {!preview && <div className="ve-block-handle">⠿ <span>Arraste para reorganizar</span></div>}
+            {!preview && <div className="ve-block-handle"><span className="ve-drag-instructions">⠿ Arraste para reorganizar</span><div className="ve-move-buttons"><button type="button" aria-label={`Mover ${labels[id]} para cima`} onClick={() => moveByIndex(id, -1)} disabled={config.order[0] === id}>↑</button><button type="button" aria-label={`Mover ${labels[id]} para baixo`} onClick={() => moveByIndex(id, 1)} disabled={config.order[config.order.length - 1] === id}>↓</button></div></div>}
             {id === "hero" && <div className="ve-hero"><span>RIFA STOP</span><h2>{config.title}</h2><p>Banner principal do site</p></div>}
             {id === "intro" && <div className="ve-intro"><h2>{config.title}</h2><p>{config.subtitle}</p></div>}
             {id === "raffles" && <div className="ve-raffles"><h2>Rifas disponíveis</h2><div className="ve-placeholder-cards"><span>Card de rifa</span><span>Card de rifa</span><span>Card de rifa</span></div><small>As rifas reais continuam sendo carregadas pelo site.</small></div>}
