@@ -5,7 +5,7 @@ import { getCurrentUser } from "@/lib/auth";
 import HomeRaffleBrowser from "@/app/HomeRaffleBrowser";
 import SiteHeader from "@/app/SiteHeader";
 import { getSiteInstagramHandle } from "@/lib/site-settings";
-import { getSiteEditorConfig } from "@/lib/site-editor";
+import { DEFAULT_SITE_EDITOR_CONFIG, getSiteEditorConfig } from "@/lib/site-editor";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +15,7 @@ export default async function HomePage() {
     where: { id: 1 },
     select: { contactWhatsapp: true, heroImageUrl: true }
   });
-  const editor = await getSiteEditorConfig();
+  const editor = await getSiteEditorConfig().catch(() => DEFAULT_SITE_EDITOR_CONFIG);
   const instagramHandle = await getSiteInstagramHandle();
   const raffles = await prisma.raffle.findMany({
     where: { status: { in: ["ACTIVE", "ENDED"] } },
