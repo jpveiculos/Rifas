@@ -42,7 +42,7 @@ export default async function RafflePage({ params }: Props) {
 
           <div className="info-row">
             <div className="info-item"><span className="info-label">Preço por número</span><span className="info-value">{(raffle.priceInCents / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span></div>
-            <div className="info-item"><span className="info-label">Data do sorteio</span><span className="info-value">{raffle.endDate ? new Date(raffle.endDate).toLocaleString("pt-BR") : "A data será divulgada assim que as cotas forem vendidas."}</span></div>
+            {raffle.endDate && <div className="info-item"><span className="info-label">Data do sorteio</span><span className="info-value">{new Date(raffle.endDate).toLocaleString("pt-BR")}</span></div>}
           </div>
 
           {raffle.status === "ENDED" && winningNumbers.length > 0 && (
