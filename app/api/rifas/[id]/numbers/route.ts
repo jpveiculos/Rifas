@@ -19,7 +19,7 @@ export async function POST(request: Request, { params }: Params) {
     });
 
     if (!raffle || raffle.status !== "ACTIVE" || (raffle.endDate && raffle.endDate <= new Date())) {
-      return NextResponse.json({ error: "Esta rifa não está disponível para novas reservas." }, { status: 409 });
+      return NextResponse.json({ error: "Esta rifa não está disponível para novas participações." }, { status: 409 });
     }
 
     const body = await request.json();
@@ -29,11 +29,12 @@ export async function POST(request: Request, { params }: Params) {
       return NextResponse.json({ error: "Quantidade inválida." }, { status: 400 });
     }
 
-
+    // Nesta etapa os números são apenas sugestões provisórias para a tela.
+    // Não são reservados no banco até o cliente solicitar a geração do Pix.
     const available = await prisma.raffleNumber.findMany({
       where: { raffleId: id, status: "AVAILABLE" },
-      select: { id: true, number: true },
-      take: quantity * 5
+      select: { number: true },
+      take: Math.min(quantity * 10, 1000)
     });
 
     if (available.length < quantity) {
@@ -43,34 +44,12 @@ export async function POST(request: Request, { params }: Params) {
     const shuffled = [...available].sort(() => Math.random() - 0.5).slice(0, quantity);
     const reservationId = crypto.randomUUID();
 
-    await prisma.$transaction(async (tx) => {
-      for (const item of shuffled) {
-        const updated = await tx.raffleNumber.updateMany({
-          where: { id: item.id, status: "AVAILABLE" },
-          data: {
-            status: "RESERVED",
-            reservationId,
-            reservedAt: new Date(),
-            reservedByUserId: user.id
-          }
-        });
-
-        if (updated.count !== 1) {
-          throw new Error("NUMBER_CONFLICT");
-        }
-      }
-    });
-
     return NextResponse.json({
       reservationId,
       numbers: shuffled.map((item) => item.number).sort((a, b) => a - b)
     });
   } catch (error) {
-    if (error instanceof Error && error.message === "NUMBER_CONFLICT") {
-      return NextResponse.json({ error: "Os números acabaram de ser alterados. Tente novamente." }, { status: 409 });
-    }
-
     console.error(error);
-    return NextResponse.json({ error: "Não foi possível reservar os números." }, { status: 500 });
+    return NextResponse.json({ error: "Não foi possível gerar os números." }, { status: 500 });
   }
 }
