@@ -1,6 +1,15 @@
 name: Validate visual site editor
 
 on:
+  push:
+    branches: [feature/editor-visual-site]
+    paths:
+      - "app/**"
+      - "lib/**"
+      - "prisma/**"
+      - "package.json"
+      - "next.config.ts"
+      - ".github/workflows/validate-site-editor.yml"
   pull_request:
     branches: [main]
     paths:
