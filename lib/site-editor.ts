@@ -15,13 +15,8 @@ export const DEFAULT_SITE_EDITOR_CONFIG: SiteEditorConfig = {
 };
 
 export async function getSiteEditorConfig(): Promise<SiteEditorConfig> {
-  await prisma.$executeRawUnsafe(`
-    CREATE TABLE IF NOT EXISTS "SiteEditorConfig" (
-      id INTEGER PRIMARY KEY,
-      config JSONB NOT NULL,
-      "updatedAt" TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    )
-  `);
+  // A tabela é criada apenas quando o administrador salva pela primeira vez.
+  // A página pública usa a configuração padrão enquanto ela ainda não existe.
   const rows = await prisma.$queryRawUnsafe<Array<{ config: SiteEditorConfig }>>(
     'SELECT config FROM "SiteEditorConfig" WHERE id = 1'
   );
