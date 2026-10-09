@@ -217,7 +217,7 @@ export default function RaffleParticipant({ raffleId, priceInCents }: { raffleId
 
           {!payment && (
             <>
-              <p>Seus números foram gerados. Agora clique em Pagar com Pix para reservar os números e confirmar sua participação.</p>
+              <p>Efetue o pagamento para confirmar sua participação.</p>
               <button className="primary-button participant-button" type="button" onClick={createPayment} disabled={paymentLoading}>
                 {paymentLoading ? "Gerando Pix..." : "Pagar com Pix"}
               </button>
