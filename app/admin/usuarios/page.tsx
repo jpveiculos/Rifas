@@ -8,6 +8,8 @@ type User = {
 };
 type Participation = {
   id: string; quantity: number; amountInCents: number; status: string; createdAt: string; approvedAt: string | null;
+  reservationId: string; mercadopagoOrderId: string | null; mercadopagoStatus: string | null;
+  mercadopagoStatusDetail: string | null; mercadopagoPaidAmountInCents: number | null;
   raffle: { id: string; raffleCode: string | null; name: string; productName: string; priceInCents: number; status: string };
 };
 type UserNumber = {
@@ -148,7 +150,12 @@ export default function AdminUsersPage() {
                       <div key={p.id} className="admin-users-history-card" style={{padding:12,borderRadius:8}}>
                         <strong>{p.raffle.productName || p.raffle.name}</strong>
                         <div>Rifa: {p.raffle.name}{p.raffle.raffleCode ? ` · ID ${p.raffle.raffleCode}` : ""}</div>
-                        <div>{p.quantity} número(s) · R$ {(p.amountInCents/100).toFixed(2).replace(".",",")} · {p.status}</div>
+                        <div>{p.quantity} número(s) · R$ {(p.amountInCents/100).toFixed(2).replace(".",",")} · Status no site: {p.status}</div>
+                        <div><strong>Código da participação:</strong> {p.id}</div>
+                        <div><strong>Referência da cobrança:</strong> rifas_participation_{p.id}</div>
+                        <div><strong>Pedido Mercado Pago:</strong> {p.mercadopagoOrderId || "Ainda não gerado"}</div>
+                        <div><strong>Status Mercado Pago:</strong> {p.mercadopagoStatus || "Sem retorno"}{p.mercadopagoStatusDetail ? " · " + p.mercadopagoStatusDetail : ""}</div>
+                        <div><strong>Valor confirmado:</strong> {p.mercadopagoPaidAmountInCents == null ? "Não informado" : "R$ " + (p.mercadopagoPaidAmountInCents/100).toFixed(2).replace(".",",")}</div>
                         <small>Participação em {new Date(p.createdAt).toLocaleString("pt-BR")}</small>
                       </div>
                     ))}
@@ -216,7 +223,12 @@ export default function AdminUsersPage() {
                   <div key={p.id} className="admin-users-history-card">
                     <strong>{p.raffle.productName || p.raffle.name}</strong>
                     <div>Rifa: {p.raffle.name}{p.raffle.raffleCode ? ` · ID ${p.raffle.raffleCode}` : ""}</div>
-                    <div>{p.quantity} número(s) · R$ {(p.amountInCents/100).toFixed(2).replace(".",",")} · {p.status}</div>
+                    <div>{p.quantity} número(s) · R$ {(p.amountInCents/100).toFixed(2).replace(".",",")} · Status no site: {p.status}</div>
+                        <div><strong>Código da participação:</strong> {p.id}</div>
+                        <div><strong>Referência da cobrança:</strong> rifas_participation_{p.id}</div>
+                        <div><strong>Pedido Mercado Pago:</strong> {p.mercadopagoOrderId || "Ainda não gerado"}</div>
+                        <div><strong>Status Mercado Pago:</strong> {p.mercadopagoStatus || "Sem retorno"}{p.mercadopagoStatusDetail ? " · " + p.mercadopagoStatusDetail : ""}</div>
+                        <div><strong>Valor confirmado:</strong> {p.mercadopagoPaidAmountInCents == null ? "Não informado" : "R$ " + (p.mercadopagoPaidAmountInCents/100).toFixed(2).replace(".",",")}</div>
                     <small>Participação em {new Date(p.createdAt).toLocaleString("pt-BR")}</small>
                   </div>
                 ))}
