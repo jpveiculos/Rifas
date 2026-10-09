@@ -73,7 +73,7 @@ export default function RaffleParticipant({ raffleId, priceInCents }: { raffleId
       const response = await fetch("/api/rifas/" + raffleId + "/payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reservationId })
+        body: JSON.stringify({ reservationId, numbers })
       });
       const data = await response.json();
 
@@ -201,16 +201,16 @@ export default function RaffleParticipant({ raffleId, priceInCents }: { raffleId
 
       {numbers.length > 0 && (
         <div className="generated-numbers">
-          <h3>Seus números reservados</h3>
+          <h3>Seus números gerados</h3>
           <div className="number-list">
-            {payment?.status === "PENDING"
-              ? <span>••••</span>
-              : numbers.map((number) => <span key={number}>{String(number).padStart(4, "0")}</span>)}
+            {payment?.status === "APPROVED"
+              ? numbers.map((number) => <span key={number}>{String(number).padStart(4, "0")}</span>)
+              : <span>••••</span>}
           </div>
 
           {!payment && (
             <>
-              <p>Os números estão reservados para você. Agora faça o pagamento para confirmar sua participação.</p>
+              <p>Seus números foram gerados. Agora clique em Pagar com Pix para reservar os números e confirmar sua participação.</p>
               <button className="primary-button participant-button" type="button" onClick={createPayment} disabled={paymentLoading}>
                 {paymentLoading ? "Gerando Pix..." : "Pagar com Pix"}
               </button>
