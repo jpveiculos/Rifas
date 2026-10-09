@@ -155,6 +155,14 @@ export async function createMercadoPagoParticipation({
   }
 
   const amountInCents = moneyInCents(raffle.priceInCents * reservedNumbers.length);
+  const participant = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { name: true }
+  });
+  const participantName = String(participant?.name || "").trim();
+  const nameParts = participantName.split(/\s+/).filter(Boolean);
+  const payerFirstName = nameParts[0] || "Participante";
+  const payerLastName = nameParts.slice(1).join(" ") || "RifasTOP";
   const participation = existing ?? await prisma.raffleParticipation.create({
     data: {
       raffleId,
@@ -180,7 +188,7 @@ export async function createMercadoPagoParticipation({
         type: "online",
         total_amount: amount,
         external_reference: `rifas_participation_${participation.id}`,
-        description: `Rifa - ${String(raffle.name || raffle.productName || "Rifa").slice(0, 140)}`,
+        description: `Rifa - ${String(raffle.name || raffle.productName || "Rifa")} - ${participantName || "Participante"}`.slice(0, 250),
         processing_mode: "automatic",
         transactions: {
           payments: [{
@@ -193,7 +201,9 @@ export async function createMercadoPagoParticipation({
           }]
         },
         payer: {
-          email: `usuario-${userId}@rifas.top`
+          email: `usuario-${userId}@rifas.top`,
+          first_name: payerFirstName,
+          last_name: payerLastName
         }
       })
     });
