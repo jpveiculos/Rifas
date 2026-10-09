@@ -231,6 +231,16 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
               <label>Valor por número<input required inputMode="decimal" value={form.pricePerNumber} onChange={(e) => update("pricePerNumber", e.target.value)} /></label>
             </div>
             <label>Data e hora do sorteio<input type="datetime-local" value={form.endDate} onChange={(e) => update("endDate", e.target.value)} /></label>
+            {form.endDate && (
+              <button
+                className="secondary-button compact-button"
+                type="button"
+                onClick={() => update("endDate", "")}
+              >
+                Remover data de sorteio
+              </button>
+            )}
+            <small className="form-help">Para apagar a data já cadastrada, toque em “Remover data de sorteio” e depois em “Salvar alterações”.</small>
           </section>
 
           {message && <div className="success-message">{message}</div>}
