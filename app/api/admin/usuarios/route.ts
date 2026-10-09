@@ -45,6 +45,8 @@ export async function GET(request: Request) {
       orderBy: { createdAt: "desc" },
       select: {
         id: true, quantity: true, amountInCents: true, status: true,
+        reservationId: true, mercadopagoOrderId: true, mercadopagoStatus: true,
+        mercadopagoStatusDetail: true, mercadopagoPaidAmountInCents: true,
         createdAt: true, approvedAt: true,
         raffle: { select: { id: true, raffleCode: true, name: true, productName: true, priceInCents: true, status: true } }
       }
