@@ -1,0 +1,37 @@
+name: Validate visual site editor
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "app/**"
+      - "lib/**"
+      - "prisma/**"
+      - "package.json"
+      - "next.config.ts"
+      - ".github/workflows/validate-site-editor.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DATABASE_URL: "postgresql://test:test@localhost:5432/rifas_test?schema=public"
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install dependencies
+        run: npm install
+      - name: Generate Prisma client
+        run: npx prisma generate
+      - name: Build application
+        run: npm run build
