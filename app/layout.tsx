@@ -2,17 +2,23 @@ import type { Metadata } from "next";
 import "./globals.css";
 import SiteFooter from "@/app/SiteFooter";
 
+const siteDescription =
+  "A RifasTOP é uma plataforma de rifas online que oferece sorteios de prêmios variados, incluindo veículos, eletrônicos e outros produtos. Consulte as rifas disponíveis, as regras de participação e os resultados dos sorteios, com informações claras sobre cada campanha.";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://rifastop.com.br"),
-  title: "RifasTOP",
-  description: "Plataforma de Rifas",
+  title: {
+    default: "RifasTOP | Rifas Online e Sorteios de Prêmios",
+    template: "%s | RifasTOP"
+  },
+  description: siteDescription,
   applicationName: "RifasTOP",
   alternates: {
     canonical: "https://rifastop.com.br"
   },
   openGraph: {
-    title: "RifasTOP",
-    description: "Plataforma de Rifas",
+    title: "RifasTOP | Rifas Online e Sorteios de Prêmios",
+    description: siteDescription,
     url: "https://rifastop.com.br",
     siteName: "RifasTOP",
     locale: "pt_BR",
@@ -28,8 +34,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "RifasTOP",
-    description: "Plataforma de Rifas",
+    title: "RifasTOP | Rifas Online e Sorteios de Prêmios",
+    description: siteDescription,
     images: ["/api/og-image"]
   },
   appleWebApp: {
