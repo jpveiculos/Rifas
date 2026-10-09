@@ -357,6 +357,12 @@ export async function PATCH(request: Request) {
         where: { id },
         data: { raffleCode, name, city: raffleCity, topicId, productName, description, priceInCents, endDate, imageUrls }
       });
+
+      revalidatePath("/");
+      revalidatePath("/rifa/" + id);
+      revalidatePath("/minha-conta");
+      revalidatePath("/admin");
+
       return NextResponse.json({ id, ok: true });
     }
 
