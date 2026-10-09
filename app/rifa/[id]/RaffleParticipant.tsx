@@ -79,6 +79,13 @@ export default function RaffleParticipant({ raffleId, priceInCents }: { raffleId
 
       if (!response.ok) {
         setError(data.error ?? "Não foi possível iniciar o pagamento.");
+        if (response.status === 409) {
+          // Os números provisórios podem ter sido escolhidos por outra pessoa
+          // antes da geração do Pix; permita ao cliente gerar outros números.
+          setNumbers([]);
+          setReservationId("");
+          setPayment(null);
+        }
         return;
       }
 
