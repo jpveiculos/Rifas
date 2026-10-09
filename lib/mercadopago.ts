@@ -400,11 +400,19 @@ export async function handleMercadoPagoWebhook({
   const reference = String(order?.external_reference || "");
   const match = reference.match(/^rifas_participation_(.+)$/);
 
-  if (!match) return { ignored: true };
+  // Primeiro usamos a referência exclusiva enviada na criação da cobrança.
+  // Se ela vier ausente/inconsistente, fazemos fallback pelo orderId já salvo
+  // no banco. A associação exata pelo ID do pedido evita comparar por nome,
+  // valor ou horário, que podem se repetir entre participantes.
+  let participation = match
+    ? await prisma.raffleParticipation.findUnique({ where: { id: match[1] } })
+    : null;
 
-  const participation = await prisma.raffleParticipation.findUnique({
-    where: { id: match[1] }
-  });
+  if (!participation || participation.mercadopagoOrderId !== orderId) {
+    participation = await prisma.raffleParticipation.findUnique({
+      where: { mercadopagoOrderId: orderId }
+    });
+  }
 
   if (!participation || participation.mercadopagoOrderId !== orderId) {
     return { ignored: true };
