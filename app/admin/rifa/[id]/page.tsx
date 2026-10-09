@@ -240,7 +240,6 @@ export default function EditRafflePage({ params }: { params: Promise<{ id: strin
                 Remover data de sorteio
               </button>
             )}
-            <small className="form-help">Para apagar a data já cadastrada, toque em “Remover data de sorteio” e depois em “Salvar alterações”.</small>
           </section>
 
           {message && <div className="success-message">{message}</div>}
