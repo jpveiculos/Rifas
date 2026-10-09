@@ -16,8 +16,8 @@ export async function POST(request: Request, { params }: Params) {
 
     const body = await request.json();
     const reservationId = String(body.reservationId ?? "").trim();
-    const rawNumbers = Array.isArray(body.numbers) ? body.numbers : [];
-    const numbers = rawNumbers.map(Number);
+    const rawNumbers: unknown[] = Array.isArray(body.numbers) ? body.numbers : [];
+    const numbers: number[] = rawNumbers.map((value: unknown) => Number(value));
 
     if (
       !reservationId ||
