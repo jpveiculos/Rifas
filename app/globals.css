@@ -4852,3 +4852,139 @@ body:not(:has(.home-bottom-links)) .social-links-section {
 }
 
 
+
+
+/* ===== CORREÇÃO RESPONSIVA: modal de dados do participante ===== */
+.admin-users-modal-backdrop {
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+}
+
+.admin-users-modal,
+.admin-users-modal * {
+  box-sizing: border-box;
+}
+
+.admin-users-modal {
+  width: min(760px, 100%);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.admin-users-modal-head {
+  min-width: 0;
+}
+
+.admin-users-modal-head > div {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.admin-users-modal-head h2,
+.admin-users-modal-head p {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.admin-users-close {
+  flex: 0 0 42px;
+}
+
+.admin-users-modal-body {
+  min-width: 0;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-users-modal-body > *,
+.admin-users-modal .admin-users-history,
+.admin-users-modal .admin-users-history-card {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.admin-users-modal .admin-users-history {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.admin-users-modal .admin-users-history-card {
+  width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  overflow-x: hidden;
+}
+
+.admin-users-modal .admin-users-history-card strong,
+.admin-users-modal .admin-users-history-card div,
+.admin-users-modal .admin-users-history-card small {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.admin-users-modal-actions {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .admin-users-modal-backdrop {
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    padding-top: max(8px, env(safe-area-inset-top));
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+  }
+
+  .admin-users-modal {
+    width: 100%;
+    max-width: 100%;
+    max-height: calc(100dvh - 16px);
+    max-height: calc(100vh - 16px);
+    border-radius: 16px;
+  }
+
+  .admin-users-modal-head {
+    padding: 14px 14px;
+    gap: 10px;
+  }
+
+  .admin-users-modal-head h2 {
+    font-size: clamp(20px, 5.5vw, 26px);
+    line-height: 1.2;
+  }
+
+  .admin-users-modal-head p {
+    font-size: 14px;
+    line-height: 1.35;
+  }
+
+  .admin-users-modal-body {
+    padding: 12px;
+  }
+
+  .admin-users-modal .admin-users-history {
+    margin-top: 12px;
+    padding: 10px;
+  }
+
+  .admin-users-modal .admin-users-history-card {
+    padding: 10px;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .admin-users-modal-actions {
+    padding: 10px 12px max(12px, env(safe-area-inset-bottom));
+    gap: 8px;
+  }
+
+  .admin-users-modal-actions button {
+    min-height: 46px;
+    padding: 10px 12px;
+    white-space: normal;
+  }
+}
