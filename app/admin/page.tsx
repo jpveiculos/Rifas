@@ -542,6 +542,11 @@ export default function AdminPage() {
               <strong>Participantes</strong>
               <small>Gerenciar usuários</small>
             </a>
+            <a className="admin-nav-item" href="/admin/editor">
+              <span>↕</span>
+              <strong>Editar visual do site</strong>
+              <small>Arrastar, organizar e publicar</small>
+            </a>
           </nav>
 
           <section className="admin-settings-card">
