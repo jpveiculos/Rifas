@@ -32,67 +32,84 @@ enum RaffleResultStatus {
   WINNER
 }
 
+enum RouletteWalletType {
+  PLAY_CREDITS
+  WITHDRAWABLE_BALANCE
+}
+
+enum RouletteWalletTransactionType {
+  DEPOSIT
+  CONVERSION_IN
+  CONVERSION_OUT
+  STAKE
+  PRIZE
+  WITHDRAWAL
+  REFUND
+  ADMIN_ADJUSTMENT
+}
+
 model SiteSettings {
-  id             Int      @id @default(1)
+  id              Int      @id @default(1)
   contactWhatsapp String   @default("77998315360")
   instagramHandle String   @default("rifastop.com.br")
-  heroImageUrl   String?  @db.Text
-  updatedAt      DateTime @updatedAt
+  heroImageUrl    String?  @db.Text
+  updatedAt       DateTime @updatedAt
 }
 
 model RaffleTopic {
-  id          String   @id @default(cuid())
-  name        String
-  normalized  String   @unique
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  raffles     Raffle[]
+  id         String   @id @default(cuid())
+  name       String
+  normalized String   @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  raffles    Raffle[]
 
   @@index([name])
 }
 
 model Raffle {
-  id                   String             @id @default(cuid())
-  raffleCode           String?            @unique
-  name                 String
-  city                 String             @default("")
-  topicId              String?
-  topic                RaffleTopic?       @relation(fields: [topicId], references: [id], onDelete: SetNull)
-  productName          String
-  description          String             @db.Text
-  imageUrls            String[]           @default([])
-  totalNumbers         Int
-  priceInCents         Int
-  endDate              DateTime?
-  status               RaffleStatus       @default(DRAFT)
-  salesClosedAt        DateTime?
-  drawEligibleCount    Int?
-  winningNumber        Int?
-  winningNumbers       Int[]              @default([])
-  federalNumbers       String[]           @default([])
-  resultStatus         RaffleResultStatus @default(PENDING)
-  resultPublishedAt    DateTime?
-  createdAt             DateTime           @default(now())
-  updatedAt             DateTime           @updatedAt
-  numbers              RaffleNumber[]
-  participations       RaffleParticipation[]
-  marketingCampaigns   MarketingCampaign[]
+  id                 String             @id @default(cuid())
+  raffleCode         String?            @unique
+  name               String
+  city               String             @default("")
+  topicId            String?
+  topic              RaffleTopic?       @relation(fields: [topicId], references: [id], onDelete: SetNull)
+  productName        String
+  description        String             @db.Text
+  imageUrls          String[]           @default([])
+  totalNumbers       Int
+  priceInCents       Int
+  endDate            DateTime?
+  status             RaffleStatus       @default(DRAFT)
+  salesClosedAt      DateTime?
+  drawEligibleCount  Int?
+  winningNumber      Int?
+  winningNumbers     Int[]              @default([])
+  federalNumbers     String[]            @default([])
+  resultStatus       RaffleResultStatus @default(PENDING)
+  resultPublishedAt  DateTime?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  numbers            RaffleNumber[]
+  participations     RaffleParticipation[]
+  marketingCampaigns MarketingCampaign[]
 
   @@index([topicId])
 }
 
 model User {
-  id             String    @id @default(cuid())
-  name           String
-  city           String
-  whatsapp       String
-  username       String    @unique
-  passwordHash   String
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  sessions       Session[]
-  numbers        RaffleNumber[]
-  participations RaffleParticipation[]
+  id                       String                     @id @default(cuid())
+  name                     String
+  city                     String
+  whatsapp                 String
+  username                 String                     @unique
+  passwordHash             String
+  createdAt                DateTime                   @default(now())
+  updatedAt                DateTime                   @updatedAt
+  sessions                 Session[]
+  numbers                  RaffleNumber[]
+  participations           RaffleParticipation[]
+  rouletteWalletAccounts   RouletteWalletAccount[]
 }
 
 model Session {
@@ -108,16 +125,16 @@ model Session {
 }
 
 model RaffleNumber {
-  id                 String       @id @default(cuid())
-  raffleId           String
-  number             Int
-  status             NumberStatus @default(AVAILABLE)
-  reservationId      String?
-  reservedAt         DateTime?
-  confirmedAt        DateTime?
-  reservedByUserId   String?
-  raffle             Raffle       @relation(fields: [raffleId], references: [id], onDelete: Cascade)
-  reservedByUser     User?        @relation(fields: [reservedByUserId], references: [id], onDelete: SetNull)
+  id               String       @id @default(cuid())
+  raffleId         String
+  number           Int
+  status           NumberStatus @default(AVAILABLE)
+  reservationId    String?
+  reservedAt       DateTime?
+  confirmedAt      DateTime?
+  reservedByUserId String?
+  raffle           Raffle       @relation(fields: [raffleId], references: [id], onDelete: Cascade)
+  reservedByUser   User?        @relation(fields: [reservedByUserId], references: [id], onDelete: SetNull)
 
   @@unique([raffleId, number])
   @@index([raffleId, status])
@@ -127,10 +144,10 @@ model RaffleNumber {
 
 model RaffleParticipation {
   id                           String              @id @default(cuid())
-  raffleId                    String
-  userId                      String
-  reservationId               String              @unique
-  quantity                    Int
+  raffleId                     String
+  userId                       String
+  reservationId                String              @unique
+  quantity                     Int
   amountInCents                Int
   status                       ParticipationStatus @default(PENDING)
   mercadopagoOrderId           String?             @unique
@@ -144,7 +161,6 @@ model RaffleParticipation {
   createdAt                    DateTime            @default(now())
   updatedAt                    DateTime            @updatedAt
   approvedAt                   DateTime?
-
   raffle                       Raffle              @relation(fields: [raffleId], references: [id], onDelete: Cascade)
   user                         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -153,6 +169,38 @@ model RaffleParticipation {
   @@index([mercadopagoOrderId])
 }
 
+// Wallets are exclusively for roulette. Raffle payments and participation
+// records intentionally remain separate and do not read or write these balances.
+model RouletteWalletAccount {
+  id           String            @id @default(cuid())
+  userId       String
+  type         RouletteWalletType
+  balanceCents Int               @default(0)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions RouletteWalletTransaction[]
+
+  @@unique([userId, type])
+  @@index([userId])
+}
+
+model RouletteWalletTransaction {
+  id                String                        @id @default(cuid())
+  accountId         String
+  type              RouletteWalletTransactionType
+  amountCents       Int
+  balanceAfterCents Int
+  idempotencyKey    String                        @unique
+  sourceType        String
+  sourceId          String?
+  description       String?                       @db.Text
+  createdAt         DateTime                      @default(now())
+  account           RouletteWalletAccount         @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([accountId, createdAt])
+  @@index([sourceType, sourceId])
+}
 
 model MarketingCampaign {
   id              String            @id
@@ -188,17 +236,17 @@ model MarketingVariant {
 }
 
 model MarketingMetric {
-  id             String          @id
-  variantId      String          @unique
-  spendCents     Int             @default(0)
-  impressions    Int             @default(0)
-  reach          Int             @default(0)
-  engagements    Int             @default(0)
-  profileVisits  Int             @default(0)
-  linkClicks     Int             @default(0)
-  registrations  Int             @default(0)
-  participations Int             @default(0)
-  updatedAt      DateTime        @updatedAt
+  id             String           @id
+  variantId      String           @unique
+  spendCents     Int              @default(0)
+  impressions    Int              @default(0)
+  reach          Int              @default(0)
+  engagements    Int              @default(0)
+  profileVisits  Int              @default(0)
+  linkClicks     Int              @default(0)
+  registrations  Int              @default(0)
+  participations Int              @default(0)
+  updatedAt      DateTime         @updatedAt
   variant        MarketingVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
 }
 
@@ -215,17 +263,17 @@ model MarketingClick {
 }
 
 model MetaIntegration {
-  id                  Int       @id @default(1)
+  id                   Int       @id @default(1)
   accessTokenEncrypted String?
-  tokenExpiresAt      DateTime?
-  metaUserId          String?
-  metaUserName        String?
-  adAccountId         String?
-  adAccountName       String?
-  facebookPageId      String?
-  facebookPageName    String?
-  instagramAccountId  String?
-  instagramUsername   String?
-  connectedAt         DateTime?
-  updatedAt           DateTime  @updatedAt
+  tokenExpiresAt       DateTime?
+  metaUserId           String?
+  metaUserName         String?
+  adAccountId          String?
+  adAccountName        String?
+  facebookPageId       String?
+  facebookPageName     String?
+  instagramAccountId   String?
+  instagramUsername    String?
+  connectedAt          DateTime?
+  updatedAt            DateTime  @updatedAt
 }
